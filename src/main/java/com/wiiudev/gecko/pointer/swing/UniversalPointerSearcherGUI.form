@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.wiiudev.gecko.pointer.swing.UniversalPointerSearcherGUI">
+  <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="646" height="659"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="80b87" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <tabbedpane id="3bcae" binding="tabbedPane">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="200" height="200"/>
+              </grid>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="8466d" layout-manager="GridLayoutManager" row-count="8" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <tabbedpane title="Pointer Searcher"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <grid id="738a8" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="fc347" class="javax.swing.JButton" binding="editMemoryDumpButton" default-binding="true">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Edit"/>
+                          <toolTipText value="Edits the currently selected memory dump row"/>
+                        </properties>
+                      </component>
+                      <component id="3c33c" class="javax.swing.JButton" binding="removeMemoryDumpButton" default-binding="true">
+                        <constraints>
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Remove"/>
+                          <toolTipText value="Removes the currently selected memory dump"/>
+                        </properties>
+                      </component>
+                      <component id="b860f" class="javax.swing.JButton" binding="resetMemoryDumpsButton">
+                        <constraints>
+                          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Remove All"/>
+                          <toolTipText value="Removes all memory dumps from the list"/>
+                        </properties>
+                      </component>
+                      <component id="c3ac3" class="javax.swing.JButton" binding="addMemoryDumpButton" default-binding="true">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Add"/>
+                          <toolTipText value="Allows you to add a memory dump for the pointer search"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <scrollpane id="a8248">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The added memory dumps"/>
+                    </properties>
+                    <border type="none"/>
+                    <children>
+                      <component id="9dc2b" class="javax.swing.JTable" binding="addedMemoryDumpsTable">
+                        <constraints/>
+                        <properties>
+                          <toolTipText value=""/>
+                        </properties>
+                      </component>
+                    </children>
+                  </scrollpane>
+                  <scrollpane id="2a5bc">
+                    <constraints>
+                      <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="44b1a" class="javax.swing.JTextArea" binding="foundPointersOutputArea">
+                        <constraints/>
+                        <properties>
+                          <editable value="false"/>
+                          <enabled value="true"/>
+                          <rows value="8"/>
+                          <toolTipText value="The discovered pointers by searching the added memory dumps"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </scrollpane>
+                  <grid id="7fdf5" layout-manager="GridLayoutManager" row-count="4" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="7" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="6c5e6" class="javax.swing.JButton" binding="searchPointersButton">
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Search Pointers"/>
+                          <toolTipText value="Starts the pointer search"/>
+                        </properties>
+                      </component>
+                      <component id="830e9" class="javax.swing.JButton" binding="cancelSearchButton">
+                        <constraints>
+                          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Cancel Pointer Search"/>
+                          <toolTipText value="Cancels the current search"/>
+                        </properties>
+                      </component>
+                      <component id="c5030" class="javax.swing.JProgressBar" binding="pointerSearchProgressBar">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <stringPainted value="true"/>
+                          <toolTipText value="The progress of the pointer search"/>
+                        </properties>
+                      </component>
+                      <component id="73534" class="javax.swing.JLabel" binding="pointerSearchStatisticsLabel">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value=""/>
+                        </properties>
+                      </component>
+                      <component id="ab5de" class="javax.swing.JButton" binding="tutorialButton" default-binding="true">
+                        <constraints>
+                          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Tutorial"/>
+                          <toolTipText value="Shows you a tutorial on this application"/>
+                        </properties>
+                      </component>
+                      <component id="9c6e8" class="javax.swing.JProgressBar" binding="innerPointerSearchProgressBar">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <stringPainted value="true"/>
+                          <toolTipText value="The pointer search pointer depth progress"/>
+                        </properties>
+                      </component>
+                      <component id="e0655" class="javax.swing.JButton" binding="nativePointerSearcherOutputButton" default-binding="true">
+                        <constraints>
+                          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Debugging Output"/>
+                          <toolTipText value="Shows the native pointer searcher output for debugging"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <component id="5f434" class="javax.swing.JComboBox" binding="offsetPrintingSettingSelection">
+                    <constraints>
+                      <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The setting for offset printing"/>
+                    </properties>
+                  </component>
+                  <component id="9cf54" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Offset Printing:"/>
+                    </properties>
+                  </component>
+                  <component id="f47ef" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Sorting:"/>
+                    </properties>
+                  </component>
+                  <component id="e14be" class="javax.swing.JComboBox" binding="sortingSelection">
+                    <constraints>
+                      <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The memory pointer sorting rule"/>
+                    </properties>
+                  </component>
+                  <component id="e6963" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Page:"/>
+                    </properties>
+                  </component>
+                  <component id="b2ff0" class="javax.swing.JSpinner" binding="resultsPageSpinner">
+                    <constraints>
+                      <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The current results page"/>
+                    </properties>
+                  </component>
+                  <component id="a56dd" class="javax.swing.JLabel" binding="pageResultsLabel">
+                    <constraints>
+                      <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="65cba" layout-manager="GridLayoutManager" row-count="17" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <tabbedpane title="Settings"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="77150" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Pointer Search Depth:"/>
+                    </properties>
+                  </component>
+                  <component id="a9b48" class="javax.swing.JFormattedTextField" binding="pointerSearchDepthField">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The desired depth of the pointer search"/>
+                    </properties>
+                  </component>
+                  <component id="b755" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Pointer Value Alignment:"/>
+                    </properties>
+                  </component>
+                  <component id="8899a" class="javax.swing.JFormattedTextField" binding="pointerValueAlignmentField">
+                    <constraints>
+                      <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The alignment of memory values"/>
+                    </properties>
+                  </component>
+                  <component id="c7903" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Maximum Memory Chunk Size:"/>
+                    </properties>
+                  </component>
+                  <component id="88e1" class="javax.swing.JFormattedTextField" binding="maximumMemoryChunkSizeField">
+                    <constraints>
+                      <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The maximum amount of memory to use for buffering memory dump contents (adjust for users with low RAM)"/>
+                    </properties>
+                  </component>
+                  <component id="df4e7" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Maximum Offset:"/>
+                    </properties>
+                  </component>
+                  <component id="1fc8a" class="javax.swing.JTextField" binding="maximumPointerOffsetField">
+                    <constraints>
+                      <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The maximum pointer offset for each pointer (in hexadecimal)"/>
+                    </properties>
+                  </component>
+                  <component id="a6b9a" class="javax.swing.JCheckBox" binding="allowNegativeOffsetsCheckBox" default-binding="true">
+                    <constraints>
+                      <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Allow Negative Offsets"/>
+                      <toolTipText value="Whether to allow negative pointer offsets"/>
+                    </properties>
+                  </component>
+                  <component id="15620" class="javax.swing.JLabel" binding="ignoredMemoryRangesLabel">
+                    <constraints>
+                      <grid row="15" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Ignored Memory Ranges:"/>
+                    </properties>
+                  </component>
+                  <scrollpane id="b73d9" binding="ignoredMemoryRangesTableScrollPane">
+                    <constraints>
+                      <grid row="16" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="e5b7" class="javax.swing.JTable" binding="ignoredMemoryRangesTable">
+                        <constraints/>
+                        <properties>
+                          <toolTipText value="The memory ranges ignored from the pointer search"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </scrollpane>
+                  <grid id="47ac4" layout-manager="GridLayoutManager" row-count="4" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="13" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="8b2f9" class="javax.swing.JCheckBox" binding="baseOffsetRangeSelection">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Base Offset Range:"/>
+                          <toolTipText value="Whether to enable base offset range restrictions"/>
+                        </properties>
+                      </component>
+                      <component id="12032" class="javax.swing.JFormattedTextField" binding="startingBaseAddressField">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <toolTipText value="The first enabled base offset address inclusive"/>
+                        </properties>
+                      </component>
+                      <component id="ec12a" class="javax.swing.JFormattedTextField" binding="endBaseAddressField">
+                        <constraints>
+                          <grid row="0" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <toolTipText value="The last base address range address exclusive"/>
+                        </properties>
+                      </component>
+                      <component id="56e2b" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="-"/>
+                        </properties>
+                      </component>
+                      <component id="35c08" class="javax.swing.JCheckBox" binding="writePointersToFileSystemCheckBox" default-binding="true">
+                        <constraints>
+                          <grid row="1" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <selected value="true"/>
+                          <text value="Write Pointers to &quot;Pointers.txt&quot;"/>
+                          <toolTipText value="Whether to synchronize the pointers into a Pointers.txt"/>
+                        </properties>
+                      </component>
+                      <component id="40fa0" class="javax.swing.JCheckBox" binding="excludeCyclesCheckBox" default-binding="true">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <selected value="true"/>
+                          <text value="Exclude Cycles"/>
+                          <toolTipText value="Whether to exclude cycles of pointer base addresses"/>
+                        </properties>
+                      </component>
+                      <component id="7b7db" class="javax.swing.JCheckBox" binding="readPointerMapsCheckBox">
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Read Pointer Map(s)"/>
+                          <toolTipText value="Whether to read existing pointer maps to possibly speed up searches (maybe only beneficial on Linux)"/>
+                        </properties>
+                      </component>
+                      <component id="87a3d" class="javax.swing.JCheckBox" binding="useNativePointerSearcherCheckBox">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Use Native Pointer Searcher Engine"/>
+                          <toolTipText value="Whether to use the native C++ pointer searcher engine instead of Java (more memory and runtime efficient)"/>
+                        </properties>
+                      </component>
+                      <component id="1c970" class="javax.swing.JCheckBox" binding="generatePointerMapsCheckBox" default-binding="true">
+                        <constraints>
+                          <grid row="2" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <selected value="false"/>
+                          <text value="Generate Pointer Map(s)"/>
+                          <toolTipText value="Whether this application should write pointer maps to the disc"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <vspacer id="42ae6">
+                    <constraints>
+                      <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </vspacer>
+                  <component id="ee966" class="javax.swing.JCheckBox" binding="singleMemoryDumpMethodCheckBox" default-binding="true">
+                    <constraints>
+                      <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Single Memory Dump Method"/>
+                      <toolTipText value="Whether to find pointers for memory dumps individually and to match results to each other (helps finding depth 3 pointers)"/>
+                    </properties>
+                  </component>
+                  <component id="92fa2" class="javax.swing.JButton" binding="singleMemoryDumpMethodInformationButton">
+                    <constraints>
+                      <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Information"/>
+                      <toolTipText value="Information about the single memory dump method"/>
+                    </properties>
+                  </component>
+                  <component id="35940" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Minimum Pointer Address:"/>
+                    </properties>
+                  </component>
+                  <component id="73629" class="javax.swing.JTextField" binding="minimumPointerAddressField">
+                    <constraints>
+                      <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The minimum address for pointers to be valid (for the 3DS this e.g. is 0x100000)"/>
+                    </properties>
+                  </component>
+                  <component id="a0dbf" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Address Size:"/>
+                    </properties>
+                  </component>
+                  <component id="f1596" class="javax.swing.JComboBox" binding="addressSizeSelection">
+                    <constraints>
+                      <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The address size in bytes"/>
+                    </properties>
+                  </component>
+                  <component id="60730" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Pointer Results Page Size:"/>
+                    </properties>
+                  </component>
+                  <component id="9ef3d" class="javax.swing.JTextField" binding="pointerResultsPageSizeField">
+                    <constraints>
+                      <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The page size for the pointer results"/>
+                    </properties>
+                  </component>
+                  <component id="2e135" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Maximum Pointers Count:"/>
+                    </properties>
+                  </component>
+                  <component id="1e053" class="javax.swing.JFormattedTextField" binding="maximumPointersCountField">
+                    <constraints>
+                      <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The maximum amount of pointers to find before stopping the search"/>
+                    </properties>
+                  </component>
+                  <component id="d66ff" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Pointer Address Alignment:"/>
+                    </properties>
+                  </component>
+                  <component id="e3e03" class="javax.swing.JFormattedTextField" binding="pointerAddressAlignmentField">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The alignment of memory addresses"/>
+                    </properties>
+                  </component>
+                  <component id="ce219" class="javax.swing.JLabel" binding="readableMaximumMemoryChunkSizeLabel">
+                    <constraints>
+                      <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font size="14"/>
+                      <foreground color="-16729301"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <component id="b2cc0" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Last Pointer Offsets:"/>
+                    </properties>
+                  </component>
+                  <component id="4116b" class="javax.swing.JTextField" binding="lastPointerOffsetsField">
+                    <constraints>
+                      <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <toolTipText value="The desired last pointer offsets comma-separated"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="101f" binding="aboutTab" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <tabbedpane title="About"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="2904d" class="javax.swing.JTextPane" binding="aboutTextPane">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <contentType value="text/html"/>
+                      <editable value="false"/>
+                      <toolTipText value="About this application"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+            </children>
+          </tabbedpane>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>
