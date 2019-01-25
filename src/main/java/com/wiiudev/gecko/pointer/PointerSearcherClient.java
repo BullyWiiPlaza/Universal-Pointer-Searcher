@@ -13,8 +13,8 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
-	// TODO 8d86561b BullyWiiPlaza <bullywiihacks@gmail.com> on 1/17/2019 at 2:05 AM committed by
-	// TODO Output Area not synced with command prompt (?)
+	// TODO https://github.com/BullyWiiPlaza/Universal-Pointer-Searcher/issues/3#issuecomment-456256928
+	// TODO Output Area not synced with command prompt (?) -> Windows native pointer searcher crash bug
 	// TODO Java pointer searcher does not find e.g. [[0x39520908] + 0x368] - 0x1AC in "dumps\No Track Music\39CEB148.bin"
 	// TODO Implement ignored memory ranges (Feature)
 	private static void startGUI()
