@@ -136,6 +136,7 @@ public class NativePointerSearcherManager
 	{
 		val command = buildCommandList(executableFilePath);
 		val processBuilder = new ProcessBuilder(command);
+		command.remove(0);
 		val executedCommand = toCommandString(command);
 		processBuilder.redirectErrorStream(true);
 		process = processBuilder.start();
@@ -161,7 +162,8 @@ public class NativePointerSearcherManager
 			stringBuilder.append(commandItem);
 			stringBuilder.append("\"");
 
-			if (commandItemIndex != commands.size() - 1)
+			val commandsCount = commands.size();
+			if (commandItemIndex != commandsCount - 1)
 			{
 				stringBuilder.append(" ");
 			}
@@ -190,6 +192,7 @@ public class NativePointerSearcherManager
 	{
 		val command = new ArrayList<String>();
 		command.add(temporaryExecutableFile.toString());
+		command.add(temporaryExecutableFile.toString()); // The file path is the first argument
 
 		// Add commands for each memory dump
 		for (val memoryDump : memoryDumps)
@@ -250,6 +253,11 @@ public class NativePointerSearcherManager
 
 	private String toCommaSeparated(List<Long> list)
 	{
+		if (list.isEmpty())
+		{
+			return " ";
+		}
+
 		val stringBuilder = new StringBuilder();
 		for (var listIndex = 0; listIndex < list.size(); listIndex++)
 		{
