@@ -887,8 +887,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val maximumMemoryChunkSize = memoryPointerSearcher.getMaximumMemoryChunkSize();
 		maximumMemoryChunkSizeField.setText(maximumMemoryChunkSize + "");
 
-		val cppPointerSearcherManager = new NativePointerSearcherManager();
-		val maximumPointersCount = cppPointerSearcherManager.getMaximumPointersCount();
+		val nativePointerSearcherManager = new NativePointerSearcherManager();
+		val maximumPointersCount = nativePointerSearcherManager.getMaximumPointersCount();
 		maximumPointersCountField.setText(maximumPointersCount + "");
 
 		val maximumPointerOffset = memoryPointerSearcher.getMaximumPointerOffset();
@@ -1318,11 +1318,11 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val memoryDumps = memoryPointerSearcher.getMemoryDumps();
 		for (val memoryDump : memoryDumps)
 		{
-			val startingAddress = memoryDump.getStartingAddress();
-			memoryDump.setMinimumPointerAddress(startingAddress);
+			val minimumPointerAddress = parseUnsignedLong(minimumPointerAddressField.getText(), 16);
+			memoryDump.setMinimumPointerAddress(minimumPointerAddress);
 			val addressSize = getSelectedItem(addressSizeSelection);
 			memoryDump.setAddressSize(addressSize);
-			val maximumPointerAddress = startingAddress + memoryDump.getSize() - addressSize;
+			val maximumPointerAddress = memoryDump.getSize() - addressSize;
 			memoryDump.setMaximumPointerAddress(maximumPointerAddress);
 			val pointerAddressAlignment = parseUnsignedInt(pointerAddressAlignmentField.getText(), 16);
 			memoryDump.setAddressAlignment(pointerAddressAlignment);
