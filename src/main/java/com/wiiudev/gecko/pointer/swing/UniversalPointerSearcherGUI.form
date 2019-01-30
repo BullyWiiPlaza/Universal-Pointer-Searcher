@@ -590,7 +590,7 @@
                       </grid>
                     </constraints>
                     <properties>
-                      <toolTipText value="The desired last pointer offsets comma-separated"/>
+                      <toolTipText value="The desired last pointer offsets in hexadecimal and comma-separated if multiple"/>
                     </properties>
                   </component>
                 </children>

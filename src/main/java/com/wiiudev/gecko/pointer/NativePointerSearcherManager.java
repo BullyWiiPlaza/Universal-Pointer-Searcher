@@ -246,7 +246,8 @@ public class NativePointerSearcherManager
 		command.add("-x");
 		command.add(maximumPointersCount + "");
 		command.add("-q");
-		command.add(toCommaSeparated(lastPointerOffsets));
+		val commaSeparatedLastPointerOffsets = toCommaSeparated(lastPointerOffsets);
+		command.add(commaSeparatedLastPointerOffsets);
 
 		return command;
 	}
@@ -261,7 +262,15 @@ public class NativePointerSearcherManager
 		val stringBuilder = new StringBuilder();
 		for (var listIndex = 0; listIndex < list.size(); listIndex++)
 		{
-			stringBuilder.append(toHexString(list.get(listIndex)));
+			var value = list.get(listIndex);
+			if (value < 0)
+			{
+				stringBuilder.append("-");
+				value *= -1;
+			}
+
+			val hexadecimalValue = toHexString(value).toUpperCase();
+			stringBuilder.append(hexadecimalValue);
 			if (listIndex != list.size() - 1)
 			{
 				stringBuilder.append(",");

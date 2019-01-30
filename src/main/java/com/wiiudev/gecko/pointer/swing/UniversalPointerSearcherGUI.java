@@ -18,8 +18,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -45,6 +44,7 @@ import static com.wiiudev.gecko.pointer.utilities.DataConversions.parseInt;
 import static java.awt.Color.GREEN;
 import static java.awt.Color.RED;
 import static java.awt.event.ItemEvent.SELECTED;
+import static java.awt.event.KeyEvent.VK_DELETE;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.parseUnsignedInt;
 import static java.lang.Long.*;
@@ -62,7 +62,7 @@ import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 public class UniversalPointerSearcherGUI extends JFrame
 {
 	public static final String APPLICATION_NAME = "Universal Pointer Searcher";
-	private static final String APPLICATION_VERSION = "v3.04";
+	private static final String APPLICATION_VERSION = "v3.05";
 	private static final String STORED_POINTERS_FILE_NAME = "Pointers.txt";
 
 	// Invalid JOptionPane option as default for recognition
@@ -174,8 +174,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		singleMemoryDumpMethodCheckBox.setVisible(false);
 		singleMemoryDumpMethodInformationButton.setVisible(false);
 		innerPointerSearchProgressBar.setVisible(false);
-		addedMemoryDumpsTable.getSelectionModel()
-				.addListSelectionListener(listSelectionEvent -> setButtonAvailability());
+		configureAddedMemoryDumpsTable();
 		baseOffsetRangeSelection.addItemListener(itemEvent -> setButtonAvailability());
 		startingBaseAddressField.setDocument(new JTextAreaLimit(8));
 		endBaseAddressField.setDocument(new JTextAreaLimit(8));
@@ -184,6 +183,26 @@ public class UniversalPointerSearcherGUI extends JFrame
 		setButtonAvailability();
 		handlePersistentSettings();
 		configurePointerResultsPage();
+	}
+
+	private void configureAddedMemoryDumpsTable()
+	{
+		val selectionModel = addedMemoryDumpsTable.getSelectionModel();
+		selectionModel.addListSelectionListener(listSelectionEvent -> setButtonAvailability());
+
+		val keyAdapter = new KeyAdapter()
+		{
+			@Override
+			public void keyReleased(KeyEvent event)
+			{
+				val keyCode = event.getKeyCode();
+				if (keyCode == VK_DELETE)
+				{
+					askForRemovingMemoryDumps();
+				}
+			}
+		};
+		addedMemoryDumpsTable.addKeyListener(keyAdapter);
 	}
 
 	private void addLastPointerOffsetFieldDocumentListener()
@@ -440,24 +459,26 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private void addRemoveMemoryDumpButtonListener()
 	{
-		removeMemoryDumpButton.addActionListener(actionEvent ->
-		{
-			val buttons = new String[]{"Yes", "No"};
-			val selectedAnswer = showOptionDialog(rootPane,
-					"Would you really like to delete the selected memory dump?",
-					removeMemoryDumpButton.getText(),
-					YES_NO_CANCEL_OPTION,
-					QUESTION_MESSAGE,
-					null,
-					buttons,
-					null);
+		removeMemoryDumpButton.addActionListener(actionEvent -> askForRemovingMemoryDumps());
+	}
 
-			if (selectedAnswer == YES_OPTION)
-			{
-				memoryDumpTableManager.removeSelectedMemoryDumps();
-				setMemoryPointerSearcherMemoryDumps();
-			}
-		});
+	private void askForRemovingMemoryDumps()
+	{
+		val buttons = new String[]{"Yes", "No"};
+		val selectedAnswer = showOptionDialog(rootPane,
+				"Would you really like to delete the selected memory dump?",
+				removeMemoryDumpButton.getText(),
+				YES_NO_CANCEL_OPTION,
+				QUESTION_MESSAGE,
+				null,
+				buttons,
+				null);
+
+		if (selectedAnswer == YES_OPTION)
+		{
+			memoryDumpTableManager.removeSelectedMemoryDumps();
+			setMemoryPointerSearcherMemoryDumps();
+		}
 	}
 
 	private void setMemoryPointerSearcherMemoryDumps()
@@ -1031,7 +1052,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 				nativePointerSearcherOutput = null;
 				setPointerSearchOptions();
 
-				val minimumPointerAddress = parseUnsignedLong(minimumPointerAddressField.getText(), 16);
+				val minimumPointerAddress = getMinimumPointerAddressFieldValue();
 
 				if (minimumPointerAddress == 0)
 				{
@@ -1142,7 +1163,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val maximumPointerOffset = parseUnsignedLong(maximumPointerOffsetField.getText(), 16);
 		memoryPointerSearcher.setMaximumPointerOffset(maximumPointerOffset);
 
-		val minimumPointerAddress = parseUnsignedLong(minimumPointerAddressField.getText(), 16);
+		val minimumPointerAddress = getMinimumPointerAddressFieldValue();
 		memoryPointerSearcher.setMinimumPointerAddress(minimumPointerAddress);
 
 		val addressSize = getSelectedItem(addressSizeSelection);
@@ -1318,11 +1339,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val memoryDumps = memoryPointerSearcher.getMemoryDumps();
 		for (val memoryDump : memoryDumps)
 		{
-			val minimumPointerAddress = parseUnsignedLong(minimumPointerAddressField.getText(), 16);
+			val minimumPointerAddress = getMinimumPointerAddress(memoryDump);
 			memoryDump.setMinimumPointerAddress(minimumPointerAddress);
 			val addressSize = getSelectedItem(addressSizeSelection);
 			memoryDump.setAddressSize(addressSize);
-			val maximumPointerAddress = memoryDump.getSize() - addressSize;
+			val startingAddress = memoryDump.getStartingAddress();
+			val maximumPointerAddress = startingAddress + memoryDump.getSize() - addressSize;
 			memoryDump.setMaximumPointerAddress(maximumPointerAddress);
 			val pointerAddressAlignment = parseUnsignedInt(pointerAddressAlignmentField.getText(), 16);
 			memoryDump.setAddressAlignment(pointerAddressAlignment);
@@ -1388,6 +1410,22 @@ public class UniversalPointerSearcherGUI extends JFrame
 			memoryPointerList.setMemoryPointers(memoryPointers);
 			memoryPointerSearcher.setMemoryPointerList(memoryPointerList);
 		}
+	}
+
+	private long getMinimumPointerAddress(MemoryDump memoryDump)
+	{
+		val minimumPointerAddress = getMinimumPointerAddressFieldValue();
+		val startingAddress = memoryDump.getStartingAddress();
+		if (minimumPointerAddress < startingAddress)
+		{
+			return startingAddress;
+		}
+		return minimumPointerAddress;
+	}
+
+	private long getMinimumPointerAddressFieldValue()
+	{
+		return parseUnsignedLong(minimumPointerAddressField.getText(), 16);
 	}
 
 	private List<Long> parseLastOffsets()
