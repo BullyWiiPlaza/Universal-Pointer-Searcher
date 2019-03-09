@@ -13,6 +13,8 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
+	// TODO Update README
+	// TODO Recompile native pointer searcher for Linux/Mac OS X
 	// TODO Support pointer search in modules (Switch/Windows)
 	// TODO Last pointer offsets for Java engine
 	// TODO Java pointer searcher does not find e.g. [[0x39520908] + 0x368] - 0x1AC in "dumps\No Track Music\39CEB148.bin"

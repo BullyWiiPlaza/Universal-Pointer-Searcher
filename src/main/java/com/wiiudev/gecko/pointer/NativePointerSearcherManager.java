@@ -18,6 +18,7 @@ import java.util.List;
 import static java.lang.Integer.toHexString;
 import static java.lang.Long.toHexString;
 import static java.lang.Runtime.getRuntime;
+import static java.lang.System.getenv;
 import static java.lang.System.lineSeparator;
 import static java.nio.ByteOrder.BIG_ENDIAN;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
@@ -31,6 +32,8 @@ public class NativePointerSearcherManager
 	private static final String BINARY_NAME = "PointerSearcher";
 	private static final String EXTENSION = getExtension();
 	private static final String DOT_EXTENSION = "." + EXTENSION;
+	private static final String WINDOWS_SYSTEM32_DIRECTORY;
+	private static final String CMD_FILE_PATH;
 
 	private static String getExtension()
 	{
@@ -50,6 +53,7 @@ public class NativePointerSearcherManager
 
 	private static final String POINTER_SEARCHER_BINARY = BINARY_NAME + DOT_EXTENSION;
 	private static final String COMMAND_LINE_STARTING_SYMBOL = IS_OS_WINDOWS ? ">" : "$ ";
+	private static final boolean ELEVATE_PROCESS_PRIORITY = true;
 
 	private static Path executableFilePath;
 
@@ -89,6 +93,9 @@ public class NativePointerSearcherManager
 
 	static
 	{
+		WINDOWS_SYSTEM32_DIRECTORY = getenv("WINDIR") + "\\system32";
+		CMD_FILE_PATH = WINDOWS_SYSTEM32_DIRECTORY + "\\" + "cmd";
+
 		val thread = new Thread(new Runnable()
 		{
 			@Override
@@ -136,7 +143,7 @@ public class NativePointerSearcherManager
 	{
 		val command = buildCommandList(executableFilePath);
 		val processBuilder = new ProcessBuilder(command);
-		command.remove(0);
+		command.remove(executableFilePath.toString());
 		val executedCommand = toCommandString(command);
 		processBuilder.redirectErrorStream(true);
 		process = processBuilder.start();
@@ -158,9 +165,15 @@ public class NativePointerSearcherManager
 		var commandItemIndex = 0;
 		for (val commandItem : commands)
 		{
-			stringBuilder.append("\"");
+			if (commandItem.contains(" "))
+			{
+				stringBuilder.append("\"");
+			}
 			stringBuilder.append(commandItem);
-			stringBuilder.append("\"");
+			if (commandItem.contains(" "))
+			{
+				stringBuilder.append("\"");
+			}
 
 			val commandsCount = commands.size();
 			if (commandItemIndex != commandsCount - 1)
@@ -191,6 +204,17 @@ public class NativePointerSearcherManager
 	private List<String> buildCommandList(Path temporaryExecutableFile)
 	{
 		val command = new ArrayList<String>();
+
+		if (IS_OS_WINDOWS && ELEVATE_PROCESS_PRIORITY)
+		{
+			command.add(CMD_FILE_PATH); // Command prompt
+			command.add("/c"); // Carry out the command
+			command.add("start"); // Start an external process
+			command.add("\"Native-Pointer-Searcher\""); // The name of the process
+			command.add("/realtime"); // Highest possible priority
+			command.add("/b"); // Same command window
+		}
+
 		command.add(temporaryExecutableFile.toString());
 		command.add(temporaryExecutableFile.toString()); // The file path is the first argument
 
