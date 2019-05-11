@@ -100,7 +100,7 @@ public class MemoryPointer
 			pointerBuilder.append(OPENING_BRACKET);
 		}
 
-		val formattedBaseAddress = toHexadecimal(baseAddress, addressSize, true);
+		val formattedBaseAddress = toHexadecimal(baseAddress, addressSize, false);
 		pointerBuilder.append(formattedBaseAddress);
 		pointerBuilder.append(CLOSING_BRACKET + " ");
 

@@ -218,60 +218,59 @@ public class NativePointerSearcherManager
 		command.add(temporaryExecutableFile.toString());
 		command.add(temporaryExecutableFile.toString()); // The file path is the first argument
 
+		command.add("--maximum-pointer-offset");
+		command.add(toHexString(maximumPointerOffset).toUpperCase());
+		command.add("--allow-negative-offsets");
+		command.add(booleanToIntegerString(allowNegativeOffsets));
+		command.add("--exclude-cycles");
+		command.add(booleanToIntegerString(excludeCycles));
+		command.add("--maximum-pointer-depth");
+		command.add(maximumPointerDepth + "");
+		command.add("--maximum-chunk-size");
+		command.add(maximumMemoryDumpChunkSize + "");
+		command.add("--save-additional-memory-dump-ram");
+		command.add(booleanToIntegerString(saveAdditionalMemoryDumpRAM));
+		command.add("--potential-pointer-offsets-count-per-address-prediction");
+		command.add(potentialPointerOffsetsCountPerAddressPrediction + "");
+		command.add("--maximum-pointers-count");
+		command.add(maximumPointersCount + "");
+		command.add("--last-pointer-offsets");
+		val commaSeparatedLastPointerOffsets = toCommaSeparated(lastPointerOffsets);
+		command.add(commaSeparatedLastPointerOffsets);
+
 		// Add commands for each memory dump
 		for (val memoryDump : memoryDumps)
 		{
 			val memoryDumpFilePath = memoryDump.getFilePath().toAbsolutePath();
-			command.add("-m");
+			command.add("--file-path");
 			command.add(memoryDumpFilePath.toString());
-			command.add("-s");
+			command.add("--starting-address");
 			val startingAddress = memoryDump.getStartingAddress();
 			command.add(toHexString(startingAddress).toUpperCase());
-			command.add("-t");
+			command.add("--destination-address");
 			val targetAddress = memoryDump.getTargetAddress();
 			command.add(toHexString(targetAddress).toUpperCase());
-			command.add("-e");
+			command.add("--endian");
 			val byteOrder = memoryDump.getByteOrder();
 			command.add(byteOrderToString(byteOrder));
-			command.add("-z");
+			command.add("--address-size");
 			val addressSize = memoryDump.getAddressSize();
 			command.add(toHexString(addressSize).toUpperCase());
-			command.add("-a");
+			command.add("--address-alignment");
 			val addressAlignment = memoryDump.getAddressAlignment();
 			command.add(toHexString(addressAlignment).toUpperCase());
-			command.add("-u");
+			command.add("--value-size-alignment");
 			val valueAlignment = memoryDump.getValueAlignment();
 			command.add(toHexString(valueAlignment).toUpperCase());
-			command.add("-i");
+			command.add("--pointer-address-range");
 			val minimumPointerAddress = memoryDump.getMinimumPointerAddress();
-			command.add(toHexString(minimumPointerAddress).toUpperCase());
 			val maximumPointerAddress = memoryDump.getMaximumPointerAddress();
-			command.add(toHexString(maximumPointerAddress).toUpperCase());
-			command.add("-g");
+			command.add(toHexString(minimumPointerAddress).toUpperCase() + "-" + toHexString(maximumPointerAddress).toUpperCase());
+			command.add("--write-pointer-map");
 			command.add(booleanToIntegerString(memoryDump.isGeneratePointerMap()));
-			command.add("-r");
+			command.add("--read-pointer-map");
 			command.add(booleanToIntegerString(memoryDump.isReadPointerMap()));
 		}
-
-		command.add("-o");
-		command.add(toHexString(maximumPointerOffset).toUpperCase());
-		command.add("-n");
-		command.add(booleanToIntegerString(allowNegativeOffsets));
-		command.add("-k");
-		command.add(booleanToIntegerString(excludeCycles));
-		command.add("-d");
-		command.add(maximumPointerDepth + "");
-		command.add("-c");
-		command.add(maximumMemoryDumpChunkSize + "");
-		command.add("-v");
-		command.add(booleanToIntegerString(saveAdditionalMemoryDumpRAM));
-		command.add("-p");
-		command.add(potentialPointerOffsetsCountPerAddressPrediction + "");
-		command.add("-x");
-		command.add(maximumPointersCount + "");
-		command.add("-q");
-		val commaSeparatedLastPointerOffsets = toCommaSeparated(lastPointerOffsets);
-		command.add(commaSeparatedLastPointerOffsets);
 
 		return command;
 	}
@@ -365,10 +364,10 @@ public class NativePointerSearcherManager
 	{
 		if (byteOrder.equals(LITTLE_ENDIAN))
 		{
-			return "l";
+			return "little";
 		} else if (byteOrder.equals(BIG_ENDIAN))
 		{
-			return "b";
+			return "big";
 		}
 
 		// Should never happen

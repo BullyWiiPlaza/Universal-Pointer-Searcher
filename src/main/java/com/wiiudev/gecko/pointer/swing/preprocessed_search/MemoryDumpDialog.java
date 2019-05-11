@@ -70,6 +70,7 @@ public class MemoryDumpDialog extends JDialog
 	private JLabel startingAddressFieldLabel;
 	private JLabel targetAddressFieldLabel;
 	private JLabel filePathValidatorLabel;
+	private JCheckBox addModuleDumpsFolderCheckBox;
 	private List<JLabel> statusLabels;
 
 	@Getter
@@ -87,7 +88,14 @@ public class MemoryDumpDialog extends JDialog
 	public MemoryDumpDialog(MemoryDump memoryDump, boolean mayParseFolder)
 	{
 		this.memoryDump = memoryDump;
-		parseEntireFolderCheckBox.setEnabled(mayParseFolder);
+		parseEntireFolderCheckBox.setEnabled(mayParseFolder
+				&& memoryDump != null && !memoryDump.isAddedAsFolder());
+
+		if (memoryDump != null)
+		{
+			val isAddedAsFolder = memoryDump.isAddedAsFolder();
+			addModuleDumpsFolderCheckBox.setSelected(isAddedAsFolder);
+		}
 
 		statusLabels = new ArrayList<>();
 		statusLabels.add(folderImporterLabel);
@@ -104,6 +112,11 @@ public class MemoryDumpDialog extends JDialog
 		runComponentAvailabilitySetter();
 		considerPopulatingFields();
 		addFileTypeSelectionItems();
+	}
+
+	public boolean shouldAddFolderDirectly()
+	{
+		return addModuleDumpsFolderCheckBox.isSelected();
 	}
 
 	public boolean shouldParseEntireFolder()
@@ -278,7 +291,7 @@ public class MemoryDumpDialog extends JDialog
 				try
 				{
 					val path = Paths.get(filePath);
-					isFilePathValid = shouldParseEntireFolder ? isDirectory(path) : isRegularFile(path);
+					isFilePathValid = (shouldParseEntireFolder || addModuleDumpsFolderCheckBox.isSelected()) ? isDirectory(path) : isRegularFile(path);
 					filePathValidatorText = "The file path is not a " + (shouldParseEntireFolder ? "directory" : "file");
 				} catch (InvalidPathException ignored)
 				{
@@ -292,8 +305,8 @@ public class MemoryDumpDialog extends JDialog
 					filePathField.setBackground(finalIsFilePathValid ? VALID_INPUT_COLOR : INVALID_INPUT_COLOR);
 					setValidationLabel(finalIsFilePathValid, FILE_PATH_CHECK_OK,
 							finalFilePathValidatorText, filePathValidatorLabel);
-					targetAddressField.setEnabled(!shouldParseEntireFolder);
-					fileTypeSelection.setEnabled(!shouldParseEntireFolder);
+					targetAddressField.setEnabled(!shouldParseEntireFolder || addModuleDumpsFolderCheckBox.isSelected());
+					fileTypeSelection.setEnabled(!shouldParseEntireFolder && !addModuleDumpsFolderCheckBox.isSelected());
 
 					val detectedFileTypeImport = parseFileTypeImport(filePath);
 					if (detectedFileTypeImport != null)
@@ -500,6 +513,32 @@ public class MemoryDumpDialog extends JDialog
 
 	private boolean isTargetAddressFieldValid(String filePath, long startingAddress, boolean isStartingAddressFieldValid)
 	{
+		invokeLater(() ->
+		{
+			if (addModuleDumpsFolderCheckBox.isSelected())
+			{
+				val fileTypeImport = getSelectedItem(fileTypeSelection);
+				if (!fileTypeImport.equals(MEMORY_DUMP))
+				{
+					fileTypeSelection.setSelectedItem(MEMORY_DUMP);
+				}
+
+				if (parseEntireFolderCheckBox.isSelected())
+				{
+					parseEntireFolderCheckBox.setSelected(false);
+				}
+
+				startingAddressField.setText("0");
+				if (startingAddressField.isEnabled())
+				{
+					startingAddressField.setEnabled(false);
+				}
+			} else
+			{
+				startingAddressField.setEnabled(true);
+			}
+		});
+
 		var targetAddress = -1L;
 		var isTargetAddressFieldValid = true;
 		var targetAddressValidationFailedText = "";
@@ -524,7 +563,13 @@ public class MemoryDumpDialog extends JDialog
 					try
 					{
 						val memoryDumpFileSize = getFileSize(filePath);
-						isTargetAddressFieldValid = targetOffset > 0 && targetOffset <= memoryDumpFileSize;
+						if (memoryDumpFileSize == -1)
+						{
+							isTargetAddressFieldValid = true;
+						} else
+						{
+							isTargetAddressFieldValid = targetOffset > 0 && targetOffset <= memoryDumpFileSize;
+						}
 						targetAddressValidationFailedText = "Target address outside of memory dump bounds";
 					} catch (IOException | InvalidPathException exception)
 					{
@@ -539,7 +584,11 @@ public class MemoryDumpDialog extends JDialog
 			}
 		}
 
-		isTargetAddressFieldValid |= parseEntireFolderCheckBox.isSelected();
+		if (parseEntireFolderCheckBox.isSelected() && !addModuleDumpsFolderCheckBox.isSelected())
+		{
+			isTargetAddressFieldValid = true;
+		}
+
 		val finalIsTargetAddressFieldValid = isTargetAddressFieldValid;
 		val finalTargetAddressValidationFailedText = targetAddressValidationFailedText;
 		invokeLater(() ->
@@ -562,7 +611,7 @@ public class MemoryDumpDialog extends JDialog
 
 	private long getFileSize(String filePath) throws IOException
 	{
-		var memoryDumpFileSize = 0L;
+		var memoryDumpFileSize = -1L;
 		val filePathObject = Paths.get(filePath);
 
 		if (isRegularFile(filePathObject))
@@ -610,9 +659,10 @@ public class MemoryDumpDialog extends JDialog
 			val targetAddress = targetAddressFieldText.equals("")
 					? null : (Long) parseUnsignedLong(targetAddressFieldText, 16);
 			memoryDump = new MemoryDump(filePath, startingAddress, targetAddress, byteOrder);
+			memoryDump.setAddedAsFolder(addModuleDumpsFolderCheckBox.isSelected());
 
 			val parseEntireFolderCheckBoxSelected = parseEntireFolderCheckBox.isSelected();
-			if (parseEntireFolderCheckBoxSelected)
+			if (parseEntireFolderCheckBoxSelected && !addModuleDumpsFolderCheckBox.isSelected())
 			{
 				parseFolder(startingAddress, byteOrder);
 			} else

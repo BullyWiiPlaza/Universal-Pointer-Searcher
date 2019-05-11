@@ -87,6 +87,10 @@ public class MemoryDump
 	@Setter
 	private boolean readPointerMap;
 
+	@Getter
+	@Setter
+	private boolean isAddedAsFolder;
+
 	public MemoryDump(String memoryDumpFilePath,
 	                  Long startingAddress,
 	                  Long targetAddress,

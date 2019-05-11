@@ -62,7 +62,7 @@ import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 public class UniversalPointerSearcherGUI extends JFrame
 {
 	public static final String APPLICATION_NAME = "Universal Pointer Searcher";
-	private static final String APPLICATION_VERSION = "v3.06";
+	private static final String APPLICATION_VERSION = "v3.1";
 	private static final String STORED_POINTERS_FILE_NAME = "Pointers.txt";
 
 	// Invalid JOptionPane option as default for recognition
@@ -122,6 +122,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private Path lastAddedFilePath;
 	private Long lastAddedStartingAddress;
 	private boolean parseEntireFolder;
+	private boolean addFolderDirectly;
 
 	private MemoryPointerSearcher memoryPointerSearcher;
 	private boolean isSearching;
@@ -524,10 +525,16 @@ public class UniversalPointerSearcherGUI extends JFrame
 			}
 		}
 
-		val parseEntireFolderValue = persistentSettingsManager.get(PARSE_ENTIRE_FOLDER.toString());
+		val parseEntireFolderValue = persistentSettingsManager.get(ADD_MEMORY_DUMPS_POINTER_MAPS_FOLDER.toString());
 		if (parseEntireFolderValue != null)
 		{
 			this.parseEntireFolder = parseBoolean(parseEntireFolderValue);
+		}
+
+		val addFolderDirectlyValue = persistentSettingsManager.get(ADD_MODULE_DUMPS_FOLDER.toString());
+		if (addFolderDirectlyValue != null)
+		{
+			this.addFolderDirectly = parseBoolean(addFolderDirectlyValue);
 		}
 
 		restoreString(POINTER_SEARCH_DEPTH, pointerSearchDepthField);
@@ -597,7 +604,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 					{
 						persistentSettingsManager.put(LAST_ADDED_FILE_PATH.toString(), lastAddedFilePath.toString());
 					}
-					persistentSettingsManager.put(PARSE_ENTIRE_FOLDER.toString(), parseEntireFolder + "");
+					persistentSettingsManager.put(ADD_MEMORY_DUMPS_POINTER_MAPS_FOLDER.toString(), parseEntireFolder + "");
+					persistentSettingsManager.put(ADD_MODULE_DUMPS_FOLDER.toString(), addFolderDirectly + "");
 
 					if (lastAddedStartingAddress != null)
 					{
@@ -662,7 +670,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		{
 			val memoryDump = memoryDumpTableManager.getSelectedMemoryDump();
 			val memoryDumpDialog = showMemoryDumpDialog(memoryDump, editMemoryDumpButton,
-					null, null, false, false);
+					null, null, false, addFolderDirectly, false);
 
 			if (memoryDumpDialog.isMemoryDumpAdded())
 			{
@@ -956,7 +964,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			{
 				val memoryDumpDialog = showMemoryDumpDialog(null,
 						addMemoryDumpButton, lastAddedFilePath, lastAddedStartingAddress,
-						parseEntireFolder, true);
+						parseEntireFolder, addFolderDirectly, true);
 				if (memoryDumpDialog.isMemoryDumpAdded())
 				{
 					val addedMemoryDump = memoryDumpDialog.getMemoryDump();
@@ -964,7 +972,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 					lastAddedStartingAddress = addedMemoryDump.getStartingAddress();
 					parseEntireFolder = memoryDumpDialog.isParseEntireFolderSelected();
 
-					if (memoryDumpDialog.shouldParseEntireFolder())
+					if (memoryDumpDialog.shouldParseEntireFolder() && !memoryDumpDialog.shouldAddFolderDirectly())
 					{
 						val memoryDumps = memoryDumpDialog.getMemoryDumps();
 						if (memoryDumps != null)
@@ -1009,6 +1017,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	                                              JButton button, Path filePath,
 	                                              Long lastAddedStartingAddress,
 	                                              boolean parseEntireFolder,
+	                                              boolean addFolderDirectly,
 	                                              boolean mayParseFolder)
 	{
 		val memoryDumpDialog = new MemoryDumpDialog(memoryDump, mayParseFolder);
@@ -1344,7 +1353,17 @@ public class UniversalPointerSearcherGUI extends JFrame
 			val addressSize = getSelectedItem(addressSizeSelection);
 			memoryDump.setAddressSize(addressSize);
 			val startingAddress = memoryDump.getStartingAddress();
-			val maximumPointerAddress = startingAddress + memoryDump.getSize() - addressSize;
+			long maximumPointerAddress;
+
+			if (memoryDump.isAddedAsFolder())
+			{
+				maximumPointerAddress = MAX_VALUE;
+			} else
+			{
+				val memoryDumpSize = memoryDump.getSize();
+				maximumPointerAddress = startingAddress + memoryDumpSize - addressSize;
+			}
+
 			memoryDump.setMaximumPointerAddress(maximumPointerAddress);
 			val pointerAddressAlignment = parseUnsignedInt(pointerAddressAlignmentField.getText(), 16);
 			memoryDump.setAddressAlignment(pointerAddressAlignment);
