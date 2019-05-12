@@ -670,7 +670,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		{
 			val memoryDump = memoryDumpTableManager.getSelectedMemoryDump();
 			val memoryDumpDialog = showMemoryDumpDialog(memoryDump, editMemoryDumpButton,
-					null, null, false, addFolderDirectly, false);
+					null, null, false, false);
 
 			if (memoryDumpDialog.isMemoryDumpAdded())
 			{
@@ -964,7 +964,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			{
 				val memoryDumpDialog = showMemoryDumpDialog(null,
 						addMemoryDumpButton, lastAddedFilePath, lastAddedStartingAddress,
-						parseEntireFolder, addFolderDirectly, true);
+						parseEntireFolder, true);
 				if (memoryDumpDialog.isMemoryDumpAdded())
 				{
 					val addedMemoryDump = memoryDumpDialog.getMemoryDump();
@@ -1017,7 +1017,6 @@ public class UniversalPointerSearcherGUI extends JFrame
 	                                              JButton button, Path filePath,
 	                                              Long lastAddedStartingAddress,
 	                                              boolean parseEntireFolder,
-	                                              boolean addFolderDirectly,
 	                                              boolean mayParseFolder)
 	{
 		val memoryDumpDialog = new MemoryDumpDialog(memoryDump, mayParseFolder);

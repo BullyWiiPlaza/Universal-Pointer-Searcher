@@ -109,7 +109,7 @@
                           <editable value="false"/>
                           <enabled value="true"/>
                           <rows value="8"/>
-                          <toolTipText value="The discovered pointers by searching the added memory dumps"/>
+                          <toolTipText value="The discovered pointers by searching the added memory dump(s)"/>
                         </properties>
                       </component>
                     </children>
