@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import static java.io.File.separator;
 import static java.lang.Integer.toHexString;
 import static java.lang.Long.toHexString;
 import static java.lang.Runtime.getRuntime;
-import static java.lang.System.getenv;
-import static java.lang.System.lineSeparator;
+import static java.lang.System.*;
 import static java.nio.ByteOrder.BIG_ENDIAN;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.file.Files.*;
@@ -144,9 +144,10 @@ public class NativePointerSearcherManager
 		val command = buildCommandList(executableFilePath);
 		val processBuilder = new ProcessBuilder(command);
 		command.remove(executableFilePath.toString());
-		val executedCommand = toCommandString(command);
+		var executedCommand = toCommandString(command);
 		processBuilder.redirectErrorStream(true);
 		process = processBuilder.start();
+		executedCommand = considerReplacingTemporaryDirectoryFilePath(executedCommand);
 		val processOutput = COMMAND_LINE_STARTING_SYMBOL
 				+ executedCommand + "\n\n" + readFromProcess(process);
 		val exitCode = process.waitFor();
@@ -157,6 +158,25 @@ public class NativePointerSearcherManager
 		}
 
 		return new NativePointerSearcherOutput(null, processOutput);
+	}
+
+	private String considerReplacingTemporaryDirectoryFilePath(String command)
+	{
+		if (IS_OS_WINDOWS)
+		{
+			var temporaryDirectory = getProperty("java.io.tmpdir");
+			if (temporaryDirectory.endsWith(separator))
+			{
+				temporaryDirectory = temporaryDirectory.substring(0,
+						temporaryDirectory.length() - separator.length());
+			}
+
+			if (command.contains(temporaryDirectory))
+			{
+				return command.replace(temporaryDirectory, "%TEMP%");
+			}
+		}
+		return command;
 	}
 
 	private String toCommandString(List<String> commands)
