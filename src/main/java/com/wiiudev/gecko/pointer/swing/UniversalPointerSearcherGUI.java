@@ -27,10 +27,12 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wiiudev.gecko.pointer.NativePointerSearcherManager.*;
 import static com.wiiudev.gecko.pointer.SingleMemoryDumpPointersFinder.findPotentialPointerLists;
 import static com.wiiudev.gecko.pointer.SingleMemoryDumpPointersFinder.toOutputString;
 import static com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher.MINIMUM_POINTER_SEARCH_DEPTH;
 import static com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher.getSGenitive;
+import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer.OPENING_BRACKET;
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer.parseMemoryPointer;
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.OffsetPrintingSetting.SIGNED;
 import static com.wiiudev.gecko.pointer.swing.PersistentSetting.*;
@@ -297,20 +299,27 @@ public class UniversalPointerSearcherGUI extends JFrame
 	{
 		nativePointerSearcherOutputButton.addActionListener(actionEvent ->
 		{
-			if (nativePointerSearcherOutput == null)
+			try
 			{
-				showMessageDialog(this,
-						"No native pointer search has been performed yet.",
-						"Warning", WARNING_MESSAGE);
-			} else
+				if (nativePointerSearcherOutput == null)
+				{
+					showMessageDialog(this,
+							"No native pointer search has been performed yet.",
+							"Warning", WARNING_MESSAGE);
+				} else
+				{
+					val nativePointerSearcherOutputDialog = new NativePointerSearcherOutputDialog();
+					val dialogTitle = nativePointerSearcherOutputButton.getText();
+					nativePointerSearcherOutputDialog.setTitle(dialogTitle);
+					var processOutput = nativePointerSearcherOutput.getProcessOutput();
+					processOutput = compressProcessOutput(processOutput);
+					nativePointerSearcherOutputDialog.setText(processOutput);
+					nativePointerSearcherOutputDialog.setLocationRelativeTo(this);
+					nativePointerSearcherOutputDialog.setVisible(true);
+				}
+			} catch (Throwable throwable)
 			{
-				val nativePointerSearcherOutputDialog = new NativePointerSearcherOutputDialog();
-				val dialogTitle = nativePointerSearcherOutputButton.getText();
-				nativePointerSearcherOutputDialog.setTitle(dialogTitle);
-				val processOutput = nativePointerSearcherOutput.getProcessOutput();
-				nativePointerSearcherOutputDialog.setText(processOutput);
-				nativePointerSearcherOutputDialog.setLocationRelativeTo(this);
-				nativePointerSearcherOutputDialog.setVisible(true);
+				handleException(throwable);
 			}
 		});
 	}
@@ -1031,9 +1040,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 		return memoryDumpDialog;
 	}
 
-	private void handleException(Exception exception)
+	private void handleException(Throwable throwable)
 	{
-		StackTraceUtilities.handleException(rootPane, exception);
+		StackTraceUtilities.handleException(rootPane, throwable);
 	}
 
 	private boolean addMemoryDump(MemoryDump memoryDump)
@@ -1417,7 +1426,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			val memoryPointers = new ArrayList<MemoryPointer>();
 			for (val line : lines)
 			{
-				if (line.startsWith("[")) // TODO Maybe proper parsing?
+				if (line.startsWith(OPENING_BRACKET))
 				{
 					val memoryPointer = parseMemoryPointer(line);
 					memoryPointers.add(memoryPointer);

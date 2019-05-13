@@ -17,7 +17,7 @@ public class MemoryPointer
 {
 	private static final String HEXADECIMAL_HEADER = "0x";
 	private static final String CLOSING_BRACKET = "]";
-	private static final String OPENING_BRACKET = "[";
+	public static final String OPENING_BRACKET = "[";
 
 	@Getter
 	@Setter

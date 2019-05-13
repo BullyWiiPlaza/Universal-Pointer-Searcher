@@ -10,10 +10,10 @@ import static javax.swing.SwingUtilities.invokeLater;
 
 public class StackTraceUtilities
 {
-	private static String toString(Exception exception)
+	private static String toString(Throwable throwable)
 	{
-		val stringBuilder = new StringBuilder(exception.toString() + "\n");
-		for (val stackTraceElement : exception.getStackTrace())
+		val stringBuilder = new StringBuilder(throwable.toString() + "\n");
+		for (val stackTraceElement : throwable.getStackTrace())
 		{
 			stringBuilder.append("\n\tat ");
 			stringBuilder.append(stackTraceElement);
@@ -24,10 +24,9 @@ public class StackTraceUtilities
 
 	private static final int MAXIMUM_CHARACTERS_COUNT = 1500;
 
-	private static String truncateStackTrace(Exception exception)
+	private static String truncateStackTrace(Throwable throwable)
 	{
-		var stackTrace = toString(exception);
-
+		var stackTrace = toString(throwable);
 		if (stackTrace.length() > MAXIMUM_CHARACTERS_COUNT)
 		{
 			val lastIndex = stackTrace.indexOf("\n", MAXIMUM_CHARACTERS_COUNT);
@@ -37,15 +36,10 @@ public class StackTraceUtilities
 		return stackTrace;
 	}
 
-	public static void handleException(JRootPane rootPane, Exception exception)
+	public static void handleException(JRootPane rootPane, Throwable throwable)
 	{
-		exception.printStackTrace();
-		val stackTrace = truncateStackTrace(exception);
-
-		invokeLater(() ->
-				showMessageDialog(rootPane,
-						stackTrace,
-						"Error",
-						ERROR_MESSAGE));
+		throwable.printStackTrace();
+		val stackTrace = truncateStackTrace(throwable);
+		invokeLater(() -> showMessageDialog(rootPane, stackTrace, "Error", ERROR_MESSAGE));
 	}
 }

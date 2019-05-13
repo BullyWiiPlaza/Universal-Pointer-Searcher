@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer.OPENING_BRACKET;
 import static java.io.File.separator;
 import static java.lang.Integer.toHexString;
 import static java.lang.Long.toHexString;
@@ -148,8 +149,9 @@ public class NativePointerSearcherManager
 		processBuilder.redirectErrorStream(true);
 		process = processBuilder.start();
 		executedCommand = considerReplacingTemporaryDirectoryFilePath(executedCommand);
+		val actualProcessOutput = readFromProcess(process);
 		val processOutput = COMMAND_LINE_STARTING_SYMBOL
-				+ executedCommand + "\n\n" + readFromProcess(process);
+				+ executedCommand + "\n\n" + actualProcessOutput;
 		val exitCode = process.waitFor();
 		if (exitCode != 0)
 		{
@@ -158,6 +160,31 @@ public class NativePointerSearcherManager
 		}
 
 		return new NativePointerSearcherOutput(null, processOutput);
+	}
+
+	public static String compressProcessOutput(String processOutput)
+	{
+		val stringBuilder = new StringBuilder();
+		val lines = processOutput.split(lineSeparator());
+		var reachedMemoryPointers = false;
+		for (val line : lines)
+		{
+			if (!line.startsWith(OPENING_BRACKET))
+			{
+				stringBuilder.append(line);
+				stringBuilder.append(lineSeparator());
+			} else
+			{
+				if (!reachedMemoryPointers)
+				{
+					stringBuilder.append("<< Memory pointers truncated >>");
+					stringBuilder.append(lineSeparator());
+					reachedMemoryPointers = true;
+				}
+			}
+		}
+
+		return stringBuilder.toString().trim();
 	}
 
 	private String considerReplacingTemporaryDirectoryFilePath(String command)
