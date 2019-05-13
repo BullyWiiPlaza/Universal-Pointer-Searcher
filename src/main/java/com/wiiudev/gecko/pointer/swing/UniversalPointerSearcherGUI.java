@@ -30,7 +30,7 @@ import java.util.List;
 import static com.wiiudev.gecko.pointer.NativePointerSearcherManager.*;
 import static com.wiiudev.gecko.pointer.SingleMemoryDumpPointersFinder.findPotentialPointerLists;
 import static com.wiiudev.gecko.pointer.SingleMemoryDumpPointersFinder.toOutputString;
-import static com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher.MINIMUM_POINTER_SEARCH_DEPTH;
+import static com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher.MINIMUM_POINTER_SEARCH_DEPTH_VALUE;
 import static com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher.getSGenitive;
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer.OPENING_BRACKET;
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer.parseMemoryPointer;
@@ -42,7 +42,7 @@ import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.getSelect
 import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.setWindowIconImage;
 import static com.wiiudev.gecko.pointer.swing.utilities.HTMLDialogUtilities.addHyperLinkListener;
 import static com.wiiudev.gecko.pointer.swing.utilities.ResourceUtilities.resourceToString;
-import static com.wiiudev.gecko.pointer.utilities.DataConversions.parseInt;
+import static com.wiiudev.gecko.pointer.utilities.DataConversions.parseLongSafely;
 import static java.awt.Color.GREEN;
 import static java.awt.Color.RED;
 import static java.awt.event.ItemEvent.SELECTED;
@@ -83,7 +83,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JLabel pointerSearchStatisticsLabel;
 	private JFormattedTextField pointerValueAlignmentField;
 	private JFormattedTextField maximumMemoryChunkSizeField;
-	private JFormattedTextField pointerSearchDepthField;
+	private JFormattedTextField maximumPointerSearchDepthField;
 	private JComboBox<OffsetPrintingSetting> offsetPrintingSettingSelection;
 	private JTable addedMemoryDumpsTable;
 	private JButton cancelSearchButton;
@@ -119,6 +119,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JFormattedTextField pointerAddressAlignmentField;
 	private JLabel readableMaximumMemoryChunkSizeLabel;
 	private JTextField lastPointerOffsetsField;
+	private JFormattedTextField minimumPointerSearchDepthField;
 	private PersistentSettingsManager persistentSettingsManager;
 	private MemoryDumpTableManager memoryDumpTableManager;
 	private Path lastAddedFilePath;
@@ -546,7 +547,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 			this.addFolderDirectly = parseBoolean(addFolderDirectlyValue);
 		}
 
-		restoreString(POINTER_SEARCH_DEPTH, pointerSearchDepthField);
+		restoreString(MINIMUM_POINTER_SEARCH_DEPTH, minimumPointerSearchDepthField);
+		restoreString(MAXIMUM_POINTER_SEARCH_DEPTH, maximumPointerSearchDepthField);
 		restoreString(POINTER_VALUE_ALIGNMENT, pointerValueAlignmentField);
 		restoreString(POINTER_ADDRESS_ALIGNMENT, pointerAddressAlignmentField);
 		restoreString(MAXIMUM_MEMORY_CHUNK_SIZE, maximumMemoryChunkSizeField);
@@ -621,7 +623,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 						persistentSettingsManager.put(LAST_ADDED_STARTING_ADDRESS.toString(), toHexString(lastAddedStartingAddress).toUpperCase());
 					}
 
-					persistentSettingsManager.put(POINTER_SEARCH_DEPTH.toString(), pointerSearchDepthField.getText());
+					persistentSettingsManager.put(MINIMUM_POINTER_SEARCH_DEPTH.toString(), minimumPointerSearchDepthField.getText());
+					persistentSettingsManager.put(MAXIMUM_POINTER_SEARCH_DEPTH.toString(), maximumPointerSearchDepthField.getText());
 					persistentSettingsManager.put(POINTER_VALUE_ALIGNMENT.toString(), pointerValueAlignmentField.getText());
 					persistentSettingsManager.put(POINTER_ADDRESS_ALIGNMENT.toString(), pointerAddressAlignmentField.getText());
 					persistentSettingsManager.put(MAXIMUM_MEMORY_CHUNK_SIZE.toString(), maximumMemoryChunkSizeField.getText());
@@ -733,8 +736,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private void configurePointerSearchDepthField()
 	{
-		pointerSearchDepthField.setDocument(new JTextAreaLimit(2));
-		addButtonAvailabilityDocumentListener(pointerSearchDepthField);
+		minimumPointerSearchDepthField.setDocument(new JTextAreaLimit(2));
+		maximumPointerSearchDepthField.setDocument(new JTextAreaLimit(2));
+		addButtonAvailabilityDocumentListener(minimumPointerSearchDepthField);
+		addButtonAvailabilityDocumentListener(maximumPointerSearchDepthField);
 	}
 
 	private void addButtonAvailabilityDocumentListener(JTextField pointerSearchDepthField)
@@ -848,17 +853,24 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private void setButtonAvailability()
 	{
+		val minimumPointerDepth = parseLongSafely(minimumPointerSearchDepthField.getText());
+		val maximumPointerDepth = parseLongSafely(maximumPointerSearchDepthField.getText());
+		val isPointerDepthInvalid = minimumPointerDepth > maximumPointerDepth;
+		minimumPointerSearchDepthField.setBackground(GREEN);
+		maximumPointerSearchDepthField.setBackground(isPointerDepthInvalid ? RED : GREEN);
+
 		val usingNativePointerSearcher = useNativePointerSearcherCheckBox.isSelected();
 		val memoryDumps = memoryPointerSearcher.getMemoryDumps();
 		val memoryDumpsAdded = memoryDumps.size() > 0;
 
-		val maximumPointerOffset = parseInt(maximumPointerOffsetField.getText());
+		val maximumPointerOffset = parseLongSafely(maximumPointerOffsetField.getText());
 		// TODO Wrong check?
 		val maximumPointerOffsetValid = maximumPointerOffset % 4 == 0;
 
 		val pointerSearchDepth = getPointerSearchDepth();
 		val lastPointerOffsetBackgroundColor = lastPointerOffsetsField.getBackground();
-		val isSearchButtonAvailable = pointerSearchDepth >= MINIMUM_POINTER_SEARCH_DEPTH
+		val isSearchButtonAvailable = !isPointerDepthInvalid &&
+				pointerSearchDepth >= MINIMUM_POINTER_SEARCH_DEPTH_VALUE
 				&& memoryDumpsAdded && maximumPointerOffsetValid
 				&& lastPointerOffsetBackgroundColor.equals(GREEN);
 		searchPointersButton.setEnabled(isSearchButtonAvailable && !isSearching);
@@ -867,7 +879,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 		excludeCyclesCheckBox.setEnabled(!isSearching);
 		useNativePointerSearcherCheckBox.setEnabled(!isSearching);
 
-		pointerSearchDepthField.setEnabled(!isSearching);
+		minimumPointerSearchDepthField.setEnabled(!isSearching);
+		maximumPointerSearchDepthField.setEnabled(!isSearching);
 		pointerValueAlignmentField.setEnabled(!isSearching);
 		pointerAddressAlignmentField.setEnabled(!isSearching && usingNativePointerSearcher);
 		maximumMemoryChunkSizeField.setEnabled(!isSearching);
@@ -902,11 +915,11 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private int getPointerSearchDepth()
 	{
-		val pointerSearchDepthFieldText = pointerSearchDepthField.getText();
+		val pointerSearchDepthFieldText = maximumPointerSearchDepthField.getText();
 		var pointerSearchDepth = 0;
 		try
 		{
-			pointerSearchDepth = (int) parseInt(pointerSearchDepthFieldText);
+			pointerSearchDepth = (int) parseLongSafely(pointerSearchDepthFieldText);
 		} catch (NumberFormatException ignored)
 		{
 
@@ -919,8 +932,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 		memoryPointerSearcher = new MemoryPointerSearcher();
 		memoryDumpTableManager = new MemoryDumpTableManager(addedMemoryDumpsTable);
 
+		minimumPointerSearchDepthField.setText(MINIMUM_POINTER_SEARCH_DEPTH_VALUE + "");
+
 		val pointerSearchDepth = memoryPointerSearcher.getPointerSearchDepth();
-		pointerSearchDepthField.setText(pointerSearchDepth + "");
+		maximumPointerSearchDepthField.setText(pointerSearchDepth + "");
 
 		val maximumMemoryChunkSize = memoryPointerSearcher.getMaximumMemoryChunkSize();
 		maximumMemoryChunkSizeField.setText(maximumMemoryChunkSize + "");
@@ -1168,7 +1183,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private void setPointerSearchOptions()
 	{
-		val pointerSearchDepth = parseUnsignedInt(pointerSearchDepthField.getText(), 10);
+		val pointerSearchDepth = parseUnsignedInt(maximumPointerSearchDepthField.getText(), 10);
 		memoryPointerSearcher.setPointerSearchDepth(pointerSearchDepth);
 
 		val pointerValueAlignment = parseUnsignedInt(pointerValueAlignmentField.getText(), 16);
@@ -1393,7 +1408,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val maximumMemoryChunkSize = parseLong(maximumMemoryChunkSizeField.getText(), 10);
 		nativePointerSearcher.setMaximumMemoryDumpChunkSize(maximumMemoryChunkSize);
 
-		val maximumPointerDepth = parseLong(pointerSearchDepthField.getText());
+		val minimumPointerDepth = parseLong(minimumPointerSearchDepthField.getText());
+		nativePointerSearcher.setMinimumPointerDepth(minimumPointerDepth);
+
+		val maximumPointerDepth = parseLong(maximumPointerSearchDepthField.getText());
 		nativePointerSearcher.setMaximumPointerDepth(maximumPointerDepth);
 
 		val maximumPointersCount = parseLong(maximumPointersCountField.getText(), 10);

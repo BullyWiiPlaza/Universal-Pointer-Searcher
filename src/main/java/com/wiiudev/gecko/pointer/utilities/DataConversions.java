@@ -28,7 +28,7 @@ public class DataConversions
 		return hexadecimal;
 	}*/
 
-	public static long parseInt(String text)
+	public static long parseLongSafely(String text)
 	{
 		if (text.equals(""))
 		{

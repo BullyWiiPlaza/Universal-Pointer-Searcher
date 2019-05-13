@@ -3,6 +3,7 @@ package com.wiiudev.gecko.pointer.swing;
 import lombok.val;
 
 import javax.swing.*;
+import java.awt.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,11 @@ public class NativePointerSearcherOutputDialog extends JDialog
 	{
 		setContentPane(contentPane);
 		setModal(true);
-		setSize(800, 700);
+		val defaultToolkit = Toolkit.getDefaultToolkit();
+		val screenSize = defaultToolkit.getScreenSize();
+		val width = (int) (screenSize.getWidth() * 0.9);
+		val height = (int) (screenSize.getHeight() * 0.9);
+		setSize(width, height);
 		setWindowIconImage(this);
 	}
 

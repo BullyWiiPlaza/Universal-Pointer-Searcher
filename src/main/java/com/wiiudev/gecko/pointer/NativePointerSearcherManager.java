@@ -70,6 +70,9 @@ public class NativePointerSearcherManager
 	private long maximumPointerOffset;
 
 	@Setter
+	private long minimumPointerDepth;
+
+	@Setter
 	private long maximumPointerDepth;
 
 	@Setter
@@ -271,6 +274,8 @@ public class NativePointerSearcherManager
 		command.add(booleanToIntegerString(allowNegativeOffsets));
 		command.add("--exclude-cycles");
 		command.add(booleanToIntegerString(excludeCycles));
+		command.add("--minimum-pointer-depth");
+		command.add(minimumPointerDepth + "");
 		command.add("--maximum-pointer-depth");
 		command.add(maximumPointerDepth + "");
 		command.add("--maximum-chunk-size");

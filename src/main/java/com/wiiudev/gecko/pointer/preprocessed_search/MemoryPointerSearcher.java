@@ -36,7 +36,7 @@ import static javax.swing.SwingUtilities.invokeLater;
 
 public class MemoryPointerSearcher
 {
-	public static final int MINIMUM_POINTER_SEARCH_DEPTH = 1;
+	public static final int MINIMUM_POINTER_SEARCH_DEPTH_VALUE = 1;
 	private static boolean USE_DEEP_MODE = false;
 
 	private static final Logger LOGGER = getLogger(MemoryPointerSearcher.class.getName());
