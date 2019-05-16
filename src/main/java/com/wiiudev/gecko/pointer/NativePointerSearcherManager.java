@@ -278,7 +278,7 @@ public class NativePointerSearcherManager
 		command.add(temporaryExecutableFile.toString()); // The file path is the first argument
 
 		command.add("--thread-count");
-		command.add(toHexString(threadCount).toUpperCase());
+		command.add(threadCount + "");
 		command.add("--maximum-pointer-offset");
 		command.add(toHexString(maximumPointerOffset).toUpperCase());
 		command.add("--allow-negative-offsets");
@@ -423,7 +423,7 @@ public class NativePointerSearcherManager
 		return stringBuilder.toString().trim();
 	}
 
-	private String byteOrderToString(ByteOrder byteOrder)
+	public static String byteOrderToString(ByteOrder byteOrder)
 	{
 		if (byteOrder.equals(LITTLE_ENDIAN))
 		{

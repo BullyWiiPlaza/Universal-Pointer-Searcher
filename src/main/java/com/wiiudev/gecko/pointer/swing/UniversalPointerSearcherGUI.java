@@ -23,6 +23,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,6 +31,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wiiudev.gecko.pointer.NativePointerSearcherManager.byteOrderToString;
 import static com.wiiudev.gecko.pointer.NativePointerSearcherManager.compressProcessOutput;
 import static com.wiiudev.gecko.pointer.SingleMemoryDumpPointersFinder.findPotentialPointerLists;
 import static com.wiiudev.gecko.pointer.SingleMemoryDumpPointersFinder.toOutputString;
@@ -58,6 +60,7 @@ import static java.lang.Long.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.System.lineSeparator;
+import static java.nio.ByteOrder.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.write;
 import static java.util.Collections.singletonList;
@@ -129,9 +132,11 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private PersistentSettingsManager persistentSettingsManager;
 	private MemoryDumpTableManager memoryDumpTableManager;
 	private Path lastAddedFilePath;
+	private ByteOrder lastAddedByteOrder;
 	private Long lastAddedStartingAddress;
+	private Long lastAddedTargetAddress;
 	private boolean parseEntireFolder;
-	private boolean addFolderDirectly;
+	private boolean addModuleDumpsFolder;
 
 	private MemoryPointerSearcher memoryPointerSearcher;
 	private boolean isSearching;
@@ -516,6 +521,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private void restorePersistentSettings()
 	{
+		val lastAddedByteOrder = persistentSettingsManager.get(LAST_ADDED_BYTE_ORDER.toString());
+		if (lastAddedByteOrder != null)
+		{
+			this.lastAddedByteOrder = lastAddedByteOrder.equals("little") ? LITTLE_ENDIAN : BIG_ENDIAN;
+		}
+
 		var lastAddedFilePath = persistentSettingsManager.get(LAST_ADDED_FILE_PATH.toString());
 		if (lastAddedFilePath != null)
 		{
@@ -541,6 +552,18 @@ public class UniversalPointerSearcherGUI extends JFrame
 			}
 		}
 
+		val lastAddedTargetAddress = persistentSettingsManager.get(LAST_ADDED_TARGET_ADDRESS.toString());
+		if (lastAddedTargetAddress != null)
+		{
+			try
+			{
+				this.lastAddedTargetAddress = parseUnsignedLong(lastAddedTargetAddress, 16);
+			} catch (NumberFormatException exception)
+			{
+				handleException(exception);
+			}
+		}
+
 		val parseEntireFolderValue = persistentSettingsManager.get(ADD_MEMORY_DUMPS_POINTER_MAPS_FOLDER.toString());
 		if (parseEntireFolderValue != null)
 		{
@@ -550,7 +573,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val addFolderDirectlyValue = persistentSettingsManager.get(ADD_MODULE_DUMPS_FOLDER.toString());
 		if (addFolderDirectlyValue != null)
 		{
-			this.addFolderDirectly = parseBoolean(addFolderDirectlyValue);
+			this.addModuleDumpsFolder = parseBoolean(addFolderDirectlyValue);
 		}
 
 		restoreString(MINIMUM_POINTER_SEARCH_DEPTH, minimumPointerSearchDepthField);
@@ -622,12 +645,24 @@ public class UniversalPointerSearcherGUI extends JFrame
 					{
 						persistentSettingsManager.put(LAST_ADDED_FILE_PATH.toString(), lastAddedFilePath.toString());
 					}
+
+					if (lastAddedByteOrder != null)
+					{
+						persistentSettingsManager.put(LAST_ADDED_BYTE_ORDER.toString(),
+								byteOrderToString(lastAddedByteOrder));
+					}
+
 					persistentSettingsManager.put(ADD_MEMORY_DUMPS_POINTER_MAPS_FOLDER.toString(), parseEntireFolder + "");
-					persistentSettingsManager.put(ADD_MODULE_DUMPS_FOLDER.toString(), addFolderDirectly + "");
+					persistentSettingsManager.put(ADD_MODULE_DUMPS_FOLDER.toString(), addModuleDumpsFolder + "");
 
 					if (lastAddedStartingAddress != null)
 					{
 						persistentSettingsManager.put(LAST_ADDED_STARTING_ADDRESS.toString(), toHexString(lastAddedStartingAddress).toUpperCase());
+					}
+
+					if (lastAddedTargetAddress != null)
+					{
+						persistentSettingsManager.put(LAST_ADDED_TARGET_ADDRESS.toString(), toHexString(lastAddedTargetAddress).toUpperCase());
 					}
 
 					persistentSettingsManager.put(MINIMUM_POINTER_SEARCH_DEPTH.toString(), minimumPointerSearchDepthField.getText());
@@ -690,7 +725,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 		{
 			val memoryDump = memoryDumpTableManager.getSelectedMemoryDump();
 			val memoryDumpDialog = showMemoryDumpDialog(memoryDump, editMemoryDumpButton,
-					null, null, false, false);
+					null, null, null, null,
+					false, false, false);
 
 			if (memoryDumpDialog.isMemoryDumpAdded())
 			{
@@ -1002,15 +1038,20 @@ public class UniversalPointerSearcherGUI extends JFrame
 			{
 				val memoryDumpDialog = showMemoryDumpDialog(null,
 						addMemoryDumpButton, lastAddedFilePath, lastAddedStartingAddress,
-						parseEntireFolder, true);
+						lastAddedTargetAddress, lastAddedByteOrder, parseEntireFolder,
+						true, addModuleDumpsFolder);
 				if (memoryDumpDialog.isMemoryDumpAdded())
 				{
 					val addedMemoryDump = memoryDumpDialog.getMemoryDump();
 					lastAddedFilePath = addedMemoryDump.getFilePath();
+					lastAddedByteOrder = addedMemoryDump.getByteOrder();
 					lastAddedStartingAddress = addedMemoryDump.getStartingAddress();
+					lastAddedTargetAddress = addedMemoryDump.getTargetAddress();
 					parseEntireFolder = memoryDumpDialog.isParseEntireFolderSelected();
+					addModuleDumpsFolder = memoryDumpDialog.isAddModuleDumpsFolderSelected();
 
-					if (memoryDumpDialog.shouldParseEntireFolder() && !memoryDumpDialog.shouldAddFolderDirectly())
+					if (memoryDumpDialog.shouldParseEntireFolder()
+							&& !memoryDumpDialog.isAddModuleDumpsFolderSelected())
 					{
 						val memoryDumps = memoryDumpDialog.getMemoryDumps();
 						if (memoryDumps != null)
@@ -1054,13 +1095,19 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private MemoryDumpDialog showMemoryDumpDialog(MemoryDump memoryDump,
 	                                              JButton button, Path filePath,
 	                                              Long lastAddedStartingAddress,
+	                                              Long lastAddedTargetAddress,
+	                                              ByteOrder lastAddedByteOrder,
 	                                              boolean parseEntireFolder,
-	                                              boolean mayParseFolder)
+	                                              boolean mayParseFolder,
+	                                              boolean addModuleDumpsFolder)
 	{
 		val memoryDumpDialog = new MemoryDumpDialog(memoryDump, mayParseFolder);
 		memoryDumpDialog.setFilePath(filePath);
 		memoryDumpDialog.setLastAddedStartingAddress(lastAddedStartingAddress);
+		memoryDumpDialog.setLastAddedTargetAddress(lastAddedTargetAddress);
+		memoryDumpDialog.setByteOrder(lastAddedByteOrder);
 		memoryDumpDialog.setParseEntireFolder(parseEntireFolder);
+		memoryDumpDialog.setAddModuleDumpsFolder(addModuleDumpsFolder);
 		memoryDumpDialog.setLocationRelativeTo(this);
 		val title = button.getText();
 		memoryDumpDialog.setTitle(title);

@@ -114,7 +114,7 @@ public class MemoryDumpDialog extends JDialog
 		addFileTypeSelectionItems();
 	}
 
-	public boolean shouldAddFolderDirectly()
+	public boolean isAddModuleDumpsFolderSelected()
 	{
 		return addModuleDumpsFolderCheckBox.isSelected();
 	}
@@ -744,5 +744,27 @@ public class MemoryDumpDialog extends JDialog
 	public void setParseEntireFolder(boolean selected)
 	{
 		parseEntireFolderCheckBox.setSelected(selected);
+	}
+
+	public void setByteOrder(ByteOrder byteOrder)
+	{
+		if (byteOrder != null)
+		{
+			val memoryDumpsByteOrder = getMemoryDumpsByteOrder(byteOrder);
+			byteOrderSelection.setSelectedItem(memoryDumpsByteOrder);
+		}
+	}
+
+	public void setLastAddedTargetAddress(Long targetAddress)
+	{
+		if (targetAddress != null)
+		{
+			targetAddressField.setText(toHexString(targetAddress).toUpperCase());
+		}
+	}
+
+	public void setAddModuleDumpsFolder(boolean addModuleDumpsFolder)
+	{
+		addModuleDumpsFolderCheckBox.setSelected(addModuleDumpsFolder);
 	}
 }
