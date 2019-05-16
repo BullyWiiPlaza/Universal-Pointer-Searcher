@@ -18,7 +18,10 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -27,7 +30,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wiiudev.gecko.pointer.NativePointerSearcherManager.*;
+import static com.wiiudev.gecko.pointer.NativePointerSearcherManager.compressProcessOutput;
 import static com.wiiudev.gecko.pointer.SingleMemoryDumpPointersFinder.findPotentialPointerLists;
 import static com.wiiudev.gecko.pointer.SingleMemoryDumpPointersFinder.toOutputString;
 import static com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher.MINIMUM_POINTER_SEARCH_DEPTH_VALUE;
@@ -42,6 +45,8 @@ import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.getSelect
 import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.setWindowIconImage;
 import static com.wiiudev.gecko.pointer.swing.utilities.HTMLDialogUtilities.addHyperLinkListener;
 import static com.wiiudev.gecko.pointer.swing.utilities.ResourceUtilities.resourceToString;
+import static com.wiiudev.gecko.pointer.swing.utilities.TextAreaLimitType.HEXADECIMAL;
+import static com.wiiudev.gecko.pointer.swing.utilities.TextAreaLimitType.NUMERIC;
 import static com.wiiudev.gecko.pointer.utilities.DataConversions.parseLongSafely;
 import static java.awt.Color.GREEN;
 import static java.awt.Color.RED;
@@ -120,6 +125,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JLabel readableMaximumMemoryChunkSizeLabel;
 	private JTextField lastPointerOffsetsField;
 	private JFormattedTextField minimumPointerSearchDepthField;
+	private JFormattedTextField threadCountField;
 	private PersistentSettingsManager persistentSettingsManager;
 	private MemoryDumpTableManager memoryDumpTableManager;
 	private Path lastAddedFilePath;
@@ -180,8 +186,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 		innerPointerSearchProgressBar.setVisible(false);
 		configureAddedMemoryDumpsTable();
 		baseOffsetRangeSelection.addItemListener(itemEvent -> setButtonAvailability());
-		startingBaseAddressField.setDocument(new JTextAreaLimit(8));
-		endBaseAddressField.setDocument(new JTextAreaLimit(8));
+		startingBaseAddressField.setDocument(new JTextAreaLimit(8, HEXADECIMAL));
+		endBaseAddressField.setDocument(new JTextAreaLimit(8, HEXADECIMAL));
 		initializeIgnoredMemoryRangesTableManager();
 		addDefaultContextMenu(foundPointersOutputArea);
 		setButtonAvailability();
@@ -551,6 +557,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		restoreString(MAXIMUM_POINTER_SEARCH_DEPTH, maximumPointerSearchDepthField);
 		restoreString(POINTER_VALUE_ALIGNMENT, pointerValueAlignmentField);
 		restoreString(POINTER_ADDRESS_ALIGNMENT, pointerAddressAlignmentField);
+		restoreString(THREAD_COUNT, threadCountField);
 		restoreString(MAXIMUM_MEMORY_CHUNK_SIZE, maximumMemoryChunkSizeField);
 		restoreString(MAXIMUM_POINTERS_COUNT, maximumPointersCountField);
 		restoreString(MAXIMUM_OFFSET, maximumPointerOffsetField);
@@ -627,6 +634,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 					persistentSettingsManager.put(MAXIMUM_POINTER_SEARCH_DEPTH.toString(), maximumPointerSearchDepthField.getText());
 					persistentSettingsManager.put(POINTER_VALUE_ALIGNMENT.toString(), pointerValueAlignmentField.getText());
 					persistentSettingsManager.put(POINTER_ADDRESS_ALIGNMENT.toString(), pointerAddressAlignmentField.getText());
+					persistentSettingsManager.put(THREAD_COUNT.toString(), threadCountField.getText());
 					persistentSettingsManager.put(MAXIMUM_MEMORY_CHUNK_SIZE.toString(), maximumMemoryChunkSizeField.getText());
 					persistentSettingsManager.put(MAXIMUM_POINTERS_COUNT.toString(), maximumPointersCountField.getText());
 					persistentSettingsManager.put(MAXIMUM_OFFSET.toString(), maximumPointerOffsetField.getText());
@@ -725,19 +733,21 @@ public class UniversalPointerSearcherGUI extends JFrame
 	{
 		configurePointerSearchDepthField();
 		val addressSize = Integer.BYTES * 2;
-		pointerValueAlignmentField.setDocument(new JTextAreaLimit(addressSize));
-		pointerAddressAlignmentField.setDocument(new JTextAreaLimit(addressSize));
-		maximumPointersCountField.setDocument(new JTextAreaLimit(addressSize));
-		maximumMemoryChunkSizeField.setDocument(new JTextAreaLimit((Long.MAX_VALUE + "").length()));
-		maximumPointerOffsetField.setDocument(new JTextAreaLimit(6));
-		minimumPointerAddressField.setDocument(new JTextAreaLimit(addressSize));
-		pointerResultsPageSizeField.setDocument(new JTextAreaLimit(addressSize));
+		pointerValueAlignmentField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL));
+		pointerAddressAlignmentField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL));
+		threadCountField.setDocument(new JTextAreaLimit(addressSize, NUMERIC));
+		maximumPointersCountField.setDocument(new JTextAreaLimit(addressSize, NUMERIC));
+		maximumMemoryChunkSizeField.setDocument(new JTextAreaLimit((Long.MAX_VALUE + "").length(), NUMERIC));
+		maximumPointerOffsetField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL));
+		minimumPointerAddressField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL));
+		pointerResultsPageSizeField.setDocument(new JTextAreaLimit(addressSize, NUMERIC));
 	}
 
 	private void configurePointerSearchDepthField()
 	{
-		minimumPointerSearchDepthField.setDocument(new JTextAreaLimit(2));
-		maximumPointerSearchDepthField.setDocument(new JTextAreaLimit(2));
+		val addressSize = Integer.BYTES * 2;
+		minimumPointerSearchDepthField.setDocument(new JTextAreaLimit(addressSize, NUMERIC));
+		maximumPointerSearchDepthField.setDocument(new JTextAreaLimit(addressSize, NUMERIC));
 		addButtonAvailabilityDocumentListener(minimumPointerSearchDepthField);
 		addButtonAvailabilityDocumentListener(maximumPointerSearchDepthField);
 	}
@@ -880,8 +890,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 		useNativePointerSearcherCheckBox.setEnabled(!isSearching);
 
 		minimumPointerSearchDepthField.setEnabled(!isSearching);
-		maximumPointerSearchDepthField.setEnabled(!isSearching);
+		maximumPointerSearchDepthField.setEnabled(!isSearching && usingNativePointerSearcher);
 		pointerValueAlignmentField.setEnabled(!isSearching);
+		threadCountField.setEnabled(!isSearching && usingNativePointerSearcher);
 		pointerAddressAlignmentField.setEnabled(!isSearching && usingNativePointerSearcher);
 		maximumMemoryChunkSizeField.setEnabled(!isSearching);
 		maximumPointersCountField.setEnabled(!isSearching && usingNativePointerSearcher);
@@ -962,6 +973,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 		val pointerAddressAlignment = memoryPointerSearcher.getPointerAddressAlignment();
 		pointerAddressAlignmentField.setText(pointerAddressAlignment + "");
+
+		val threadCount = memoryPointerSearcher.getThreadCount();
+		threadCountField.setText(threadCount + "");
 
 		val allowNegativeOffsets = memoryPointerSearcher.isAllowNegativeOffsets();
 		allowNegativeOffsetsCheckBox.setSelected(allowNegativeOffsets);
@@ -1423,6 +1437,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 		val maximumPointerOffset = parseLong(maximumPointerOffsetField.getText(), 16);
 		nativePointerSearcher.setMaximumPointerOffset(maximumPointerOffset);
+
+		val threadCount = parseLong(threadCountField.getText(), 10);
+		nativePointerSearcher.setThreadCount(threadCount);
 
 		val lastOffsets = parseLastOffsets();
 		nativePointerSearcher.setLastPointerOffsets(lastOffsets);

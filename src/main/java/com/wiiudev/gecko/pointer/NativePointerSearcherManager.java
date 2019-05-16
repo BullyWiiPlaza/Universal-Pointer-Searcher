@@ -35,6 +35,7 @@ public class NativePointerSearcherManager
 	private static final String DOT_EXTENSION = "." + EXTENSION;
 	private static final String WINDOWS_SYSTEM32_DIRECTORY;
 	private static final String CMD_FILE_PATH;
+	private static final String WINDOWS_TEMPORARY_DIRECTORY_COMMAND = "%TEMP%";
 
 	private static String getExtension()
 	{
@@ -68,6 +69,9 @@ public class NativePointerSearcherManager
 
 	@Setter
 	private long maximumPointerOffset;
+
+	@Setter
+	private long threadCount;
 
 	@Setter
 	private long minimumPointerDepth;
@@ -187,26 +191,31 @@ public class NativePointerSearcherManager
 			}
 		}
 
-		return stringBuilder.toString().trim();
+		return stringBuilder.toString();
 	}
 
-	private String considerReplacingTemporaryDirectoryFilePath(String command)
+	private String considerReplacingTemporaryDirectoryFilePath(String input)
 	{
 		if (IS_OS_WINDOWS)
 		{
-			var temporaryDirectory = getProperty("java.io.tmpdir");
-			if (temporaryDirectory.endsWith(separator))
+			val temporaryDirectory = getTemporaryFilePath();
+			if (input.contains(temporaryDirectory))
 			{
-				temporaryDirectory = temporaryDirectory.substring(0,
-						temporaryDirectory.length() - separator.length());
-			}
-
-			if (command.contains(temporaryDirectory))
-			{
-				return command.replace(temporaryDirectory, "%TEMP%");
+				input = input.replace(temporaryDirectory, WINDOWS_TEMPORARY_DIRECTORY_COMMAND);
 			}
 		}
-		return command;
+		return input;
+	}
+
+	private static String getTemporaryFilePath()
+	{
+		var temporaryDirectory = getProperty("java.io.tmpdir");
+		if (temporaryDirectory.endsWith(separator))
+		{
+			temporaryDirectory = temporaryDirectory.substring(0,
+					temporaryDirectory.length() - separator.length());
+		}
+		return temporaryDirectory;
 	}
 
 	private String toCommandString(List<String> commands)
@@ -268,6 +277,8 @@ public class NativePointerSearcherManager
 		command.add(temporaryExecutableFile.toString());
 		command.add(temporaryExecutableFile.toString()); // The file path is the first argument
 
+		command.add("--thread-count");
+		command.add(toHexString(threadCount).toUpperCase());
 		command.add("--maximum-pointer-offset");
 		command.add(toHexString(maximumPointerOffset).toUpperCase());
 		command.add("--allow-negative-offsets");

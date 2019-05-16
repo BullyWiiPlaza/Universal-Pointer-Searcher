@@ -27,6 +27,7 @@ import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.seri
 import static com.wiiudev.gecko.pointer.preprocessed_search.utilities.MapUtilities.sortByValue;
 import static java.lang.Long.parseUnsignedLong;
 import static java.lang.Math.*;
+import static java.lang.Runtime.getRuntime;
 import static java.lang.System.arraycopy;
 import static java.nio.file.Files.exists;
 import static java.util.Arrays.copyOf;
@@ -73,6 +74,10 @@ public class MemoryPointerSearcher
 	@Getter
 	@Setter
 	private int pointerValueAlignment = 4;
+
+	@Getter
+	@Setter
+	private int threadCount;
 
 	@Getter
 	@Setter
@@ -136,6 +141,9 @@ public class MemoryPointerSearcher
 	public MemoryPointerSearcher()
 	{
 		memoryDumps = new ArrayList<>();
+
+		val runtime = getRuntime();
+		threadCount = runtime.availableProcessors();
 	}
 
 	public static String getSGenitive(List<MemoryDump> memoryDumps, List<MemoryDump> pointerMaps)
