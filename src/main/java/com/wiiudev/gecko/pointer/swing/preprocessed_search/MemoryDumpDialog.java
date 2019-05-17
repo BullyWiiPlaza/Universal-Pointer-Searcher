@@ -85,11 +85,13 @@ public class MemoryDumpDialog extends JDialog
 	@Getter
 	private List<MemoryDump> pointerMaps;
 
+	private final boolean mayParseFolder;
+
 	public MemoryDumpDialog(MemoryDump memoryDump, boolean mayParseFolder)
 	{
 		this.memoryDump = memoryDump;
-		parseEntireFolderCheckBox.setEnabled(mayParseFolder
-				&& memoryDump != null && !memoryDump.isAddedAsFolder());
+		this.mayParseFolder = mayParseFolder;
+
 
 		if (memoryDump != null)
 		{
@@ -298,10 +300,14 @@ public class MemoryDumpDialog extends JDialog
 					filePathValidatorText = INVALID_FILE_PATH;
 				}
 
+				val isImportableFilesOkay = new boolean[]{true};
 				val finalIsFilePathValid = isFilePathValid;
 				val finalFilePathValidatorText = filePathValidatorText;
 				invokeLater(() ->
 				{
+					val isParsingEntireFolderAllowed = mayParseFolder && !addModuleDumpsFolderCheckBox.isSelected();
+					parseEntireFolderCheckBox.setEnabled(isParsingEntireFolderAllowed);
+					addModuleDumpsFolderCheckBox.setEnabled(mayParseFolder && !parseEntireFolderCheckBox.isSelected());
 					filePathField.setBackground(finalIsFilePathValid ? VALID_INPUT_COLOR : INVALID_INPUT_COLOR);
 					setValidationLabel(finalIsFilePathValid, FILE_PATH_CHECK_OK,
 							finalFilePathValidatorText, filePathValidatorLabel);
@@ -322,6 +328,8 @@ public class MemoryDumpDialog extends JDialog
 						findFiles(memoryDumps, pointerMaps);
 						val folderImporterLabelText = getFolderImporterLabelText(memoryDumps, pointerMaps);
 						folderImporterLabel.setText(folderImporterLabelText);
+						int importableFilesCount = memoryDumps.size() + pointerMaps.size();
+						isImportableFilesOkay[0] = importableFilesCount > 0;
 					} else
 					{
 						folderImporterLabel.setText("");
@@ -381,7 +389,8 @@ public class MemoryDumpDialog extends JDialog
 				{
 					// Verify the target address
 					val isTargetAddressFieldValid = isTargetAddressFieldValid(filePath, startingAddress, isStartingAddressFieldValid);
-					val isAddingMemoryDumpAllowed = isFilePathValid && isStartingAddressFieldValid && isTargetAddressFieldValid;
+					val isAddingMemoryDumpAllowed = isFilePathValid && isStartingAddressFieldValid
+							&& isTargetAddressFieldValid;
 					invokeLater(() -> confirmMemoryDumpButton.setEnabled(isAddingMemoryDumpAllowed));
 				} else
 				{
@@ -396,7 +405,7 @@ public class MemoryDumpDialog extends JDialog
 						targetAddressField.setText("");
 						targetAddressField.setBackground(VALID_INPUT_COLOR);
 						startingAddressField.setBackground(finalAreAllMemoryDumpsOkay ? VALID_INPUT_COLOR : INVALID_INPUT_COLOR);
-						confirmMemoryDumpButton.setEnabled(finalAreAllMemoryDumpsOkay);
+						confirmMemoryDumpButton.setEnabled(finalAreAllMemoryDumpsOkay && isImportableFilesOkay[0]);
 					});
 				}
 
