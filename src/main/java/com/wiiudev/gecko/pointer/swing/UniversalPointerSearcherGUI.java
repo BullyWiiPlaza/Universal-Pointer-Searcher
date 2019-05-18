@@ -37,7 +37,6 @@ import static com.wiiudev.gecko.pointer.SingleMemoryDumpPointersFinder.findPoten
 import static com.wiiudev.gecko.pointer.SingleMemoryDumpPointersFinder.toOutputString;
 import static com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher.MINIMUM_POINTER_SEARCH_DEPTH_VALUE;
 import static com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher.getSGenitive;
-import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer.OPENING_BRACKET;
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer.parseMemoryPointer;
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.OffsetPrintingSetting.SIGNED;
 import static com.wiiudev.gecko.pointer.swing.PersistentSetting.*;
@@ -60,7 +59,8 @@ import static java.lang.Long.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.System.lineSeparator;
-import static java.nio.ByteOrder.*;
+import static java.nio.ByteOrder.BIG_ENDIAN;
+import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.write;
 import static java.util.Collections.singletonList;
@@ -72,7 +72,7 @@ import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 public class UniversalPointerSearcherGUI extends JFrame
 {
 	public static final String APPLICATION_NAME = "Universal Pointer Searcher";
-	private static final String APPLICATION_VERSION = "v3.2";
+	private static final String APPLICATION_VERSION = "v3.3";
 	private static final String STORED_POINTERS_FILE_NAME = "Pointers.txt";
 
 	// Invalid JOptionPane option as default for recognition
@@ -1508,10 +1508,13 @@ public class UniversalPointerSearcherGUI extends JFrame
 			val memoryPointers = new ArrayList<MemoryPointer>();
 			for (val line : lines)
 			{
-				if (line.startsWith(OPENING_BRACKET))
+				try
 				{
 					val memoryPointer = parseMemoryPointer(line);
 					memoryPointers.add(memoryPointer);
+				} catch (Exception ignored)
+				{
+
 				}
 			}
 

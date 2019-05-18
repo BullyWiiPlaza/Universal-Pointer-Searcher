@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer.OPENING_BRACKET;
+import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer.parseMemoryPointer;
 import static java.io.File.separator;
 import static java.lang.Integer.toHexString;
 import static java.lang.Long.toHexString;
@@ -149,10 +149,10 @@ public class NativePointerSearcherManager
 
 	public NativePointerSearcherOutput call() throws Exception
 	{
-		val command = buildCommandList(executableFilePath);
-		val processBuilder = new ProcessBuilder(command);
-		command.remove(executableFilePath.toString());
-		var executedCommand = toCommandString(command);
+		val commandList = buildCommandList(executableFilePath);
+		val processBuilder = new ProcessBuilder(commandList);
+		commandList.remove(executableFilePath.toString());
+		var executedCommand = toCommandString(commandList);
 		processBuilder.redirectErrorStream(true);
 		process = processBuilder.start();
 		executedCommand = considerReplacingTemporaryDirectoryFilePath(executedCommand);
@@ -176,18 +176,22 @@ public class NativePointerSearcherManager
 		var reachedMemoryPointers = false;
 		for (val line : lines)
 		{
-			if (!line.startsWith(OPENING_BRACKET))
+			try
 			{
-				stringBuilder.append(line);
-				stringBuilder.append(lineSeparator());
-			} else
-			{
+				parseMemoryPointer(line);
+
+				// Print out truncation
 				if (!reachedMemoryPointers)
 				{
 					stringBuilder.append("<< Memory pointers truncated >>");
 					stringBuilder.append(lineSeparator());
 					reachedMemoryPointers = true;
 				}
+			} catch (Exception ignored)
+			{
+				// Print out the unfiltered line
+				stringBuilder.append(line);
+				stringBuilder.append(lineSeparator());
 			}
 		}
 
@@ -328,7 +332,8 @@ public class NativePointerSearcherManager
 			command.add("--pointer-address-range");
 			val minimumPointerAddress = memoryDump.getMinimumPointerAddress();
 			val maximumPointerAddress = memoryDump.getMaximumPointerAddress();
-			command.add(toHexString(minimumPointerAddress).toUpperCase() + "-" + toHexString(maximumPointerAddress).toUpperCase());
+			command.add(toHexString(minimumPointerAddress).toUpperCase()
+					+ "-" + toHexString(maximumPointerAddress).toUpperCase());
 			command.add("--write-pointer-map");
 			command.add(booleanToIntegerString(memoryDump.isGeneratePointerMap()));
 			command.add("--read-pointer-map");

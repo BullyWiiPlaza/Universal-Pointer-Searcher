@@ -12,6 +12,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer.parseMemoryPointer;
 import static java.lang.System.gc;
 import static java.lang.System.getProperty;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -84,11 +85,11 @@ public class PointerSwapFile
 	private ArrayList<MemoryPointer> readMemoryPointers(Path targetFilePath) throws IOException
 	{
 		val memoryPointers = new ArrayList<MemoryPointer>();
-		val memoryPointersString = new String(readAllBytes(targetFilePath), ENCODING);
+		val memoryPointersString = readString(targetFilePath, ENCODING);
 		val memoryPointerLines = memoryPointersString.split(LINE_SEPARATOR);
 		for (val memoryPointerLine : memoryPointerLines)
 		{
-			val memoryPointer = MemoryPointer.parseMemoryPointer(memoryPointerLine);
+			val memoryPointer = parseMemoryPointer(memoryPointerLine);
 			memoryPointers.add(memoryPointer);
 		}
 
