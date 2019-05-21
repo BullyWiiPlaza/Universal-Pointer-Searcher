@@ -18,10 +18,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.nio.file.InvalidPathException;
@@ -72,7 +69,7 @@ import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 public class UniversalPointerSearcherGUI extends JFrame
 {
 	public static final String APPLICATION_NAME = "Universal Pointer Searcher";
-	private static final String APPLICATION_VERSION = "v3.3";
+	private static final String APPLICATION_VERSION = "v3.4";
 	private static final String STORED_POINTERS_FILE_NAME = "Pointers.txt";
 
 	// Invalid JOptionPane option as default for recognition
@@ -1004,6 +1001,18 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val addressSize = memoryPointerSearcher.getAddressSize();
 		addressSizeSelection.setSelectedItem(addressSize);
 
+		// Synchronize the alignment
+		addressSizeSelection.addItemListener(itemEvent ->
+		{
+			val stateChange = itemEvent.getStateChange();
+			if (stateChange == SELECTED)
+			{
+				val selectedAddressSize = getSelectedItem(addressSizeSelection);
+				pointerAddressAlignmentField.setText(selectedAddressSize + "");
+				pointerValueAlignmentField.setText(selectedAddressSize + "");
+			}
+		});
+
 		val pointerValueAlignment = memoryPointerSearcher.getPointerValueAlignment();
 		pointerValueAlignmentField.setText(pointerValueAlignment + "");
 
@@ -1478,7 +1487,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val maximumPointersCount = parseLong(maximumPointersCountField.getText(), 10);
 		nativePointerSearcher.setMaximumPointersCount(maximumPointersCount);
 
-		nativePointerSearcher.setPotentialPointerOffsetsCountPerAddressPrediction(40);
+		nativePointerSearcher.setPotentialPointerOffsetsCountPerAddressPrediction(10);
 
 		nativePointerSearcher.setSaveAdditionalMemoryDumpRAM(false);
 
