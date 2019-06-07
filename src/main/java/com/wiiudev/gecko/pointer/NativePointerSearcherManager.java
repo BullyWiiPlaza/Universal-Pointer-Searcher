@@ -1,6 +1,7 @@
 package com.wiiudev.gecko.pointer;
 
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
+import com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -311,6 +312,9 @@ public class NativePointerSearcherManager
 			val memoryDumpFilePath = memoryDump.getFilePath().toAbsolutePath();
 			command.add("--file-path");
 			command.add(memoryDumpFilePath.toString());
+			command.add("--file-extensions");
+			command.add("." + FileTypeImport.MEMORY_DUMP.getExtension()
+					+ ",." + FileTypeImport.MEMORY_DUMP_EXTENSION);
 			command.add("--starting-address");
 			val startingAddress = memoryDump.getStartingAddress();
 			command.add(toHexString(startingAddress).toUpperCase());

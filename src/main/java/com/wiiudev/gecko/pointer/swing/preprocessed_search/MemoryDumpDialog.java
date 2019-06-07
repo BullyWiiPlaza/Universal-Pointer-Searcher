@@ -23,6 +23,7 @@ import java.util.List;
 
 import static com.wiiudev.gecko.pointer.swing.StackTraceUtilities.handleException;
 import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.*;
+import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.MEMORY_DUMP_EXTENSION;
 import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.getSelectedItem;
 import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.setWindowIconImage;
 import static com.wiiudev.gecko.pointer.swing.utilities.MemoryDumpsByteOrder.getMemoryDumpsByteOrder;
@@ -485,7 +486,8 @@ public class MemoryDumpDialog extends JDialog
 			for (val listedFile : listedFiles)
 			{
 				val listedFilePath = listedFile.toString();
-				if (listedFilePath.endsWith("." + MEMORY_DUMP.getExtension()))
+				if (listedFilePath.endsWith("." + MEMORY_DUMP.getExtension())
+						|| listedFilePath.endsWith("." + MEMORY_DUMP_EXTENSION))
 				{
 					memoryDumps.add(listedFile);
 				} else if (listedFilePath.endsWith("." + POINTER_MAP.getExtension()))

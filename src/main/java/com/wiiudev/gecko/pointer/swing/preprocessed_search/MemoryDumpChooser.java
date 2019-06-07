@@ -7,6 +7,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 
+import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.*;
 import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.MEMORY_DUMP;
 import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.POINTER_MAP;
 import static com.wiiudev.gecko.pointer.swing.preprocessed_search.MemoryDumpDialog.toRelativeFilePath;
@@ -34,7 +35,7 @@ class MemoryDumpChooser extends JFileChooser
 
 		if (!selectFolders)
 		{
-			val memoryDumpsFilter = new FileNameExtensionFilter("Memory Dumps", MEMORY_DUMP.getExtension(), "dmp");
+			val memoryDumpsFilter = new FileNameExtensionFilter("Memory Dumps", MEMORY_DUMP.getExtension(), MEMORY_DUMP_EXTENSION);
 			val pointerMapsFilter = new FileNameExtensionFilter("Pointer Maps", POINTER_MAP.getExtension());
 			addChoosableFileFilter(memoryDumpsFilter);
 			addChoosableFileFilter(pointerMapsFilter);
