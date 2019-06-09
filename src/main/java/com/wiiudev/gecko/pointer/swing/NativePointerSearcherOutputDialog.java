@@ -1,6 +1,7 @@
 package com.wiiudev.gecko.pointer.swing;
 
 import lombok.val;
+import lombok.var;
 
 import javax.swing.*;
 import java.awt.*;

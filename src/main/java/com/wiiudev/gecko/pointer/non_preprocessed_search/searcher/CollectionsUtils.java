@@ -1,6 +1,7 @@
 package com.wiiudev.gecko.pointer.non_preprocessed_search.searcher;
 
 import lombok.val;
+import lombok.var;
 
 import java.util.Collection;
 import java.util.LinkedList;

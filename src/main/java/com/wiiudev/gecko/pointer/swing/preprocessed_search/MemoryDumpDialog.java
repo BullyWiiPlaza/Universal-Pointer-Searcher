@@ -4,6 +4,7 @@ import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
 import com.wiiudev.gecko.pointer.swing.utilities.MemoryDumpsByteOrder;
 import lombok.Getter;
 import lombok.val;
+import lombok.var;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -23,7 +24,6 @@ import java.util.List;
 
 import static com.wiiudev.gecko.pointer.swing.StackTraceUtilities.handleException;
 import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.*;
-import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.MEMORY_DUMP_EXTENSION;
 import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.getSelectedItem;
 import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.setWindowIconImage;
 import static com.wiiudev.gecko.pointer.swing.utilities.MemoryDumpsByteOrder.getMemoryDumpsByteOrder;
@@ -33,7 +33,7 @@ import static com.wiiudev.gecko.pointer.utilities.FileNameUtilities.getTargetAdd
 import static java.awt.Color.GREEN;
 import static java.awt.Color.RED;
 import static java.awt.Desktop.getDesktop;
-import static java.io.File.*;
+import static java.io.File.separator;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.MIN_VALUE;
 import static java.lang.Long.parseUnsignedLong;

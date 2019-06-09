@@ -1,6 +1,7 @@
 package com.wiiudev.gecko.pointer.non_preprocessed_search.reader;
 
 import lombok.val;
+import lombok.var;
 
 import java.nio.ByteBuffer;
 

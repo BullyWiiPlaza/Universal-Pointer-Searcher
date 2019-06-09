@@ -2,6 +2,7 @@ package com.wiiudev.gecko.pointer.non_preprocessed_search.pointer;
 
 import com.wiiudev.gecko.pointer.non_preprocessed_search.MemoryDump;
 import lombok.val;
+import lombok.var;
 
 import java.util.Arrays;
 import java.util.List;

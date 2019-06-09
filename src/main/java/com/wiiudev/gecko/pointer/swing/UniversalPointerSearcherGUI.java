@@ -11,6 +11,7 @@ import com.wiiudev.gecko.pointer.swing.utilities.PersistentSettingsManager;
 import com.wiiudev.gecko.pointer.swing.utilities.WindowsTaskBarProgress;
 import com.wiiudev.gecko.pointer.utilities.Benchmark;
 import lombok.val;
+import lombok.var;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -18,7 +19,10 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.nio.file.InvalidPathException;
@@ -69,7 +73,7 @@ import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 public class UniversalPointerSearcherGUI extends JFrame
 {
 	public static final String APPLICATION_NAME = "Universal Pointer Searcher";
-	private static final String APPLICATION_VERSION = "v3.4";
+	private static final String APPLICATION_VERSION = "v3.5";
 	private static final String STORED_POINTERS_FILE_NAME = "Pointers.txt";
 
 	// Invalid JOptionPane option as default for recognition

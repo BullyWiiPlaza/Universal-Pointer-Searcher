@@ -1,6 +1,7 @@
 package com.wiiudev.gecko.pointer.preprocessed_search;
 
 import lombok.val;
+import lombok.var;
 
 import javax.swing.*;
 

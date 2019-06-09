@@ -5,6 +5,7 @@ import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPoint
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryRange;
 import com.wiiudev.gecko.pointer.utilities.Benchmark;
 import lombok.val;
+import lombok.var;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

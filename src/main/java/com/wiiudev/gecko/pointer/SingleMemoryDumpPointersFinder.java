@@ -3,6 +3,7 @@ package com.wiiudev.gecko.pointer;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer;
 import lombok.val;
+import lombok.var;
 
 import java.util.ArrayList;
 import java.util.HashMap;

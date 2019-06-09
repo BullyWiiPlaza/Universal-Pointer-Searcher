@@ -21,7 +21,7 @@ Many memory addresses in processes or video games are not static. Hence, they ch
 [Here](https://github.com/BullyWiiPlaza/Universal-Pointer-Searcher/blob/master/Universal-Pointer-Searcher.jar?raw=true).
 
 ## How do I execute the JAR file?
-Since this software is Java-based, **you need to have [`JRE 11`](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html) or higher installed on your machine.** On `Windows`, a simple double-click on the `JAR` file should suffice. On `Unix`, run the command `java -jar "Universal-Pointer-Search.jar"`.
+Since this software is Java-based, **you need to have [`JRE 8`](https://java.com/en/download) or higher installed on your machine.** On `Windows`, a simple double-click on the `JAR` file should suffice. On `Unix`, run the command `java -jar "Universal-Pointer-Search.jar"`.
 
 ## I started the application. How do I use it to find pointers?
 A tutorial can be found [here](https://www.youtube.com/watch?v=KUEXUZuO0qc).

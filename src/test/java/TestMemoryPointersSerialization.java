@@ -1,6 +1,7 @@
 import com.wiiudev.gecko.pointer.preprocessed_search.PointerSwapFile;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer;
 import lombok.val;
+import lombok.var;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

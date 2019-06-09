@@ -2,6 +2,7 @@ package com.wiiudev.gecko.pointer.preprocessed_search;
 
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer;
 import lombok.val;
+import lombok.var;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -85,7 +86,7 @@ public class PointerSwapFile
 	private ArrayList<MemoryPointer> readMemoryPointers(Path targetFilePath) throws IOException
 	{
 		val memoryPointers = new ArrayList<MemoryPointer>();
-		val memoryPointersString = readString(targetFilePath, ENCODING);
+		val memoryPointersString = new String(readAllBytes(targetFilePath), ENCODING);
 		val memoryPointerLines = memoryPointersString.split(LINE_SEPARATOR);
 		for (val memoryPointerLine : memoryPointerLines)
 		{

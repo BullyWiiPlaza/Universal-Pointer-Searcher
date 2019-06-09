@@ -3,6 +3,7 @@ package com.wiiudev.gecko.pointer.swing;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
 import com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport;
 import lombok.val;
+import lombok.var;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

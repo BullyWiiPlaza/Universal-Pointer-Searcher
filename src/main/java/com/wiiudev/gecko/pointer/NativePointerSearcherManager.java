@@ -5,6 +5,7 @@ import com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
+import lombok.var;
 
 import java.io.BufferedReader;
 import java.io.IOException;

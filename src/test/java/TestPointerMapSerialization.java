@@ -1,6 +1,7 @@
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.serialization.BackupMethod;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.serialization.CompressionMethod;
 import lombok.val;
+import lombok.var;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

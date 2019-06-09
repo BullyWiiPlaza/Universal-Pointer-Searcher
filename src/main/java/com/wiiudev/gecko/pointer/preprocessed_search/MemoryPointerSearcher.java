@@ -8,6 +8,7 @@ import com.wiiudev.gecko.pointer.utilities.Benchmark;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
+import lombok.var;
 
 import javax.swing.*;
 import java.io.IOException;

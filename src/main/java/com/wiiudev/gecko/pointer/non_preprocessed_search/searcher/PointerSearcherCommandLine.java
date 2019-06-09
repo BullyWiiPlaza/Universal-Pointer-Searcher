@@ -4,6 +4,7 @@ import com.wiiudev.gecko.pointer.non_preprocessed_search.MemoryDump;
 import com.wiiudev.gecko.pointer.non_preprocessed_search.pointer.PointerOffsetChecker;
 import com.wiiudev.gecko.pointer.utilities.Benchmark;
 import lombok.val;
+import lombok.var;
 
 public class PointerSearcherCommandLine
 {

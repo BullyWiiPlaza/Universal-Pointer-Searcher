@@ -1,6 +1,7 @@
 package com.wiiudev.gecko.pointer.preprocessed_search.data_structures.serialization;
 
 import lombok.val;
+import lombok.var;
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4SafeDecompressor;

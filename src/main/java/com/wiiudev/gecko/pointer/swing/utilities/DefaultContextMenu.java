@@ -1,6 +1,7 @@
 package com.wiiudev.gecko.pointer.swing.utilities;
 
 import lombok.val;
+import lombok.var;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;

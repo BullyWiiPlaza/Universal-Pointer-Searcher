@@ -3,6 +3,7 @@ package com.wiiudev.gecko.pointer.swing.non_preprocessed_search;
 import com.wiiudev.gecko.pointer.non_preprocessed_search.MemoryDump;
 import com.wiiudev.gecko.pointer.swing.utilities.JTextAreaLimit;
 import lombok.val;
+import lombok.var;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;

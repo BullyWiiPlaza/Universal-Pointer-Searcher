@@ -2,6 +2,7 @@ package com.wiiudev.gecko.pointer.preprocessed_search.data_structures;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import lombok.var;
 
 import java.util.Comparator;
 
