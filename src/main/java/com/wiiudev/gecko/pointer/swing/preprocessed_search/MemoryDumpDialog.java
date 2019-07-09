@@ -331,6 +331,13 @@ public class MemoryDumpDialog extends JDialog
 						folderImporterLabel.setText(folderImporterLabelText);
 						int importableFilesCount = memoryDumps.size() + pointerMaps.size();
 						isImportableFilesOkay[0] = importableFilesCount > 0;
+					} else if (addModuleDumpsFolderCheckBox.isSelected())
+					{
+						val moduleDumps = new ArrayList<File>();
+						val pointerMaps = new ArrayList<File>();
+						findFiles(moduleDumps, pointerMaps);
+						val moduleDumpsLabelText = getModulesMemoryDumpLabelText(moduleDumps);
+						folderImporterLabel.setText(moduleDumpsLabelText);
 					} else
 					{
 						folderImporterLabel.setText("");
@@ -421,6 +428,12 @@ public class MemoryDumpDialog extends JDialog
 		});
 
 		thread.start();
+	}
+
+	private String getModulesMemoryDumpLabelText(List<File> memoryDumps)
+	{
+		val memoryDumpsSize = memoryDumps.size();
+		return memoryDumpsSize + " module dump(s) found";
 	}
 
 	private boolean areAllMemoryDumpsOkay(long startingAddress, List<File> memoryDumps) throws IOException

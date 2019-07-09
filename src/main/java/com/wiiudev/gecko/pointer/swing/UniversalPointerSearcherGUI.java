@@ -19,11 +19,9 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.ByteOrder;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -50,6 +48,7 @@ import static com.wiiudev.gecko.pointer.swing.utilities.TextAreaLimitType.NUMERI
 import static com.wiiudev.gecko.pointer.utilities.DataConversions.parseLongSafely;
 import static java.awt.Color.GREEN;
 import static java.awt.Color.RED;
+import static java.awt.Desktop.getDesktop;
 import static java.awt.event.ItemEvent.SELECTED;
 import static java.awt.event.KeyEvent.VK_DELETE;
 import static java.lang.Boolean.parseBoolean;
@@ -57,6 +56,7 @@ import static java.lang.Integer.parseUnsignedInt;
 import static java.lang.Long.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.lang.Runtime.getRuntime;
 import static java.nio.ByteOrder.BIG_ENDIAN;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -70,7 +70,7 @@ import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 public class UniversalPointerSearcherGUI extends JFrame
 {
 	public static final String APPLICATION_NAME = "Universal Pointer Searcher";
-	private static final String APPLICATION_VERSION = "v3.5";
+	private static final String APPLICATION_VERSION = "v3.6";
 	private static final String STORED_POINTERS_FILE_NAME = "Pointers.txt";
 
 	// Invalid JOptionPane option as default for recognition
@@ -130,6 +130,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JTextField minimumPointerOffsetField;
 	private JLabel maximumPointerOffsetLabel;
 	private JLabel maximumPointerOffsetDelimiterLabel;
+	private JLabel processorsCountLabel;
+	private JButton optimalThreadCountButton;
 	private PersistentSettingsManager persistentSettingsManager;
 	private MemoryDumpTableManager memoryDumpTableManager;
 	private Path lastAddedFilePath;
@@ -167,6 +169,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		add(rootPanel);
 		setFrameProperties();
 
+		setProcessorsCountLabel();
 		addTextAreaLimits();
 		addPointerResultsPageSizeEditedListener();
 		configureMaximumPointerOffsetField();
@@ -178,6 +181,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		addMaximumMemoryChunkSizeModifiedListener();
 		addSignedModificationListener();
 		addPointerSearchButtonActionListener();
+		addOptimalThreadCountButtonListener();
 		addNativePointerSearcherOutputButtonListener();
 		addPointerSearchCancelButtonListener();
 		addAddMemoryDumpButtonActionListener();
@@ -199,6 +203,44 @@ public class UniversalPointerSearcherGUI extends JFrame
 		setButtonAvailability();
 		handlePersistentSettings();
 		configurePointerResultsPage();
+	}
+
+	private void addOptimalThreadCountButtonListener()
+	{
+		optimalThreadCountButton.addActionListener(actionEvent ->
+		{
+			val buttons = new String[]{"Yes", "No"};
+			val selectedAnswer = showOptionDialog(rootPane,
+					"Usually, you should pick a thread count equal to your logical processors count or slightly above.\n" +
+							"This requires some testing since every machine is different. Do you want to read more about this topic?",
+					optimalThreadCountButton.getText(), YES_NO_CANCEL_OPTION, QUESTION_MESSAGE, null, buttons, null);
+
+			if (selectedAnswer == YES_OPTION)
+			{
+				openURL("https://stackoverflow.com/a/40733399/3764804");
+				openURL("https://superuser.com/a/1105665/346267");
+			}
+		});
+	}
+
+	@SuppressWarnings("SameParameterValue")
+	private void openURL(String link)
+	{
+		val desktop = getDesktop();
+		try
+		{
+			desktop.browse(new URI(link));
+		} catch (Exception exception)
+		{
+			handleException(exception);
+		}
+	}
+
+	private void setProcessorsCountLabel()
+	{
+		val runtime = getRuntime();
+		val availableProcessors = runtime.availableProcessors();
+		processorsCountLabel.setText("Logical Processors Count: " + availableProcessors);
 	}
 
 	private void configureAddedMemoryDumpsTable()
@@ -729,7 +771,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			val memoryDump = memoryDumpTableManager.getSelectedMemoryDump();
 			val memoryDumpDialog = showMemoryDumpDialog(memoryDump, editMemoryDumpButton,
 					null, null, null, null,
-					false, false, false);
+					parseEntireFolder, true, addModuleDumpsFolder);
 
 			if (memoryDumpDialog.isMemoryDumpAdded())
 			{
