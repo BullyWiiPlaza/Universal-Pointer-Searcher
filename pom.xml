@@ -84,6 +84,13 @@
             <artifactId>slf4j-simple</artifactId>
             <version>LATEST</version>
         </dependency>
+
+        <!-- StopWatch -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>LATEST</version>
+        </dependency>
     </dependencies>
 
     <properties>

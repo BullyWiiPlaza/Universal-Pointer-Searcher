@@ -509,13 +509,19 @@ public class NativePointerSearcherManager
 		return memoryPointers;
 	}
 
-	public static List<MemoryPointer> findPointers(NativePointerSearcherManager nativePointerSearcherManager, int addressSize) throws Exception
+	public static List<MemoryPointer> findPointers(NativePointerSearcherManager nativePointerSearcherManager,
+	                                               int addressSize, boolean printResults) throws Exception
 	{
 		val nativePointerSearcherOutput = nativePointerSearcherManager.call();
 		val processOutput = nativePointerSearcherOutput.getProcessOutput();
-		List<MemoryPointer> memoryPointers = parseMemoryPointersFromOutput(processOutput);
-		System.out.println(MemoryPointer.toString(memoryPointers, addressSize, SIGNED));
-		System.out.println("A total of " + memoryPointers.size() + " memory pointers found");
+		val memoryPointers = parseMemoryPointersFromOutput(processOutput);
+
+		if (printResults)
+		{
+			System.out.println(MemoryPointer.toString(memoryPointers, addressSize, SIGNED));
+			System.out.println("A total of " + memoryPointers.size() + " memory pointers found");
+		}
+
 		return memoryPointers;
 	}
 

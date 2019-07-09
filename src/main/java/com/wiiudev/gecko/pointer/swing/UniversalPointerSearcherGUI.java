@@ -978,6 +978,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		maximumPointerSearchDepthField.setEnabled(!isSearching && usingNativePointerSearcher);
 		pointerValueAlignmentField.setEnabled(!isSearching);
 		threadCountField.setEnabled(!isSearching && usingNativePointerSearcher);
+		optimalThreadCountButton.setEnabled(!isSearching && usingNativePointerSearcher);
 		pointerAddressAlignmentField.setEnabled(!isSearching && usingNativePointerSearcher);
 		maximumMemoryChunkSizeField.setEnabled(!isSearching);
 		maximumPointersCountField.setEnabled(!isSearching && usingNativePointerSearcher);

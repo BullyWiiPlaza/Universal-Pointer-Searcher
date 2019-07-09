@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static com.google.common.base.Stopwatch.createStarted;
 import static com.wiiudev.gecko.pointer.NativePointerSearcherManager.findPointers;
 import static java.lang.Math.pow;
 import static java.nio.ByteOrder.BIG_ENDIAN;
@@ -24,6 +25,55 @@ public class NativePointerSearcherTest
 		val parallelComputer = new ParallelComputer(false, true);
 		runClasses(parallelComputer, classes);
 	} */
+
+	@Test
+	public void testOptimalThreadCount() throws Exception
+	{
+		val availableProcessorsCount = getAvailableProcessorsCount();
+		val maximumThreadCount = availableProcessorsCount * 2;
+		for (var threadCount = 1; threadCount <= maximumThreadCount; threadCount++)
+		{
+			val stopWatch = createStarted();
+
+			val nativePointerSearcherManager = new NativePointerSearcherManager();
+			nativePointerSearcherManager.setThreadCount(threadCount);
+			nativePointerSearcherManager.setExcludeCycles(true);
+			nativePointerSearcherManager.setMinimumPointerDepth(1);
+			nativePointerSearcherManager.setMaximumPointerDepth(3);
+			nativePointerSearcherManager.setMaximumMemoryDumpChunkSize(100_000_000);
+			nativePointerSearcherManager.setSaveAdditionalMemoryDumpRAM(false);
+			nativePointerSearcherManager.setPotentialPointerOffsetsCountPerAddressPrediction(40);
+			val maximumPointersCount = 100_000;
+			nativePointerSearcherManager.setMaximumPointersCount(maximumPointersCount);
+			nativePointerSearcherManager.setPointerOffsetRange(0, 10_000);
+			nativePointerSearcherManager.setLastPointerOffsets(emptyList());
+			val firstMemoryDump = new MemoryDump("D:\\Cpp\\PointerSearcher\\card_ids",
+					0x0L, 0x2D574C28020L, LITTLE_ENDIAN);
+			val addressSize = 8;
+			firstMemoryDump.setAddressSize(addressSize);
+			firstMemoryDump.setAddressAlignment(8);
+			val valueAlignment = 8;
+			firstMemoryDump.setValueAlignment(valueAlignment);
+			firstMemoryDump.setMinimumPointerAddress(0x0);
+			firstMemoryDump.setMaximumPointerAddress(0x7FFFFFFFFFFL);
+			firstMemoryDump.setFileExtensions(asList("bin", "dmp"));
+			firstMemoryDump.setGeneratePointerMap(true);
+			firstMemoryDump.setReadPointerMap(false);
+			nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
+			nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
+			findPointers(nativePointerSearcherManager, addressSize, false);
+
+			System.out.print("Pointer search with ");
+
+			if (threadCount < 10)
+			{
+				System.out.print(" ");
+			}
+
+			System.out.println(threadCount + " thread(s) took " + stopWatch);
+			System.gc();
+		}
+	}
 
 	@Test
 	public void testWindowsPointerSearch() throws Exception
@@ -56,7 +106,7 @@ public class NativePointerSearcherTest
 		nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
 		nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
 
-		val firstMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize);
+		val firstMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
 		assertFalse(firstMemoryDumpPointers.isEmpty());
 		assertTrue(firstMemoryDumpPointers.size() < maximumPointersCount);
 
@@ -107,7 +157,7 @@ public class NativePointerSearcherTest
 		nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
 		nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
 
-		val firstMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize);
+		val firstMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
 		assertFalse(firstMemoryDumpPointers.isEmpty());
 	}
 
@@ -148,7 +198,7 @@ public class NativePointerSearcherTest
 		nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
 
 		// Pointers should be found
-		val firstMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize);
+		val firstMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
 		assertFalse(firstMemoryDumpPointers.isEmpty());
 
 		// Assert the maximum pointers count to be respected
@@ -199,7 +249,7 @@ public class NativePointerSearcherTest
 		secondMemoryDump.setReadPointerMap(false);
 		nativePointerSearcherManager.addMemoryDump(secondMemoryDump);
 
-		val secondMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize);
+		val secondMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
 
 		// Pointers may not be empty
 		assertFalse(secondMemoryDumpPointers.isEmpty());
