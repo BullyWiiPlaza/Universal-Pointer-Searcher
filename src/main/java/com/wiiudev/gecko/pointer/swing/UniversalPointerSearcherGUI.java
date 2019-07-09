@@ -196,8 +196,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 		innerPointerSearchProgressBar.setVisible(false);
 		configureAddedMemoryDumpsTable();
 		baseOffsetRangeSelection.addItemListener(itemEvent -> setButtonAvailability());
-		startingBaseAddressField.setDocument(new JTextAreaLimit(8, HEXADECIMAL));
-		endBaseAddressField.setDocument(new JTextAreaLimit(8, HEXADECIMAL));
+		startingBaseAddressField.setDocument(new JTextAreaLimit(8, HEXADECIMAL, false));
+		endBaseAddressField.setDocument(new JTextAreaLimit(8, HEXADECIMAL, false));
 		initializeIgnoredMemoryRangesTableManager();
 		addDefaultContextMenu(foundPointersOutputArea);
 		setButtonAvailability();
@@ -814,22 +814,22 @@ public class UniversalPointerSearcherGUI extends JFrame
 	{
 		configurePointerSearchDepthField();
 		val addressSize = Integer.BYTES * 2;
-		pointerValueAlignmentField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL));
-		pointerAddressAlignmentField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL));
-		threadCountField.setDocument(new JTextAreaLimit(addressSize, NUMERIC));
-		maximumPointersCountField.setDocument(new JTextAreaLimit(addressSize, NUMERIC));
-		maximumMemoryChunkSizeField.setDocument(new JTextAreaLimit((Long.MAX_VALUE + "").length(), NUMERIC));
-		minimumPointerOffsetField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL));
-		maximumPointerOffsetField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL));
-		minimumPointerAddressField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL));
-		pointerResultsPageSizeField.setDocument(new JTextAreaLimit(addressSize, NUMERIC));
+		pointerValueAlignmentField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, false));
+		pointerAddressAlignmentField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, false));
+		threadCountField.setDocument(new JTextAreaLimit(addressSize, NUMERIC, false));
+		maximumPointersCountField.setDocument(new JTextAreaLimit(addressSize, NUMERIC, false));
+		maximumMemoryChunkSizeField.setDocument(new JTextAreaLimit((Long.MAX_VALUE + "").length(), NUMERIC, false));
+		minimumPointerOffsetField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, true));
+		maximumPointerOffsetField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, true));
+		minimumPointerAddressField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, false));
+		pointerResultsPageSizeField.setDocument(new JTextAreaLimit(addressSize, NUMERIC, false));
 	}
 
 	private void configurePointerSearchDepthField()
 	{
 		val addressSize = Integer.BYTES * 2;
-		minimumPointerSearchDepthField.setDocument(new JTextAreaLimit(addressSize, NUMERIC));
-		maximumPointerSearchDepthField.setDocument(new JTextAreaLimit(addressSize, NUMERIC));
+		minimumPointerSearchDepthField.setDocument(new JTextAreaLimit(addressSize, NUMERIC, false));
+		maximumPointerSearchDepthField.setDocument(new JTextAreaLimit(addressSize, NUMERIC, false));
 		addButtonAvailabilityDocumentListener(minimumPointerSearchDepthField);
 		addButtonAvailabilityDocumentListener(maximumPointerSearchDepthField);
 	}
@@ -1319,7 +1319,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val maximumMemoryChunkSize = parseLong(maximumMemoryChunkSizeField.getText(), 10);
 		memoryPointerSearcher.setMaximumMemoryChunkSize(maximumMemoryChunkSize);
 
-		val maximumPointerOffset = parseUnsignedLong(maximumPointerOffsetField.getText(), 16);
+		val maximumPointerOffset = parseLong(maximumPointerOffsetField.getText(), 16);
 		memoryPointerSearcher.setMaximumPointerOffset(maximumPointerOffset);
 
 		val minimumPointerAddress = getMinimumPointerAddressFieldValue();

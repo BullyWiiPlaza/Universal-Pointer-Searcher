@@ -295,8 +295,8 @@ public class NativePointerSearcherManager
 		command.add("--thread-count");
 		command.add(threadCount + "");
 		command.add("--pointer-offset-range");
-		command.add(toHexString(fromPointerOffset).toUpperCase()
-				+ "-" + toHexString(toPointerOffset).toUpperCase());
+		command.add(toHexadecimalString(fromPointerOffset)
+				+ "," + toHexadecimalString(toPointerOffset));
 		command.add("--exclude-cycles");
 		command.add(booleanToIntegerString(excludeCycles));
 		command.add("--minimum-pointer-depth");
@@ -324,27 +324,27 @@ public class NativePointerSearcherManager
 			addFileExtensionsCommand(command, memoryDump);
 			command.add("--starting-address");
 			val startingAddress = memoryDump.getStartingAddress();
-			command.add(toHexString(startingAddress).toUpperCase());
+			command.add(toHexadecimalString(startingAddress));
 			command.add("--destination-address");
 			val targetAddress = memoryDump.getTargetAddress();
-			command.add(toHexString(targetAddress).toUpperCase());
+			command.add(toHexadecimalString(targetAddress));
 			command.add("--endian");
 			val byteOrder = memoryDump.getByteOrder();
 			command.add(byteOrderToString(byteOrder));
 			command.add("--address-size");
 			val addressSize = memoryDump.getAddressSize();
-			command.add(toHexString(addressSize).toUpperCase());
+			command.add(toHexadecimalString(addressSize));
 			command.add("--address-alignment");
 			val addressAlignment = memoryDump.getAddressAlignment();
-			command.add(toHexString(addressAlignment).toUpperCase());
+			command.add(toHexadecimalString(addressAlignment));
 			command.add("--value-size-alignment");
 			val valueAlignment = memoryDump.getValueAlignment();
-			command.add(toHexString(valueAlignment).toUpperCase());
+			command.add(toHexadecimalString(valueAlignment));
 			command.add("--pointer-address-range");
 			val minimumPointerAddress = memoryDump.getMinimumPointerAddress();
 			val maximumPointerAddress = memoryDump.getMaximumPointerAddress();
-			command.add(toHexString(minimumPointerAddress).toUpperCase()
-					+ "-" + toHexString(maximumPointerAddress).toUpperCase());
+			command.add(toHexadecimalString(minimumPointerAddress)
+					+ "-" + toHexadecimalString(maximumPointerAddress));
 			command.add("--write-pointer-map");
 			command.add(booleanToIntegerString(memoryDump.isGeneratePointerMap()));
 			command.add("--read-pointer-map");
@@ -352,6 +352,18 @@ public class NativePointerSearcherManager
 		}
 
 		return command;
+	}
+
+	private String toHexadecimalString(long value)
+	{
+		if (value >= 0)
+		{
+			return toHexString(value).toUpperCase();
+		} else
+		{
+			value *= -1;
+			return "-" + toHexString(value).toUpperCase();
+		}
 	}
 
 	private void addFileExtensionsCommand(List<String> command, MemoryDump memoryDump)
@@ -409,7 +421,7 @@ public class NativePointerSearcherManager
 				value *= -1;
 			}
 
-			val hexadecimalValue = toHexString(value).toUpperCase();
+			val hexadecimalValue = toHexadecimalString(value);
 			stringBuilder.append(hexadecimalValue);
 			if (listIndex != list.size() - 1)
 			{

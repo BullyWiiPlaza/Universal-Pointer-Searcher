@@ -30,7 +30,7 @@ public class DataConversions
 
 	public static long parseLongSafely(String text)
 	{
-		if (text.equals(""))
+		if (text.equals("") || text.equals("-"))
 		{
 			return 0;
 		}

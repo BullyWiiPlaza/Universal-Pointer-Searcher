@@ -12,17 +12,19 @@ public class JTextAreaLimit extends PlainDocument
 {
 	private int lengthLimit;
 	private final TextAreaLimitType textAreaLimitType;
+	private final boolean allowNegative;
 
-	public JTextAreaLimit(int lengthLimit, TextAreaLimitType textAreaLimitType)
+	public JTextAreaLimit(int lengthLimit, TextAreaLimitType textAreaLimitType, boolean allowNegative)
 	{
 		super();
 		this.lengthLimit = lengthLimit;
 		this.textAreaLimitType = textAreaLimitType;
+		this.allowNegative = allowNegative;
 	}
 
 	public JTextAreaLimit()
 	{
-		this(8, HEXADECIMAL);
+		this(8, HEXADECIMAL, false);
 	}
 
 	public void insertString(int offset, String input, AttributeSet attributeSet) throws BadLocationException
@@ -38,6 +40,12 @@ public class JTextAreaLimit extends PlainDocument
 
 	private boolean isAccepted(String input)
 	{
+		val minusPrefix = "-";
+		if (allowNegative && input.startsWith(minusPrefix))
+		{
+			input = input.substring(minusPrefix.length());
+		}
+
 		switch (textAreaLimitType)
 		{
 			case HEXADECIMAL:
@@ -53,11 +61,11 @@ public class JTextAreaLimit extends PlainDocument
 
 	private static boolean isNumeric(String input)
 	{
-		return input.matches("[0-9]+");
+		return input.isEmpty() || input.matches("[0-9]+");
 	}
 
 	public static boolean isHexadecimal(String input)
 	{
-		return input.matches("[0-9A-F]+");
+		return input.isEmpty() || input.matches("[0-9A-F]+");
 	}
 }
