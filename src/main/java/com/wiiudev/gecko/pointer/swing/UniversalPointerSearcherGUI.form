@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="646" height="698"/>
+      <xy x="20" y="20" width="646" height="702"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -296,22 +296,12 @@
                       <toolTipText value="The maximum amount of memory to use for buffering memory dump contents (adjust for users with low RAM)"/>
                     </properties>
                   </component>
-                  <component id="df4e7" class="javax.swing.JLabel">
+                  <component id="df4e7" class="javax.swing.JLabel" binding="maximumPointerOffsetLabel">
                     <constraints>
                       <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="Maximum Offset:"/>
-                    </properties>
-                  </component>
-                  <component id="1fc8a" class="javax.swing.JTextField" binding="maximumPointerOffsetField">
-                    <constraints>
-                      <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                    </constraints>
-                    <properties>
-                      <toolTipText value="The maximum pointer offset for each pointer (in hexadecimal)"/>
                     </properties>
                   </component>
                   <component id="a6b9a" class="javax.swing.JCheckBox" binding="allowNegativeOffsetsCheckBox" default-binding="true">
@@ -639,6 +629,44 @@
                       <toolTipText value="The amount of threads to use for the pointer search"/>
                     </properties>
                   </component>
+                  <grid id="e0463" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="1fc8a" class="javax.swing.JTextField" binding="maximumPointerOffsetField">
+                        <constraints>
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <toolTipText value="The maximum pointer offset for each pointer (in hexadecimal)"/>
+                        </properties>
+                      </component>
+                      <component id="9acbd" class="javax.swing.JTextField" binding="minimumPointerOffsetField">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <toolTipText value="The minimum pointer offset for each pointer (in hexadecimal)"/>
+                        </properties>
+                      </component>
+                      <component id="8eb32" class="javax.swing.JLabel" binding="maximumPointerOffsetDelimiterLabel">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="-"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
                 </children>
               </grid>
               <grid id="101f" binding="aboutTab" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

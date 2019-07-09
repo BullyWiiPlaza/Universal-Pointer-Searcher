@@ -13,6 +13,8 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
+	// TODO Weiß jetzt nicht obs einfach ist das zu fixen aber derzeit kann man als Starting Address und Target Address
+	//  beim Hinzufügen eines Dumps keine Zahlen die größer als 32-bit sind eingeben sofern es sich nicht um einen Modul Dump handelt
 	// TODO Add label for amount of modules found
 	// TODO Switch memory dumps pointer search edit file dialog bugged
 	// TODO Save/Load pointer search configuration

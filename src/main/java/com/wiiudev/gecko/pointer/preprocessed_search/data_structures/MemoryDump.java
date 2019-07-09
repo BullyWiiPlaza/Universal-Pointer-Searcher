@@ -91,6 +91,10 @@ public class MemoryDump
 	@Setter
 	private boolean isAddedAsFolder;
 
+	@Getter
+	@Setter
+	private List<String> fileExtensions;
+
 	public MemoryDump(String memoryDumpFilePath,
 	                  Long startingAddress,
 	                  Long targetAddress,

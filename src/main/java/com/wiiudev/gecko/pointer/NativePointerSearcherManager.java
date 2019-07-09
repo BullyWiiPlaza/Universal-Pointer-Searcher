@@ -1,7 +1,7 @@
 package com.wiiudev.gecko.pointer;
 
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
-import com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport;
+import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -18,11 +18,15 @@ import java.util.HashSet;
 import java.util.List;
 
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer.parseMemoryPointer;
+import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.OffsetPrintingSetting.SIGNED;
+import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.MEMORY_DUMP;
+import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.MEMORY_DUMP_EXTENSION;
 import static java.io.File.separator;
 import static java.lang.Integer.toHexString;
 import static java.lang.Long.toHexString;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.*;
+import static java.lang.Thread.sleep;
 import static java.nio.ByteOrder.BIG_ENDIAN;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.file.Files.*;
@@ -59,18 +63,18 @@ public class NativePointerSearcherManager
 	private static final String COMMAND_LINE_STARTING_SYMBOL = IS_OS_WINDOWS ? ">" : "$ ";
 	private static final boolean ELEVATE_PROCESS_PRIORITY = true;
 
-	private static Path executableFilePath;
+	private static volatile Path executableFilePath;
 
 	private List<MemoryDump> memoryDumps;
-
-	@Setter
-	private boolean allowNegativeOffsets;
 
 	@Setter
 	private boolean excludeCycles;
 
 	@Setter
-	private long maximumPointerOffset;
+	private long fromPointerOffset;
+
+	@Setter
+	private long toPointerOffset;
 
 	@Setter
 	private long threadCount;
@@ -151,6 +155,11 @@ public class NativePointerSearcherManager
 
 	public NativePointerSearcherOutput call() throws Exception
 	{
+		while (executableFilePath == null)
+		{
+			sleep(10);
+		}
+
 		val commandList = buildCommandList(executableFilePath);
 		val processBuilder = new ProcessBuilder(commandList);
 		commandList.remove(executableFilePath.toString());
@@ -285,10 +294,9 @@ public class NativePointerSearcherManager
 
 		command.add("--thread-count");
 		command.add(threadCount + "");
-		command.add("--maximum-pointer-offset");
-		command.add(toHexString(maximumPointerOffset).toUpperCase());
-		command.add("--allow-negative-offsets");
-		command.add(booleanToIntegerString(allowNegativeOffsets));
+		command.add("--pointer-offset-range");
+		command.add(toHexString(fromPointerOffset).toUpperCase()
+				+ "-" + toHexString(toPointerOffset).toUpperCase());
 		command.add("--exclude-cycles");
 		command.add(booleanToIntegerString(excludeCycles));
 		command.add("--minimum-pointer-depth");
@@ -313,9 +321,7 @@ public class NativePointerSearcherManager
 			val memoryDumpFilePath = memoryDump.getFilePath().toAbsolutePath();
 			command.add("--file-path");
 			command.add(memoryDumpFilePath.toString());
-			command.add("--file-extensions");
-			command.add("." + FileTypeImport.MEMORY_DUMP.getExtension()
-					+ ",." + FileTypeImport.MEMORY_DUMP_EXTENSION);
+			addFileExtensionsCommand(command, memoryDump);
 			command.add("--starting-address");
 			val startingAddress = memoryDump.getStartingAddress();
 			command.add(toHexString(startingAddress).toUpperCase());
@@ -346,6 +352,44 @@ public class NativePointerSearcherManager
 		}
 
 		return command;
+	}
+
+	private void addFileExtensionsCommand(List<String> command, MemoryDump memoryDump)
+	{
+		command.add("--file-extensions");
+		val fileExtensions = memoryDump.getFileExtensions();
+		if (fileExtensions == null)
+		{
+			val defaultFileExtensions = new ArrayList<String>();
+			defaultFileExtensions.add(MEMORY_DUMP.getExtension());
+			defaultFileExtensions.add(MEMORY_DUMP_EXTENSION);
+			val fileExtensionsCommand = buildFileExtensionsCommand(defaultFileExtensions);
+			command.add(fileExtensionsCommand);
+		} else
+		{
+			val fileExtensionsCommand = buildFileExtensionsCommand(fileExtensions);
+			command.add(fileExtensionsCommand);
+		}
+	}
+
+	private String buildFileExtensionsCommand(List<String> fileExtensions)
+	{
+		val stringBuilder = new StringBuilder();
+		var fileExtensionsIndex = 0;
+		for (val fileExtension : fileExtensions)
+		{
+			stringBuilder.append(".");
+			stringBuilder.append(fileExtension);
+
+			if (fileExtensionsIndex != fileExtensions.size() - 1)
+			{
+				stringBuilder.append(",");
+			}
+
+			fileExtensionsIndex++;
+		}
+
+		return stringBuilder.toString();
 	}
 
 	private String toCommaSeparated(List<Long> list)
@@ -447,9 +491,43 @@ public class NativePointerSearcherManager
 		throw new IllegalStateException("Illegal byte order");
 	}
 
+	public static List<MemoryPointer> parseMemoryPointersFromOutput(String processOutput)
+	{
+		val lines = processOutput.split(lineSeparator());
+		val memoryPointers = new ArrayList<MemoryPointer>();
+		for (val line : lines)
+		{
+			try
+			{
+				val memoryPointer = parseMemoryPointer(line);
+				memoryPointers.add(memoryPointer);
+			} catch (Exception ignored)
+			{
+
+			}
+		}
+		return memoryPointers;
+	}
+
+	public static List<MemoryPointer> findPointers(NativePointerSearcherManager nativePointerSearcherManager, int addressSize) throws Exception
+	{
+		val nativePointerSearcherOutput = nativePointerSearcherManager.call();
+		val processOutput = nativePointerSearcherOutput.getProcessOutput();
+		List<MemoryPointer> memoryPointers = parseMemoryPointersFromOutput(processOutput);
+		System.out.println(MemoryPointer.toString(memoryPointers, addressSize, SIGNED));
+		System.out.println("A total of " + memoryPointers.size() + " memory pointers found");
+		return memoryPointers;
+	}
+
 	public void cancel()
 	{
 		isCanceled = true;
 		process.destroyForcibly();
+	}
+
+	public void setPointerOffsetRange(int fromOffset, int toOffset)
+	{
+		this.fromPointerOffset = fromOffset;
+		this.toPointerOffset = toOffset;
 	}
 }

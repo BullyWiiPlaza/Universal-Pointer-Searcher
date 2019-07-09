@@ -86,6 +86,10 @@ public class MemoryPointerSearcher
 
 	@Getter
 	@Setter
+	private long minimumPointerOffset = 0x0;
+
+	@Getter
+	@Setter
 	private long maximumPointerOffset = 0x400;
 
 	@Getter
