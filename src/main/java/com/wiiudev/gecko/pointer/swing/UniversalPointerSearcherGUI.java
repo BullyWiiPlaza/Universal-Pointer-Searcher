@@ -19,7 +19,10 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteOrder;
@@ -36,6 +39,7 @@ import static com.wiiudev.gecko.pointer.SingleMemoryDumpPointersFinder.toOutputS
 import static com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher.MINIMUM_POINTER_SEARCH_DEPTH_VALUE;
 import static com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher.getSGenitive;
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.OffsetPrintingSetting.SIGNED;
+import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.OffsetPrintingSetting.UNSIGNED;
 import static com.wiiudev.gecko.pointer.swing.PersistentSetting.*;
 import static com.wiiudev.gecko.pointer.swing.utilities.DefaultContextMenu.addDefaultContextMenu;
 import static com.wiiudev.gecko.pointer.swing.utilities.FileSizePrinting.readableFileSize;
@@ -132,6 +136,11 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JLabel maximumPointerOffsetDelimiterLabel;
 	private JLabel processorsCountLabel;
 	private JButton optimalThreadCountButton;
+	private JPanel baseOffsetRangePanel;
+	private JLabel threadCountLabel;
+	private JLabel pointerAddressAlignmentLabel;
+	private JLabel lastPointerOffsetsLabel;
+	private JLabel maximumPointersCountLabel;
 	private PersistentSettingsManager persistentSettingsManager;
 	private MemoryDumpTableManager memoryDumpTableManager;
 	private Path lastAddedFilePath;
@@ -894,14 +903,16 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private void setOffsetPrintingSetting()
 	{
-		val selected = allowNegativeOffsetsCheckBox.isSelected();
+		val minimumPointerOffset = parseLongSafely(minimumPointerOffsetField.getText());
+		val allowNegativeOffsets = allowNegativeOffsetsCheckBox.isSelected();
+		val isNegativeValuesExist = minimumPointerOffset < 0 || allowNegativeOffsets;
 
-		if (!selected)
+		if (!isNegativeValuesExist)
 		{
-			offsetPrintingSettingSelection.setSelectedItem(SIGNED);
+			offsetPrintingSettingSelection.setSelectedItem(UNSIGNED);
 		}
 
-		offsetPrintingSettingSelection.setEnabled(selected);
+		offsetPrintingSettingSelection.setEnabled(isNegativeValuesExist);
 	}
 
 	private void populateOffsetPrintingSettings()
@@ -958,15 +969,23 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val memoryDumps = memoryPointerSearcher.getMemoryDumps();
 		val memoryDumpsAdded = memoryDumps.size() > 0;
 
+		val addressSize = getSelectedItem(addressSizeSelection);
+		if (addressSize == null)
+		{
+			return;
+		}
+
+		val minimumPointerOffset = parseLongSafely(minimumPointerOffsetField.getText());
+		val minimumPointerOffsetValid = minimumPointerOffset % addressSize == 0;
 		val maximumPointerOffset = parseLongSafely(maximumPointerOffsetField.getText());
-		// TODO Wrong check?
-		val maximumPointerOffsetValid = maximumPointerOffset % 4 == 0;
+		val maximumPointerOffsetValid = maximumPointerOffset % addressSize == 0;
 
 		val pointerSearchDepth = getPointerSearchDepth();
 		val lastPointerOffsetBackgroundColor = lastPointerOffsetsField.getBackground();
 		val isSearchButtonAvailable = !isPointerDepthInvalid &&
 				pointerSearchDepth >= MINIMUM_POINTER_SEARCH_DEPTH_VALUE
-				&& memoryDumpsAdded && maximumPointerOffsetValid
+				&& memoryDumpsAdded && maximumPointerOffsetValid &&
+				(minimumPointerOffsetField.isVisible() && minimumPointerOffsetValid || !minimumPointerOffsetField.isVisible())
 				&& lastPointerOffsetBackgroundColor.equals(GREEN);
 		searchPointersButton.setEnabled(isSearchButtonAvailable && !isSearching);
 		cancelSearchButton.setVisible(isSearching);
@@ -975,23 +994,36 @@ public class UniversalPointerSearcherGUI extends JFrame
 		useNativePointerSearcherCheckBox.setEnabled(!isSearching);
 
 		minimumPointerSearchDepthField.setEnabled(!isSearching);
-		maximumPointerSearchDepthField.setEnabled(!isSearching && usingNativePointerSearcher);
+		maximumPointerSearchDepthField.setEnabled(!isSearching);
+		maximumPointerSearchDepthField.setVisible(usingNativePointerSearcher);
 		pointerValueAlignmentField.setEnabled(!isSearching);
-		threadCountField.setEnabled(!isSearching && usingNativePointerSearcher);
-		optimalThreadCountButton.setEnabled(!isSearching && usingNativePointerSearcher);
-		pointerAddressAlignmentField.setEnabled(!isSearching && usingNativePointerSearcher);
+		threadCountField.setEnabled(!isSearching);
+		threadCountLabel.setVisible(usingNativePointerSearcher);
+		threadCountField.setVisible(usingNativePointerSearcher);
+		processorsCountLabel.setVisible(usingNativePointerSearcher);
+		optimalThreadCountButton.setEnabled(!isSearching);
+		optimalThreadCountButton.setVisible(usingNativePointerSearcher);
+		pointerAddressAlignmentField.setEnabled(!isSearching);
+		pointerAddressAlignmentLabel.setVisible(usingNativePointerSearcher);
+		pointerAddressAlignmentField.setVisible(usingNativePointerSearcher);
 		maximumMemoryChunkSizeField.setEnabled(!isSearching);
-		maximumPointersCountField.setEnabled(!isSearching && usingNativePointerSearcher);
+		maximumPointersCountField.setEnabled(!isSearching);
+		maximumPointersCountLabel.setVisible(usingNativePointerSearcher);
+		maximumPointersCountField.setVisible(usingNativePointerSearcher);
 		minimumPointerOffsetField.setEnabled(!isSearching);
 		maximumPointerOffsetField.setEnabled(!isSearching);
 		addressSizeSelection.setEnabled(!isSearching);
 		minimumPointerAddressField.setEnabled(!isSearching);
 		allowNegativeOffsetsCheckBox.setEnabled(!isSearching);
+		allowNegativeOffsetsCheckBox.setVisible(!usingNativePointerSearcher);
 		singleMemoryDumpMethodCheckBox.setEnabled(!isSearching);
 		generatePointerMapsCheckBox.setEnabled(!isSearching);
-		readPointerMapsCheckBox.setEnabled(!isSearching && usingNativePointerSearcher);
+		readPointerMapsCheckBox.setEnabled(!isSearching);
+		readPointerMapsCheckBox.setVisible(usingNativePointerSearcher);
 		writePointersToFileSystemCheckBox.setEnabled(!isSearching);
-		lastPointerOffsetsField.setEnabled(!isSearching && usingNativePointerSearcher);
+		lastPointerOffsetsField.setEnabled(!isSearching);
+		lastPointerOffsetsLabel.setVisible(usingNativePointerSearcher);
+		lastPointerOffsetsField.setVisible(usingNativePointerSearcher);
 		pointerResultsPageSizeField.setEnabled(!isSearching);
 		sortingSelection.setEnabled(!isSearching &&
 				(singleMemoryDumpPointers == null || singleMemoryDumpPointers.isEmpty()));
@@ -1000,7 +1032,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 		resetMemoryDumpsButton.setEnabled(memoryDumpsAdded && !isSearching);
 		editMemoryDumpButton.setEnabled(memoryDumpTableManager.isMemoryDumpSelected() && !isSearching);
 		removeMemoryDumpButton.setEnabled(memoryDumpTableManager.isMemoryDumpSelected() && !isSearching);
-		baseOffsetRangeSelection.setEnabled(!isSearching && !usingNativePointerSearcher);
+		baseOffsetRangeSelection.setEnabled(!isSearching);
+		baseOffsetRangePanel.setVisible(!usingNativePointerSearcher);
 		val isBaseOffsetRangeEnabled = baseOffsetRangeSelection.isSelected()
 				&& baseOffsetRangeSelection.isEnabled();
 		startingBaseAddressField.setEnabled(isBaseOffsetRangeEnabled);
