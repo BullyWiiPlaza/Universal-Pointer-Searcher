@@ -6,10 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import lombok.var;
+import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.ByteOrder;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
@@ -29,6 +28,7 @@ import static java.lang.System.*;
 import static java.lang.Thread.sleep;
 import static java.nio.ByteOrder.BIG_ENDIAN;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.*;
 import static java.util.Arrays.asList;
 import static org.apache.commons.io.IOUtils.toByteArray;
@@ -153,6 +153,8 @@ public class NativePointerSearcherManager
 		memoryDumps.add(memoryDump);
 	}
 
+	private static final boolean USE_FILE_OUTPUT = false;
+
 	public NativePointerSearcherOutput call() throws Exception
 	{
 		while (executableFilePath == null)
@@ -165,19 +167,37 @@ public class NativePointerSearcherManager
 		commandList.remove(executableFilePath.toString());
 		var executedCommand = toCommandString(commandList);
 		processBuilder.redirectErrorStream(true);
-		process = processBuilder.start();
-		executedCommand = considerReplacingTemporaryDirectoryFilePath(executedCommand);
-		val actualProcessOutput = readFromProcess(process);
-		val processOutput = COMMAND_LINE_STARTING_SYMBOL
-				+ executedCommand + "\n\n" + actualProcessOutput;
-		val exitCode = process.waitFor();
-		if (exitCode != 0)
-		{
-			val exceptionMessage = getExceptionMessage(exitCode);
-			return new NativePointerSearcherOutput(exceptionMessage, processOutput);
-		}
+		val pointerSearcherOutput = USE_FILE_OUTPUT ? createTempFile("prefix", "suffix") : null;
 
-		return new NativePointerSearcherOutput(null, processOutput);
+		try
+		{
+			if (USE_FILE_OUTPUT)
+			{
+				processBuilder.redirectOutput(pointerSearcherOutput.toFile());
+			}
+
+			process = processBuilder.start();
+			val exitCode = process.waitFor();
+
+			executedCommand = considerReplacingTemporaryDirectoryFilePath(executedCommand);
+			val actualProcessOutput = USE_FILE_OUTPUT ?
+					new String(readAllBytes(pointerSearcherOutput)) : readFromProcess(process);
+			val processOutput = COMMAND_LINE_STARTING_SYMBOL
+					+ executedCommand + "\n\n" + actualProcessOutput;
+			if (exitCode != 0)
+			{
+				val exceptionMessage = getExceptionMessage(exitCode);
+				return new NativePointerSearcherOutput(exceptionMessage, processOutput);
+			}
+
+			return new NativePointerSearcherOutput(null, processOutput);
+		} finally
+		{
+			if (pointerSearcherOutput != null)
+			{
+				delete(pointerSearcherOutput);
+			}
+		}
 	}
 
 	public static String compressProcessOutput(String processOutput)
@@ -473,20 +493,8 @@ public class NativePointerSearcherManager
 
 	public static String readFromProcess(Process process) throws IOException
 	{
-		StringBuilder stringBuilder;
-		val lineSeparator = lineSeparator();
-		try (val bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream())))
-		{
-			stringBuilder = new StringBuilder();
-			String line;
-			while ((line = bufferedReader.readLine()) != null)
-			{
-				stringBuilder.append(line);
-				stringBuilder.append(lineSeparator);
-			}
-		}
-
-		return stringBuilder.toString().trim();
+		val inputStream = process.getInputStream();
+		return IOUtils.toString(inputStream, UTF_8).trim();
 	}
 
 	public static String byteOrderToString(ByteOrder byteOrder)

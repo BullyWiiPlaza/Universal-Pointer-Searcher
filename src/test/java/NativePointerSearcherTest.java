@@ -76,6 +76,57 @@ public class NativePointerSearcherTest
 	}
 
 	@Test
+	public void testPSVitaPointerSearch() throws Exception
+	{
+		val nativePointerSearcherManager = new NativePointerSearcherManager();
+		val availableProcessorsCount = getAvailableProcessorsCount();
+		nativePointerSearcherManager.setThreadCount(availableProcessorsCount * 2);
+		nativePointerSearcherManager.setExcludeCycles(true);
+		nativePointerSearcherManager.setMinimumPointerDepth(1);
+		nativePointerSearcherManager.setMaximumPointerDepth(3);
+		nativePointerSearcherManager.setMaximumMemoryDumpChunkSize(100_000_000);
+		nativePointerSearcherManager.setSaveAdditionalMemoryDumpRAM(false);
+		nativePointerSearcherManager.setPotentialPointerOffsetsCountPerAddressPrediction(40);
+		val maximumPointersCount = 100_000;
+		nativePointerSearcherManager.setMaximumPointersCount(maximumPointersCount);
+		nativePointerSearcherManager.setPointerOffsetRange(-400, 400);
+		nativePointerSearcherManager.setLastPointerOffsets(emptyList());
+		val memoryDumpsBaseDirectory = "D:\\Programs\\Source Codes\\Java\\IntelliJ\\Universal-Pointer-Searcher\\dumps\\Epic Mickey (PS Vita)";
+		val firstMemoryDump = new MemoryDump(memoryDumpsBaseDirectory + "\\PCSF00309_0x81000000_0x87000000_0.bin",
+				0x81000000L, 0x86BA4A9CL, LITTLE_ENDIAN);
+		val addressSize = 4;
+		firstMemoryDump.setAddressSize(addressSize);
+		firstMemoryDump.setAddressAlignment(4);
+		val valueAlignment = 4;
+		firstMemoryDump.setValueAlignment(valueAlignment);
+		firstMemoryDump.setMinimumPointerAddress(0x81000000L);
+		firstMemoryDump.setMaximumPointerAddress(0x86FFFFFCL);
+		firstMemoryDump.setFileExtensions(asList("bin", "dmp"));
+		firstMemoryDump.setGeneratePointerMap(true);
+		firstMemoryDump.setReadPointerMap(false);
+		nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
+
+		val secondMemoryDump = new MemoryDump(memoryDumpsBaseDirectory + "\\PCSF00309_0x81000000_0x87000000_1.bin",
+				0x81000000L, 0x86BA479CL, LITTLE_ENDIAN);
+		secondMemoryDump.setAddressSize(addressSize);
+		secondMemoryDump.setAddressAlignment(4);
+		secondMemoryDump.setValueAlignment(valueAlignment);
+		secondMemoryDump.setMinimumPointerAddress(0x81000000L);
+		secondMemoryDump.setMaximumPointerAddress(0x86FFFFFCL);
+		secondMemoryDump.setFileExtensions(asList("bin", "dmp"));
+		secondMemoryDump.setGeneratePointerMap(true);
+		secondMemoryDump.setReadPointerMap(false);
+		nativePointerSearcherManager.addMemoryDump(secondMemoryDump);
+
+		val firstMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
+
+		nativePointerSearcherManager.setPointerOffsetRange(0, 400);
+		val secondMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
+		assertFalse(firstMemoryDumpPointers.isEmpty());
+		assertTrue(firstMemoryDumpPointers.size() >= secondMemoryDumpPointers.size());
+	}
+
+	@Test
 	public void testWindowsPointerSearch() throws Exception
 	{
 		val nativePointerSearcherManager = new NativePointerSearcherManager();
