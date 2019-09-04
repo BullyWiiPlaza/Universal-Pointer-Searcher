@@ -539,7 +539,7 @@ public class NativePointerSearcherManager
 		if (printResults)
 		{
 			System.out.println(MemoryPointer.toString(memoryPointers, addressSize, SIGNED));
-			System.out.println("A total of " + memoryPointers.size() + " memory pointers found");
+			System.out.println("A total of " + memoryPointers.size() + " memory pointer(s) found");
 		}
 
 		return memoryPointers;

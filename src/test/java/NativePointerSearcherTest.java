@@ -3,6 +3,7 @@ import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
 import lombok.AllArgsConstructor;
 import lombok.val;
 import lombok.var;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class NativePointerSearcherTest
 		runClasses(parallelComputer, classes);
 	} */
 
-	@Test
+	@Ignore
 	public void testOptimalThreadCount() throws Exception
 	{
 		val availableProcessorsCount = getAvailableProcessorsCount();
@@ -119,11 +120,19 @@ public class NativePointerSearcherTest
 		nativePointerSearcherManager.addMemoryDump(secondMemoryDump);
 
 		val firstMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
-
-		nativePointerSearcherManager.setPointerOffsetRange(0, 400);
-		val secondMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
 		assertFalse(firstMemoryDumpPointers.isEmpty());
+
+		/* nativePointerSearcherManager.setPointerOffsetRange(0, 0x400);
+		val secondMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
 		assertTrue(firstMemoryDumpPointers.size() >= secondMemoryDumpPointers.size());
+
+		nativePointerSearcherManager.setPointerOffsetRange(0, 0x2000);
+		val thirdMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
+		assertTrue(thirdMemoryDumpPointers.size() >= secondMemoryDumpPointers.size());
+
+		nativePointerSearcherManager.setPointerOffsetRange(0, 0x4000);
+		val forthMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
+		assertTrue(forthMemoryDumpPointers.size() >= thirdMemoryDumpPointers.size()); */
 	}
 
 	@Test
