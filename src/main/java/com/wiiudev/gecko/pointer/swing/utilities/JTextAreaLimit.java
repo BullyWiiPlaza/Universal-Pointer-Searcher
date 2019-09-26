@@ -24,7 +24,7 @@ public class JTextAreaLimit extends PlainDocument
 
 	public JTextAreaLimit()
 	{
-		this(8, HEXADECIMAL, false);
+		this(Long.BYTES * 2, HEXADECIMAL, false);
 	}
 
 	public void insertString(int offset, String input, AttributeSet attributeSet) throws BadLocationException

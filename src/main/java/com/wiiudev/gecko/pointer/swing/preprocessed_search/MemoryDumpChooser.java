@@ -33,6 +33,14 @@ class MemoryDumpChooser extends JFileChooser
 		setFileSelectionMode(fileSelectionMode);
 		setCurrentDirectory(this);
 
+		if (selectFolders)
+		{
+			setDialogTitle("Add Folder");
+		} else
+		{
+			setDialogTitle("Add File");
+		}
+
 		if (!selectFolders)
 		{
 			val memoryDumpsFilter = new FileNameExtensionFilter("Memory Dumps", MEMORY_DUMP.getExtension(), MEMORY_DUMP_EXTENSION);

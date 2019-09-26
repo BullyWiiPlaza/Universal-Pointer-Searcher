@@ -74,13 +74,13 @@ import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 public class UniversalPointerSearcherGUI extends JFrame
 {
 	public static final String APPLICATION_NAME = "Universal Pointer Searcher";
-	private static final String APPLICATION_VERSION = "v3.7";
+	private static final String APPLICATION_VERSION = "v3.8";
 	private static final String STORED_POINTERS_FILE_NAME = "Pointers.txt";
 
 	// Invalid JOptionPane option as default for recognition
 	private static final int SINGLE_MEMORY_DUMP_METHOD_DEFAULT_SELECTED_ANSWER = -2;
 	private static final int DEFAULT_POINTER_RESULTS_PAGE_SIZE = 10_000;
-	private static final int DEFAULT_RESULTS_PAGE_SIZE = 1;
+	private static final long DEFAULT_RESULTS_PAGE_SIZE = 1;
 
 	private JPanel rootPanel;
 
@@ -158,7 +158,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private List<List<MemoryPointer>> singleMemoryDumpPointers;
 
 	private static UniversalPointerSearcherGUI universalPointerSearcherGUI;
-	private int pagesCount;
+	private long pagesCount;
 	private NativePointerSearcherOutput nativePointerSearcherOutput;
 	private NativePointerSearcherManager nativePointerSearcher;
 
@@ -205,8 +205,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 		innerPointerSearchProgressBar.setVisible(false);
 		configureAddedMemoryDumpsTable();
 		baseOffsetRangeSelection.addItemListener(itemEvent -> setButtonAvailability());
-		startingBaseAddressField.setDocument(new JTextAreaLimit(8, HEXADECIMAL, false));
-		endBaseAddressField.setDocument(new JTextAreaLimit(8, HEXADECIMAL, false));
+		startingBaseAddressField.setDocument(new JTextAreaLimit());
+		endBaseAddressField.setDocument(new JTextAreaLimit());
 		initializeIgnoredMemoryRangesTableManager();
 		addDefaultContextMenu(foundPointersOutputArea);
 		setButtonAvailability();
@@ -455,7 +455,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private void updatePointerResultsPage()
 	{
 		val currentPageString = resultsPageSpinner.getValue().toString();
-		var currentPageNumber = Integer.parseInt(currentPageString);
+		var currentPageNumber = (long) Double.parseDouble(currentPageString);
 		currentPageNumber = min(currentPageNumber, pagesCount);
 		val memoryPointerList = memoryPointerSearcher.getMemoryPointerList();
 
@@ -469,7 +469,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			var toIndex = currentPageNumber * memoryPointersPageSize - 1;
 			toIndex = min(toIndex, memoryPointers.size());
 			val actualToIndex = toIndex == memoryPointers.size() ? toIndex : toIndex + 1;
-			val memoryPointersPage = memoryPointers.subList(fromIndex, actualToIndex);
+			val memoryPointersPage = memoryPointers.subList((int) fromIndex, (int) actualToIndex);
 			val offsetPrintingSetting = getSelectedItem(offsetPrintingSettingSelection);
 			val addressSize = getSelectedItem(addressSizeSelection);
 			val pointersText = memoryPointersToString(offsetPrintingSetting, addressSize, memoryPointersPage);
@@ -486,7 +486,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		}
 	}
 
-	private int getPointerResultsPageSize()
+	private long getPointerResultsPageSize()
 	{
 		val resultsPageSizeFieldText = pointerResultsPageSizeField.getText();
 
@@ -495,7 +495,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			return 0;
 		}
 
-		return Integer.parseInt(resultsPageSizeFieldText);
+		return Long.parseUnsignedLong(resultsPageSizeFieldText);
 	}
 
 	private void addSingleMemoryDumpMethodButtonListener()
@@ -826,12 +826,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 		pointerValueAlignmentField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, false));
 		pointerAddressAlignmentField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, false));
 		threadCountField.setDocument(new JTextAreaLimit(addressSize, NUMERIC, false));
-		maximumPointersCountField.setDocument(new JTextAreaLimit(addressSize, NUMERIC, false));
+		maximumPointersCountField.setDocument(new JTextAreaLimit(BYTES * 2, NUMERIC, false));
 		maximumMemoryChunkSizeField.setDocument(new JTextAreaLimit((Long.MAX_VALUE + "").length(), NUMERIC, false));
 		minimumPointerOffsetField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, true));
 		maximumPointerOffsetField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, true));
-		minimumPointerAddressField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, false));
-		pointerResultsPageSizeField.setDocument(new JTextAreaLimit(addressSize, NUMERIC, false));
+		minimumPointerAddressField.setDocument(new JTextAreaLimit());
+		pointerResultsPageSizeField.setDocument(new JTextAreaLimit(BYTES * 2, NUMERIC, false));
 	}
 
 	private void configurePointerSearchDepthField()
@@ -1398,7 +1398,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			pointerSearchStatisticsLabel.setText("");
 			foundPointersOutputArea.setText("");
 			pageResultsLabel.setText("");
-			resultsPageSpinner.setValue(DEFAULT_RESULTS_PAGE_SIZE);
+			resultsPageSpinner.setValue((double) DEFAULT_RESULTS_PAGE_SIZE);
 			if (!useNativePointerSearcher)
 			{
 				searchPointersButton.setText("Reading first memory dump...");
@@ -1574,7 +1574,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val maximumPointerDepth = parseLong(maximumPointerSearchDepthField.getText());
 		nativePointerSearcher.setMaximumPointerDepth(maximumPointerDepth);
 
-		val maximumPointersCount = parseLong(maximumPointersCountField.getText(), 10);
+		val maximumPointersCount = parseUnsignedLong(maximumPointersCountField.getText(), 10);
 		nativePointerSearcher.setMaximumPointersCount(maximumPointersCount);
 
 		nativePointerSearcher.setPotentialPointerOffsetsCountPerAddressPrediction(10);
@@ -1751,9 +1751,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private void updateResultsCountSpinnerModel()
 	{
-		val spinnerNumberModel = new SpinnerNumberModel(1, 1, pagesCount, 1);
+		val spinnerNumberModel = new SpinnerNumberModel(1d, 1d, (double) pagesCount, 1d);
 		resultsPageSpinner.setModel(spinnerNumberModel);
-		resultsPageSpinner.setValue(DEFAULT_RESULTS_PAGE_SIZE);
+		resultsPageSpinner.setValue((double) DEFAULT_RESULTS_PAGE_SIZE);
 	}
 
 	private String memoryPointersToString(OffsetPrintingSetting offsetPrintingSetting,

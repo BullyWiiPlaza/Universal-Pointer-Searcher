@@ -1,6 +1,7 @@
 package com.wiiudev.gecko.pointer.swing.preprocessed_search;
 
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
+import com.wiiudev.gecko.pointer.swing.utilities.JTextAreaLimit;
 import com.wiiudev.gecko.pointer.swing.utilities.MemoryDumpsByteOrder;
 import lombok.Getter;
 import lombok.val;
@@ -34,11 +35,8 @@ import static java.awt.Color.GREEN;
 import static java.awt.Color.RED;
 import static java.awt.Desktop.getDesktop;
 import static java.io.File.separator;
-import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Integer.MIN_VALUE;
 import static java.lang.Long.parseUnsignedLong;
 import static java.lang.Long.toHexString;
-import static java.lang.Math.abs;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
 import static javax.swing.JOptionPane.*;
@@ -51,7 +49,7 @@ public class MemoryDumpDialog extends JDialog
 	private static final String DUMMY_LABEL_TEXT = "dummy";
 
 	private static final String STARTING_ADDRESS_CHECK_OK = "Starting address check: OK!";
-	private static final String STARTING_ADDRESS_INVALID_INTEGER = "The starting address is not a valid integer";
+	private static final String STARTING_ADDRESS_INVALID_INTEGER = "Failed parsing starting address";
 	private static final String INVALID_FOLDER_MEMORY_DUMPS_STARTING_ADDRESS = "Invalid starting address for at least one of the memory dumps/pointer maps";
 	private static final String FILE_PATH_CHECK_OK = "File path check: OK!";
 	private static final String INVALID_FILE_PATH = "Invalid file path";
@@ -113,8 +111,15 @@ public class MemoryDumpDialog extends JDialog
 		addAddMemoryDumpButtonListener();
 		addByteOrderInformationButtonListener();
 		runComponentAvailabilitySetter();
+		addTextFieldInputRestrictions();
 		considerPopulatingFields();
 		addFileTypeSelectionItems();
+	}
+
+	private void addTextFieldInputRestrictions()
+	{
+		startingAddressField.setDocument(new JTextAreaLimit());
+		targetAddressField.setDocument(new JTextAreaLimit());
 	}
 
 	public boolean isAddModuleDumpsFolderSelected()
@@ -252,7 +257,7 @@ public class MemoryDumpDialog extends JDialog
 	{
 		browseButtonField.addActionListener(actionEvent ->
 		{
-			val shouldParseFolder = parseEntireFolderCheckBox.isSelected();
+			val shouldParseFolder = parseEntireFolderCheckBox.isSelected() || addModuleDumpsFolderCheckBox.isSelected();
 			val fileType = getSelectedItem(fileTypeSelection);
 			val memoryDumpChooser = new MemoryDumpChooser(filePathField, shouldParseFolder, fileType);
 			val approved = memoryDumpChooser.select(this);
@@ -294,8 +299,9 @@ public class MemoryDumpDialog extends JDialog
 				try
 				{
 					val path = Paths.get(filePath);
-					isFilePathValid = (shouldParseEntireFolder || addModuleDumpsFolderCheckBox.isSelected()) ? isDirectory(path) : isRegularFile(path);
-					filePathValidatorText = "The file path is not a " + (shouldParseEntireFolder ? "directory" : "file");
+					val shouldParseFolder = shouldParseEntireFolder || addModuleDumpsFolderCheckBox.isSelected();
+					isFilePathValid = shouldParseFolder ? isDirectory(path) : isRegularFile(path);
+					filePathValidatorText = "The file path is not a " + (shouldParseFolder ? "directory" : "file");
 				} catch (InvalidPathException ignored)
 				{
 					filePathValidatorText = INVALID_FILE_PATH;
@@ -346,17 +352,18 @@ public class MemoryDumpDialog extends JDialog
 
 				// Verify the starting address
 				var startingAddress = -1L;
+				boolean isStartingAddressFieldValid = true;
+				String parsingExceptionMessage = null;
 
 				try
 				{
 					startingAddress = parseUnsignedLong(startingAddressField.getText(), 16);
-				} catch (NumberFormatException ignored)
+				} catch (NumberFormatException exception)
 				{
-
+					parsingExceptionMessage = exception.getMessage();
+					isStartingAddressFieldValid = false;
 				}
 
-				val maximumInteger = getMaximumInteger();
-				val isStartingAddressFieldValid = startingAddress >= 0 && startingAddress <= maximumInteger;
 				var areAllMemoryDumpsOkay = false;
 				if (shouldParseEntireFolder && finalIsFilePathValid)
 				{
@@ -381,12 +388,14 @@ public class MemoryDumpDialog extends JDialog
 					invokeLater(() -> confirmMemoryDumpButton.setEnabled(finalAreAllMemoryDumpsOkay));
 				}
 
+				val finalIsStartingAddressFieldValid = isStartingAddressFieldValid;
+				val finalParsingExceptionMessage = parsingExceptionMessage;
 				invokeLater(() ->
 				{
-					val background = isStartingAddressFieldValid ? VALID_INPUT_COLOR : INVALID_INPUT_COLOR;
-					setValidationLabel(isStartingAddressFieldValid,
+					val background = finalIsStartingAddressFieldValid ? VALID_INPUT_COLOR : INVALID_INPUT_COLOR;
+					setValidationLabel(finalIsStartingAddressFieldValid,
 							STARTING_ADDRESS_CHECK_OK,
-							STARTING_ADDRESS_INVALID_INTEGER,
+							STARTING_ADDRESS_INVALID_INTEGER + ": " + finalParsingExceptionMessage,
 							startingAddressFieldLabel);
 					startingAddressField.setBackground(background);
 					val isPointerMapSelected = isPointerMapSelected();
@@ -397,8 +406,7 @@ public class MemoryDumpDialog extends JDialog
 				{
 					// Verify the target address
 					val isTargetAddressFieldValid = isTargetAddressFieldValid(filePath, startingAddress, isStartingAddressFieldValid);
-					val isAddingMemoryDumpAllowed = isFilePathValid && isStartingAddressFieldValid
-							&& isTargetAddressFieldValid;
+					val isAddingMemoryDumpAllowed = isFilePathValid && isStartingAddressFieldValid && isTargetAddressFieldValid;
 					invokeLater(() -> confirmMemoryDumpButton.setEnabled(isAddingMemoryDumpAllowed));
 				} else
 				{
@@ -530,11 +538,6 @@ public class MemoryDumpDialog extends JDialog
 		return filePath;
 	}
 
-	private long getMaximumInteger()
-	{
-		return abs((long) MIN_VALUE) + MAX_VALUE;
-	}
-
 	private boolean isTargetAddressFieldValid(String filePath, long startingAddress, boolean isStartingAddressFieldValid)
 	{
 		invokeLater(() ->
@@ -571,9 +574,9 @@ public class MemoryDumpDialog extends JDialog
 		{
 			val targetAddressFieldText = targetAddressField.getText();
 			targetAddress = parseUnsignedLong(targetAddressFieldText, 16);
-		} catch (NumberFormatException ignored)
+		} catch (NumberFormatException exception)
 		{
-			targetAddressValidationFailedText = "Failed parsing target address as integer";
+			targetAddressValidationFailedText = "Failed parsing target address: " + exception.getMessage();
 			isTargetAddressFieldValid = false;
 		}
 
@@ -592,7 +595,7 @@ public class MemoryDumpDialog extends JDialog
 							isTargetAddressFieldValid = true;
 						} else
 						{
-							isTargetAddressFieldValid = targetOffset > 0 && targetOffset <= memoryDumpFileSize;
+							isTargetAddressFieldValid = targetOffset >= 0 && targetOffset <= memoryDumpFileSize;
 						}
 						targetAddressValidationFailedText = "Target address outside of memory dump bounds";
 					} catch (IOException | InvalidPathException exception)
