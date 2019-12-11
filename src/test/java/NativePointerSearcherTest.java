@@ -136,6 +136,56 @@ public class NativePointerSearcherTest
 	}
 
 	@Test
+	public void testNintendoSwitchMonsterJamPointerSearch() throws Exception
+	{
+		val nativePointerSearcherManager = new NativePointerSearcherManager();
+		val availableProcessorsCount = getAvailableProcessorsCount();
+		nativePointerSearcherManager.setThreadCount(availableProcessorsCount * 2);
+		nativePointerSearcherManager.setExcludeCycles(true);
+		nativePointerSearcherManager.setMinimumPointerDepth(1);
+		nativePointerSearcherManager.setMaximumPointerDepth(2);
+		nativePointerSearcherManager.setMaximumMemoryDumpChunkSize(100_000_000);
+		nativePointerSearcherManager.setSaveAdditionalMemoryDumpRAM(false);
+		nativePointerSearcherManager.setPotentialPointerOffsetsCountPerAddressPrediction(40);
+		val maximumPointersCount = 100_000;
+		nativePointerSearcherManager.setMaximumPointersCount(maximumPointersCount);
+		nativePointerSearcherManager.setPointerOffsetRange(0, 500);
+		nativePointerSearcherManager.setLastPointerOffsets(emptyList());
+		val memoryDumpsBaseDirectory = "D:\\Programs\\Source Codes\\Java\\IntelliJ\\Universal-Pointer-Searcher\\dumps\\Monster Jam [Switch]";
+		val firstMemoryDump = new MemoryDump(memoryDumpsBaseDirectory + "\\modules1",
+				0x0L, 0x41614B46F8L, LITTLE_ENDIAN);
+		val addressSize = 8;
+		firstMemoryDump.setAddressSize(addressSize);
+		firstMemoryDump.setAddressAlignment(8);
+		val valueAlignment = 8;
+		firstMemoryDump.setValueAlignment(valueAlignment);
+		firstMemoryDump.setMinimumPointerAddress(0x0);
+		firstMemoryDump.setMaximumPointerAddress(0x7FFFFFFFFFFL);
+		firstMemoryDump.setFileExtensions(asList("bin", "dmp"));
+		firstMemoryDump.setGeneratePointerMap(true);
+		firstMemoryDump.setReadPointerMap(false);
+		nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
+
+		val firstMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
+		assertFalse(firstMemoryDumpPointers.isEmpty());
+		assertTrue(firstMemoryDumpPointers.size() <= maximumPointersCount);
+
+		for (val memoryPointer : firstMemoryDumpPointers)
+		{
+			val offsets = memoryPointer.getOffsets();
+			for (val offset : offsets)
+			{
+				// Assert the value alignment to be respected
+				assertEquals(0, offset % valueAlignment);
+			}
+		}
+
+		nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
+		val secondMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
+		assertEquals(firstMemoryDumpPointers.size(), secondMemoryDumpPointers.size());
+	}
+
+	@Test
 	public void testWindowsPointerSearch() throws Exception
 	{
 		val nativePointerSearcherManager = new NativePointerSearcherManager();
@@ -151,7 +201,7 @@ public class NativePointerSearcherTest
 		nativePointerSearcherManager.setMaximumPointersCount(maximumPointersCount);
 		nativePointerSearcherManager.setPointerOffsetRange(0, 10_000);
 		nativePointerSearcherManager.setLastPointerOffsets(emptyList());
-		val firstMemoryDump = new MemoryDump("D:\\Cpp\\PointerSearcher\\card_ids",
+		val firstMemoryDump = new MemoryDump("D:\\Cpp\\PointerSearcher\\card_ids_1",
 				0x0L, 0x2D574C28020L, LITTLE_ENDIAN);
 		val addressSize = 8;
 		firstMemoryDump.setAddressSize(addressSize);
@@ -163,7 +213,6 @@ public class NativePointerSearcherTest
 		firstMemoryDump.setFileExtensions(asList("bin", "dmp"));
 		firstMemoryDump.setGeneratePointerMap(true);
 		firstMemoryDump.setReadPointerMap(false);
-		nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
 		nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
 
 		val firstMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
@@ -179,6 +228,10 @@ public class NativePointerSearcherTest
 				assertEquals(0, offset % valueAlignment);
 			}
 		}
+
+		nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
+		val secondMemoryDumpPointers = findPointers(nativePointerSearcherManager, addressSize, true);
+		assertEquals(firstMemoryDumpPointers.size(), secondMemoryDumpPointers.size());
 	}
 
 	private int getAvailableProcessorsCount()
@@ -188,7 +241,7 @@ public class NativePointerSearcherTest
 	}
 
 	@Test
-	public void testNintendoSwitchPointerSearch() throws Exception
+	public void testNintendoSwitchSuperSmashPointerSearch() throws Exception
 	{
 		val nativePointerSearcherManager = new NativePointerSearcherManager();
 		val availableProcessorsCount = getAvailableProcessorsCount();
