@@ -7,9 +7,9 @@ import org.bridj.cpp.com.shell.ITaskbarList3;
 
 import java.awt.*;
 
+import static com.sun.jna.Native.getComponentID;
 import static org.apache.commons.lang3.SystemUtils.*;
 import static org.bridj.Pointer.pointerToAddress;
-import static org.bridj.jawt.JAWTUtils.getNativePeerHandle;
 
 public class WindowsTaskBarProgress
 {
@@ -24,8 +24,9 @@ public class WindowsTaskBarProgress
 		if (isSupportedPlatform())
 		{
 			taskBarList3 = COMRuntime.newInstance(ITaskbarList3.class);
-			val nativePeerHandle = getNativePeerHandle(component);
-			Pointer.Releaser release = pointer -> {
+			val nativePeerHandle = getComponentID(component);
+			Pointer.Releaser release = pointer ->
+			{
 			};
 
 			pointer = pointerToAddress(nativePeerHandle, Integer.class, release);
