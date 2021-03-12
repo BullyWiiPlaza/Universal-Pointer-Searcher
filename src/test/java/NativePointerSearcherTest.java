@@ -81,7 +81,7 @@ public class NativePointerSearcherTest
 	{
 		val nativePointerSearcherManager = new NativePointerSearcherManager();
 		val availableProcessorsCount = getAvailableProcessorsCount();
-		nativePointerSearcherManager.setThreadCount(availableProcessorsCount * 2);
+		nativePointerSearcherManager.setThreadCount(availableProcessorsCount * 2L);
 		nativePointerSearcherManager.setExcludeCycles(true);
 		nativePointerSearcherManager.setMinimumPointerDepth(1);
 		nativePointerSearcherManager.setMaximumPointerDepth(3);
@@ -140,7 +140,7 @@ public class NativePointerSearcherTest
 	{
 		val nativePointerSearcherManager = new NativePointerSearcherManager();
 		val availableProcessorsCount = getAvailableProcessorsCount();
-		nativePointerSearcherManager.setThreadCount(availableProcessorsCount * 2);
+		nativePointerSearcherManager.setThreadCount(availableProcessorsCount * 2L);
 		nativePointerSearcherManager.setExcludeCycles(true);
 		nativePointerSearcherManager.setMinimumPointerDepth(1);
 		nativePointerSearcherManager.setMaximumPointerDepth(2);
@@ -190,7 +190,7 @@ public class NativePointerSearcherTest
 	{
 		val nativePointerSearcherManager = new NativePointerSearcherManager();
 		val availableProcessorsCount = getAvailableProcessorsCount();
-		nativePointerSearcherManager.setThreadCount(availableProcessorsCount * 2);
+		nativePointerSearcherManager.setThreadCount(availableProcessorsCount * 2L);
 		nativePointerSearcherManager.setExcludeCycles(true);
 		nativePointerSearcherManager.setMinimumPointerDepth(1);
 		nativePointerSearcherManager.setMaximumPointerDepth(3);
@@ -374,8 +374,8 @@ public class NativePointerSearcherTest
 	@AllArgsConstructor
 	private static class Bounds
 	{
-		private long minimum;
-		private long maximum;
+		private final long minimum;
+		private final long maximum;
 	}
 
 	@SuppressWarnings("SameParameterValue")

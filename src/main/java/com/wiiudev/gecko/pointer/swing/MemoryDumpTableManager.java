@@ -51,7 +51,7 @@ public class MemoryDumpTableManager
 	{
 		val fileType = memoryDump.getFileType();
 		val chosenByteOrder = memoryDump.getByteOrder();
-		val byteOrder = fileType.equals(POINTER_MAP) ? "-" : byteOrderToString(chosenByteOrder);
+		val byteOrder = fileType.equals(POINTER_MAP) ? "" : byteOrderToString(chosenByteOrder);
 		val startingAddress = memoryDump.getStartingAddress();
 		val targetAddress = memoryDump.getTargetAddress();
 		val row = new Object[]{memoryDump.getFilePath().toFile().getName(),

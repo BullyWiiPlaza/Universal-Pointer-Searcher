@@ -1,6 +1,7 @@
 package com.wiiudev.gecko.pointer.preprocessed_search.data_structures;
 
 import com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport;
+import com.wiiudev.gecko.pointer.swing.preprocessed_search.InputType;
 import com.wiiudev.gecko.pointer.utilities.Benchmark;
 import lombok.*;
 
@@ -94,6 +95,9 @@ public class MemoryDump
 	@Getter
 	@Setter
 	private List<String> fileExtensions;
+
+	@Setter
+	private InputType inputType;
 
 	public MemoryDump(String memoryDumpFilePath,
 	                  Long startingAddress,

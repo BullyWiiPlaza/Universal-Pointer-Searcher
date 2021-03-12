@@ -473,7 +473,7 @@ public class NativePointerSearcherManager
 	public static void giveAllPosixFilePermissions(Path filePath) throws IOException
 	{
 		val allPosixFilePermissions = asList(PosixFilePermission.values());
-		val posixFilePermissionsSet = new HashSet<PosixFilePermission>(allPosixFilePermissions);
+		val posixFilePermissionsSet = new HashSet<>(allPosixFilePermissions);
 		setPosixFilePermissions(filePath, posixFilePermissionsSet);
 	}
 
@@ -534,6 +534,12 @@ public class NativePointerSearcherManager
 	{
 		val nativePointerSearcherOutput = nativePointerSearcherManager.call();
 		val processOutput = nativePointerSearcherOutput.getProcessOutput();
+
+		if (printResults)
+		{
+			System.out.println(processOutput);
+		}
+
 		val memoryPointers = parseMemoryPointersFromOutput(processOutput);
 
 		if (printResults)

@@ -74,7 +74,7 @@ import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 public class UniversalPointerSearcherGUI extends JFrame
 {
 	public static final String APPLICATION_NAME = "Universal Pointer Searcher";
-	private static final String APPLICATION_VERSION = "v3.10";
+	private static final String APPLICATION_VERSION = "v3.11";
 	private static final String STORED_POINTERS_FILE_NAME = "Pointers.txt";
 
 	// Invalid JOptionPane option as default for recognition
@@ -828,8 +828,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 		threadCountField.setDocument(new JTextAreaLimit(addressSize, NUMERIC, false));
 		maximumPointersCountField.setDocument(new JTextAreaLimit(BYTES * 2, NUMERIC, false));
 		maximumMemoryChunkSizeField.setDocument(new JTextAreaLimit((Long.MAX_VALUE + "").length(), NUMERIC, false));
-		minimumPointerOffsetField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, true));
-		maximumPointerOffsetField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, true));
+		minimumPointerOffsetField.setDocument(new JTextAreaLimit(addressSize + 1, HEXADECIMAL, true));
+		maximumPointerOffsetField.setDocument(new JTextAreaLimit(addressSize + 1, HEXADECIMAL, true));
 		minimumPointerAddressField.setDocument(new JTextAreaLimit());
 		pointerResultsPageSizeField.setDocument(new JTextAreaLimit(BYTES * 2, NUMERIC, false));
 	}

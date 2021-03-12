@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.wiiudev.gecko.pointer.swing.StackTraceUtilities.handleException;
-import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.*;
 import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.getSelectedItem;
 import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.setWindowIconImage;
 import static com.wiiudev.gecko.pointer.swing.utilities.MemoryDumpsByteOrder.getMemoryDumpsByteOrder;
@@ -70,7 +69,8 @@ public class MemoryDumpDialog extends JDialog
 	private JLabel targetAddressFieldLabel;
 	private JLabel filePathValidatorLabel;
 	private JCheckBox addModuleDumpsFolderCheckBox;
-	private List<JLabel> statusLabels;
+	private JComboBox<InputType> inputTypeSelection;
+	private final List<JLabel> statusLabels;
 
 	@Getter
 	private boolean memoryDumpAdded;
@@ -113,7 +113,8 @@ public class MemoryDumpDialog extends JDialog
 		runComponentAvailabilitySetter();
 		addTextFieldInputRestrictions();
 		considerPopulatingFields();
-		addFileTypeSelectionItems();
+		fileTypeSelection.setModel(new DefaultComboBoxModel<>(FileTypeImport.values()));
+		inputTypeSelection.setModel(new DefaultComboBoxModel<>(InputType.values()));
 	}
 
 	private void addTextFieldInputRestrictions()
@@ -130,11 +131,6 @@ public class MemoryDumpDialog extends JDialog
 	public boolean shouldParseEntireFolder()
 	{
 		return parseEntireFolderCheckBox.isSelected();
-	}
-
-	private void addFileTypeSelectionItems()
-	{
-		fileTypeSelection.setModel(new DefaultComboBoxModel<>(values()));
 	}
 
 	private void considerPopulatingFields()
@@ -321,7 +317,7 @@ public class MemoryDumpDialog extends JDialog
 					targetAddressField.setEnabled(!shouldParseEntireFolder || addModuleDumpsFolderCheckBox.isSelected());
 					fileTypeSelection.setEnabled(!shouldParseEntireFolder && !addModuleDumpsFolderCheckBox.isSelected());
 
-					val detectedFileTypeImport = parseFileTypeImport(filePath);
+					val detectedFileTypeImport = FileTypeImport.parseFileTypeImport(filePath);
 					if (detectedFileTypeImport != null)
 					{
 						fileTypeSelection.setSelectedItem(detectedFileTypeImport);
@@ -355,13 +351,17 @@ public class MemoryDumpDialog extends JDialog
 				boolean isStartingAddressFieldValid = true;
 				String parsingExceptionMessage = null;
 
-				try
+				val selectedFileType = getSelectedItem(fileTypeSelection);
+				if (!selectedFileType.equals(FileTypeImport.POINTER_MAP))
 				{
-					startingAddress = parseUnsignedLong(startingAddressField.getText(), 16);
-				} catch (NumberFormatException exception)
-				{
-					parsingExceptionMessage = exception.getMessage();
-					isStartingAddressFieldValid = false;
+					try
+					{
+						startingAddress = parseUnsignedLong(startingAddressField.getText(), 16);
+					} catch (NumberFormatException exception)
+					{
+						parsingExceptionMessage = exception.getMessage();
+						isStartingAddressFieldValid = false;
+					}
 				}
 
 				var areAllMemoryDumpsOkay = false;
@@ -425,8 +425,11 @@ public class MemoryDumpDialog extends JDialog
 					});
 				}
 
+				invokeLater(() -> startingAddressField.setEnabled(!selectedFileType.equals(FileTypeImport.POINTER_MAP)));
+
 				try
 				{
+					//noinspection BusyWait
 					Thread.sleep(50);
 				} catch (InterruptedException exception)
 				{
@@ -480,13 +483,13 @@ public class MemoryDumpDialog extends JDialog
 	private boolean isPointerMapSelected()
 	{
 		val selectedItem = getSelectedItem(fileTypeSelection);
-		return POINTER_MAP.equals(selectedItem);
+		return FileTypeImport.POINTER_MAP.equals(selectedItem);
 	}
 
 	private boolean isMemoryDumpSelected()
 	{
 		val selectedItem = getSelectedItem(fileTypeSelection);
-		return MEMORY_DUMP.equals(selectedItem);
+		return FileTypeImport.MEMORY_DUMP.equals(selectedItem);
 	}
 
 	private String getFolderImporterLabelText(ArrayList<File> memoryDumps, ArrayList<File> pointerMaps)
@@ -507,11 +510,11 @@ public class MemoryDumpDialog extends JDialog
 			for (val listedFile : listedFiles)
 			{
 				val listedFilePath = listedFile.toString();
-				if (listedFilePath.endsWith("." + MEMORY_DUMP.getExtension())
-						|| listedFilePath.endsWith("." + MEMORY_DUMP_EXTENSION))
+				if (listedFilePath.endsWith("." + FileTypeImport.MEMORY_DUMP.getExtension())
+						|| listedFilePath.endsWith("." + FileTypeImport.MEMORY_DUMP_EXTENSION))
 				{
 					memoryDumps.add(listedFile);
-				} else if (listedFilePath.endsWith("." + POINTER_MAP.getExtension()))
+				} else if (listedFilePath.endsWith("." + FileTypeImport.POINTER_MAP.getExtension()))
 				{
 					pointerMaps.add(listedFile);
 				}
@@ -545,9 +548,9 @@ public class MemoryDumpDialog extends JDialog
 			if (addModuleDumpsFolderCheckBox.isSelected())
 			{
 				val fileTypeImport = getSelectedItem(fileTypeSelection);
-				if (!fileTypeImport.equals(MEMORY_DUMP))
+				if (!fileTypeImport.equals(FileTypeImport.MEMORY_DUMP))
 				{
-					fileTypeSelection.setSelectedItem(MEMORY_DUMP);
+					fileTypeSelection.setSelectedItem(FileTypeImport.MEMORY_DUMP);
 				}
 
 				if (parseEntireFolderCheckBox.isSelected())
@@ -587,7 +590,7 @@ public class MemoryDumpDialog extends JDialog
 				val targetOffset = targetAddress - startingAddress;
 				if (isMemoryDumpSelected())
 				{
-					try
+					/* try
 					{
 						val memoryDumpFileSize = getFileSize(filePath);
 						if (memoryDumpFileSize == -1)
@@ -602,7 +605,7 @@ public class MemoryDumpDialog extends JDialog
 					{
 						isTargetAddressFieldValid = false;
 						targetAddressValidationFailedText = "Failed validating target address inclusiveness";
-					}
+					} */
 				} else if (targetOffset < 0)
 				{
 					isTargetAddressFieldValid = false;
@@ -679,13 +682,16 @@ public class MemoryDumpDialog extends JDialog
 			dispose();
 
 			val filePath = getFilePath();
-			val startingAddress = parseUnsignedLong(startingAddressField.getText(), 16);
-			val selectedItem = getSelectedItem(byteOrderSelection);
-			val byteOrder = selectedItem == null ? null : selectedItem.getByteOrder();
+			val fileType = getSelectedItem(fileTypeSelection);
+			val startingAddress = fileType.equals(FileTypeImport.POINTER_MAP)
+					? null : parseUnsignedLong(startingAddressField.getText(), 16);
+			val selectedByteOrder = getSelectedItem(byteOrderSelection);
+			val byteOrder = selectedByteOrder == null ? null : selectedByteOrder.getByteOrder();
 			val targetAddressFieldText = targetAddressField.getText();
 			val targetAddress = targetAddressFieldText.equals("")
 					? null : (Long) parseUnsignedLong(targetAddressFieldText, 16);
 			memoryDump = new MemoryDump(filePath, startingAddress, targetAddress, byteOrder);
+			memoryDump.setInputType(getSelectedItem(inputTypeSelection));
 			memoryDump.setAddedAsFolder(addModuleDumpsFolderCheckBox.isSelected());
 
 			val parseEntireFolderCheckBoxSelected = parseEntireFolderCheckBox.isSelected();
@@ -695,7 +701,6 @@ public class MemoryDumpDialog extends JDialog
 			} else
 			{
 				memoryDumpAdded = true;
-				val fileType = getSelectedItem(fileTypeSelection);
 				memoryDump.setFileType(fileType);
 			}
 		});
@@ -740,7 +745,7 @@ public class MemoryDumpDialog extends JDialog
 					val targetAddress = getTargetAddressFromFile(memoryDumpFilePath);
 					val pointerMapMemoryDump = new MemoryDump(pointerMapAbsolutePath,
 							startingAddress, targetAddress, null);
-					pointerMapMemoryDump.setFileType(POINTER_MAP);
+					pointerMapMemoryDump.setFileType(FileTypeImport.POINTER_MAP);
 					pointerMaps.add(pointerMapMemoryDump);
 				}
 			}
