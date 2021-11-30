@@ -2,6 +2,7 @@ package com.wiiudev.gecko.pointer;
 
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer;
+import com.wiiudev.gecko.pointer.swing.TargetSystem;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -36,7 +37,7 @@ import static org.apache.commons.lang3.SystemUtils.*;
 
 public class NativePointerSearcherManager
 {
-	private static final String BINARY_NAME = "PointerSearcher";
+	private static final String BINARY_NAME = "UniversalPointerSearcher";
 	private static final String EXTENSION = getExtension();
 	private static final String DOT_EXTENSION = "." + EXTENSION;
 	private static final String WINDOWS_SYSTEM32_DIRECTORY;
@@ -65,10 +66,27 @@ public class NativePointerSearcherManager
 
 	private static volatile Path executableFilePath;
 
-	private List<MemoryDump> memoryDumps;
+	private final List<MemoryDump> memoryDumps;
 
 	@Setter
 	private boolean excludeCycles;
+
+	@Getter
+	@Setter
+	private boolean printVisitedAddresses;
+
+	@Getter
+	@Setter
+	private boolean verboseLogging;
+
+	// TODO Parsing the pointer expressions does not work with this flag turned on
+	@Getter
+	@Setter
+	private boolean printModuleFileNames;
+
+	@Getter
+	@Setter
+	private TargetSystem targetSystem;
 
 	@Setter
 	private long fromPointerOffset;
@@ -159,6 +177,7 @@ public class NativePointerSearcherManager
 	{
 		while (executableFilePath == null)
 		{
+			//noinspection BusyWait
 			sleep(10);
 		}
 
@@ -312,7 +331,7 @@ public class NativePointerSearcherManager
 		command.add(temporaryExecutableFile.toString());
 		command.add(temporaryExecutableFile.toString()); // The file path is the first argument
 
-		command.add("--thread-count");
+		/* command.add("--thread-count");
 		command.add(threadCount + "");
 		command.add("--pointer-offset-range");
 		command.add(toHexadecimalString(fromPointerOffset)
@@ -333,13 +352,24 @@ public class NativePointerSearcherManager
 		command.add(maximumPointersCount + "");
 		command.add("--last-pointer-offsets");
 		val commaSeparatedLastPointerOffsets = toCommaSeparated(lastPointerOffsets);
-		command.add(commaSeparatedLastPointerOffsets);
+		command.add(commaSeparatedLastPointerOffsets); */
+
+		command.add("--maximum-pointers-printed-count");
+		command.add(maximumPointersCount + "");
 
 		// Add commands for each memory dump
 		for (val memoryDump : memoryDumps)
 		{
 			val memoryDumpFilePath = memoryDump.getFilePath().toAbsolutePath();
-			command.add("--file-path");
+			command.add("--initial-file-path");
+			command.add(memoryDumpFilePath.toString());
+			command.add("--initial-starting-address");
+			val startingAddress = memoryDump.getStartingAddress();
+			command.add("0x" + toHexadecimalString(startingAddress));
+			command.add("--target-address");
+			val targetAddress = memoryDump.getTargetAddress();
+			command.add("0x" + toHexadecimalString(targetAddress));
+			/* command.add("--file-path");
 			command.add(memoryDumpFilePath.toString());
 			addFileExtensionsCommand(command, memoryDump);
 			command.add("--starting-address");
@@ -368,7 +398,37 @@ public class NativePointerSearcherManager
 			command.add("--write-pointer-map");
 			command.add(booleanToIntegerString(memoryDump.isGeneratePointerMap()));
 			command.add("--read-pointer-map");
-			command.add(booleanToIntegerString(memoryDump.isReadPointerMap()));
+			command.add(booleanToIntegerString(memoryDump.isReadPointerMap())); */
+		}
+
+		if (targetSystem != null)
+		{
+			command.add("--target-system");
+			command.add(targetSystem.toString());
+		}
+
+		command.add("--endian");
+		val firstMemoryDump = memoryDumps.get(0);
+		val byteOrder = firstMemoryDump.getByteOrder();
+		command.add(byteOrder.equals(LITTLE_ENDIAN) ? "little" : "big");
+
+		command.add("--address-size");
+		command.add(firstMemoryDump.getAddressSize() + "");
+
+		command.add("--exclude-cycles");
+		command.add(booleanToIntegerString(excludeCycles));
+
+		if (printVisitedAddresses)
+		{
+			command.add("--print-visited-addresses");
+		}
+
+		command.add("--verbose");
+		command.add(verboseLogging + "");
+
+		if (printModuleFileNames)
+		{
+			command.add("--print-module-file-names");
 		}
 
 		return command;

@@ -134,13 +134,19 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JTextField minimumPointerOffsetField;
 	private JLabel maximumPointerOffsetLabel;
 	private JLabel maximumPointerOffsetDelimiterLabel;
-	private JLabel processorsCountLabel;
+	private JLabel processorCountLabel;
 	private JButton optimalThreadCountButton;
 	private JPanel baseOffsetRangePanel;
 	private JLabel threadCountLabel;
 	private JLabel pointerAddressAlignmentLabel;
 	private JLabel lastPointerOffsetsLabel;
 	private JLabel maximumPointersCountLabel;
+	private JCheckBox verboseLoggingCheckBox;
+	private JCheckBox printVisitedAddressesCheckBox;
+	private JLabel pointerValueAlignmentLabel;
+	private JComboBox<TargetSystem> targetSystemSelection;
+	private JCheckBox targetSystemCheckbox;
+	private JCheckBox printModuleFileNamesCheckBox;
 	private PersistentSettingsManager persistentSettingsManager;
 	private MemoryDumpTableManager memoryDumpTableManager;
 	private Path lastAddedFilePath;
@@ -203,6 +209,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		singleMemoryDumpMethodCheckBox.setVisible(false);
 		singleMemoryDumpMethodInformationButton.setVisible(false);
 		innerPointerSearchProgressBar.setVisible(false);
+		targetSystemSelection.setModel(new DefaultComboBoxModel<>(TargetSystem.values()));
 		configureAddedMemoryDumpsTable();
 		baseOffsetRangeSelection.addItemListener(itemEvent -> setButtonAvailability());
 		startingBaseAddressField.setDocument(new JTextAreaLimit());
@@ -249,7 +256,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	{
 		val runtime = getRuntime();
 		val availableProcessors = runtime.availableProcessors();
-		processorsCountLabel.setText("Logical Processors Count: " + availableProcessors);
+		processorCountLabel.setText("Logical Processor Count: " + availableProcessors);
 	}
 
 	private void configureAddedMemoryDumpsTable()
@@ -998,14 +1005,17 @@ public class UniversalPointerSearcherGUI extends JFrame
 		maximumPointerSearchDepthField.setVisible(usingNativePointerSearcher);
 		pointerValueAlignmentField.setEnabled(!isSearching);
 		threadCountField.setEnabled(!isSearching);
-		threadCountLabel.setVisible(usingNativePointerSearcher);
-		threadCountField.setVisible(usingNativePointerSearcher);
-		processorsCountLabel.setVisible(usingNativePointerSearcher);
+		threadCountLabel.setVisible(false);
+		threadCountField.setVisible(false);
+		processorCountLabel.setVisible(false);
 		optimalThreadCountButton.setEnabled(!isSearching);
-		optimalThreadCountButton.setVisible(usingNativePointerSearcher);
+		optimalThreadCountButton.setVisible(false);
 		pointerAddressAlignmentField.setEnabled(!isSearching);
-		pointerAddressAlignmentLabel.setVisible(usingNativePointerSearcher);
-		pointerAddressAlignmentField.setVisible(usingNativePointerSearcher);
+		pointerAddressAlignmentField.setVisible(false);
+		pointerAddressAlignmentLabel.setVisible(false);
+		pointerValueAlignmentLabel.setVisible(false);
+		pointerValueAlignmentField.setEnabled(!isSearching);
+		pointerValueAlignmentField.setVisible(false);
 		maximumMemoryChunkSizeField.setEnabled(!isSearching);
 		maximumPointersCountField.setEnabled(!isSearching);
 		maximumPointersCountLabel.setVisible(usingNativePointerSearcher);
@@ -1020,6 +1030,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 		generatePointerMapsCheckBox.setEnabled(!isSearching);
 		readPointerMapsCheckBox.setEnabled(!isSearching);
 		readPointerMapsCheckBox.setVisible(usingNativePointerSearcher);
+		verboseLoggingCheckBox.setEnabled(!isSearching);
+		verboseLoggingCheckBox.setVisible(usingNativePointerSearcher);
+		printModuleFileNamesCheckBox.setEnabled(!isSearching);
+		printModuleFileNamesCheckBox.setEnabled(usingNativePointerSearcher);
+		printVisitedAddressesCheckBox.setEnabled(!isSearching);
+		printVisitedAddressesCheckBox.setVisible(usingNativePointerSearcher);
 		writePointersToFileSystemCheckBox.setEnabled(!isSearching);
 		lastPointerOffsetsField.setEnabled(!isSearching);
 		lastPointerOffsetsLabel.setVisible(usingNativePointerSearcher);
@@ -1513,6 +1529,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			{
 				try
 				{
+					//noinspection BusyWait
 					Thread.sleep(10);
 				} catch (InterruptedException exception)
 				{
@@ -1562,8 +1579,23 @@ public class UniversalPointerSearcherGUI extends JFrame
 		/* val allowNegativeOffsets = allowNegativeOffsetsCheckBox.isSelected();
 		nativePointerSearcher.setAllowNegativeOffsets(allowNegativeOffsets); */
 
+		if (targetSystemCheckbox.isSelected())
+		{
+			val targetSystem = getSelectedItem(targetSystemSelection);
+			nativePointerSearcher.setTargetSystem(targetSystem);
+		}
+
+		val isVerboseLogging = verboseLoggingCheckBox.isSelected();
+		nativePointerSearcher.setVerboseLogging(isVerboseLogging);
+
+		val printModuleFileNames = printModuleFileNamesCheckBox.isSelected();
+		nativePointerSearcher.setPrintModuleFileNames(printModuleFileNames);
+
 		val excludeCycles = excludeCyclesCheckBox.isSelected();
 		nativePointerSearcher.setExcludeCycles(excludeCycles);
+
+		val printVisitedAddresses = printVisitedAddressesCheckBox.isSelected();
+		nativePointerSearcher.setPrintVisitedAddresses(printVisitedAddresses);
 
 		val maximumMemoryChunkSize = parseLong(maximumMemoryChunkSizeField.getText(), 10);
 		nativePointerSearcher.setMaximumMemoryDumpChunkSize(maximumMemoryChunkSize);
@@ -1674,6 +1706,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		{
 			try
 			{
+				//noinspection BusyWait
 				Thread.sleep(10);
 			} catch (InterruptedException exception)
 			{
