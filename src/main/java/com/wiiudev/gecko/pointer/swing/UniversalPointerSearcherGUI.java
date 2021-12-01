@@ -1869,7 +1869,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private List<Long> parseLastOffsets()
 	{
-		val lastOffsetsText = lastPointerOffsetsField.getText();
+		val lastOffsetsText = lastPointerOffsetsField.getText().trim();
 		val splitOffsets = lastOffsetsText.isEmpty()
 				? new String[0] : lastOffsetsText.split(",");
 		val lastOffsets = new ArrayList<Long>();
