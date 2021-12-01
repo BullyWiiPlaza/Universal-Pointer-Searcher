@@ -354,8 +354,18 @@ public class NativePointerSearcherManager
 		val commaSeparatedLastPointerOffsets = toCommaSeparated(lastPointerOffsets);
 		command.add(commaSeparatedLastPointerOffsets); */
 
+		if (!lastPointerOffsets.isEmpty())
+		{
+			command.add("--last-pointer-offsets");
+			val commaSeparatedLastPointerOffsets = toCommaSeparated(lastPointerOffsets);
+			command.add(commaSeparatedLastPointerOffsets);
+		}
+
 		command.add("--maximum-pointers-printed-count");
 		command.add(maximumPointersCount + "");
+
+		command.add("--pointer-depth-range");
+		command.add(minimumPointerDepth + "," + maximumPointerDepth);
 
 		// Add commands for each memory dump
 		for (val memoryDump : memoryDumps)
@@ -416,7 +426,7 @@ public class NativePointerSearcherManager
 		command.add(firstMemoryDump.getAddressSize() + "");
 
 		command.add("--exclude-cycles");
-		command.add(booleanToIntegerString(excludeCycles));
+		command.add(excludeCycles + "");
 
 		if (printVisitedAddresses)
 		{
@@ -430,6 +440,10 @@ public class NativePointerSearcherManager
 		{
 			command.add("--print-module-file-names");
 		}
+
+		/* TODO
+		command.add("--scan-deeper-by");
+		command.add("1"); */
 
 		return command;
 	}
@@ -484,11 +498,11 @@ public class NativePointerSearcherManager
 		return stringBuilder.toString();
 	}
 
-	private String toCommaSeparated(List<Long> list)
+	private String toCommaSeparated(final List<Long> list)
 	{
 		if (list.isEmpty())
 		{
-			return " ";
+			return "";
 		}
 
 		val stringBuilder = new StringBuilder();
@@ -502,6 +516,7 @@ public class NativePointerSearcherManager
 			}
 
 			val hexadecimalValue = toHexadecimalString(value);
+			stringBuilder.append("0x");
 			stringBuilder.append(hexadecimalValue);
 			if (listIndex != list.size() - 1)
 			{

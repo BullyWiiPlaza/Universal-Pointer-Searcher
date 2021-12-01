@@ -13,10 +13,10 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
+	// TODO Add option for memory usage limit
+	// TODO Check provided addresses against address size
 	// TODO Starting address cursor flash
-	// TODO Save/Load pointer search configuration
-	// TODO Last pointer offsets for Java engine
-	// TODO Java pointer searcher does not find e.g. [[0x39520908] + 0x368] - 0x1AC in "dumps\No Track Music\39CEB148.bin"
+	// TODO Save/Load pointer search configuration via menu bar
 	// TODO Implement ignored memory ranges
 	private static void startGUI()
 	{

@@ -14,7 +14,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 
 public class JVMArgumentEnforcer
 {
-	private String argument;
+	private final String argument;
 
 	public JVMArgumentEnforcer(String argument)
 	{

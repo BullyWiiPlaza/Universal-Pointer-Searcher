@@ -7,6 +7,7 @@ import com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.*;
 import com.wiiudev.gecko.pointer.swing.preprocessed_search.MemoryDumpDialog;
 import com.wiiudev.gecko.pointer.swing.utilities.JTextAreaLimit;
+import com.wiiudev.gecko.pointer.swing.utilities.MemoryDumpsByteOrder;
 import com.wiiudev.gecko.pointer.swing.utilities.PersistentSettingsManager;
 import com.wiiudev.gecko.pointer.swing.utilities.WindowsTaskBarProgress;
 import com.wiiudev.gecko.pointer.utilities.Benchmark;
@@ -74,7 +75,7 @@ import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 public class UniversalPointerSearcherGUI extends JFrame
 {
 	public static final String APPLICATION_NAME = "Universal Pointer Searcher";
-	private static final String APPLICATION_VERSION = "v3.11";
+	private static final String APPLICATION_VERSION = "v4.0";
 	private static final String STORED_POINTERS_FILE_NAME = "Pointers.txt";
 
 	// Invalid JOptionPane option as default for recognition
@@ -132,7 +133,6 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JFormattedTextField minimumPointerSearchDepthField;
 	private JFormattedTextField threadCountField;
 	private JTextField minimumPointerOffsetField;
-	private JLabel maximumPointerOffsetLabel;
 	private JLabel maximumPointerOffsetDelimiterLabel;
 	private JLabel processorCountLabel;
 	private JButton optimalThreadCountButton;
@@ -147,6 +147,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JComboBox<TargetSystem> targetSystemSelection;
 	private JCheckBox targetSystemCheckbox;
 	private JCheckBox printModuleFileNamesCheckBox;
+	private JComboBox<MemoryDumpsByteOrder> byteOrderSelection;
+	private JLabel maximumMemoryChunkSizeLabel;
+	private JButton byteOrderInformationButton;
 	private PersistentSettingsManager persistentSettingsManager;
 	private MemoryDumpTableManager memoryDumpTableManager;
 	private Path lastAddedFilePath;
@@ -159,7 +162,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private MemoryPointerSearcher memoryPointerSearcher;
 	private boolean isSearching;
 
-	private static String searchButtonText = "Search";
+	private static final String searchButtonText = "Search";
 	private WindowsTaskBarProgress windowsTaskBarProgress;
 	private List<List<MemoryPointer>> singleMemoryDumpPointers;
 
@@ -209,7 +212,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 		singleMemoryDumpMethodCheckBox.setVisible(false);
 		singleMemoryDumpMethodInformationButton.setVisible(false);
 		innerPointerSearchProgressBar.setVisible(false);
+		useNativePointerSearcherCheckBox.setVisible(false);
+		byteOrderSelection.setModel(new DefaultComboBoxModel<>(MemoryDumpsByteOrder.values()));
 		targetSystemSelection.setModel(new DefaultComboBoxModel<>(TargetSystem.values()));
+		targetSystemCheckbox.addItemListener(itemEvent -> setTargetSystemComponentsAvailability());
+		addByteOrderInformationButtonListener();
+		setTargetSystemComponentsAvailability();
 		configureAddedMemoryDumpsTable();
 		baseOffsetRangeSelection.addItemListener(itemEvent -> setButtonAvailability());
 		startingBaseAddressField.setDocument(new JTextAreaLimit());
@@ -219,6 +227,28 @@ public class UniversalPointerSearcherGUI extends JFrame
 		setButtonAvailability();
 		handlePersistentSettings();
 		configurePointerResultsPage();
+	}
+
+	private void addByteOrderInformationButtonListener()
+	{
+		byteOrderInformationButton.addActionListener(actionEvent ->
+		{
+			try
+			{
+				val desktop = getDesktop();
+				desktop.browse(new URI("https://en.wikipedia.org/wiki/Endianness"));
+			} catch (Exception exception)
+			{
+				handleException(exception);
+			}
+		});
+	}
+
+	private void setTargetSystemComponentsAvailability()
+	{
+		val usingTargetSystem = targetSystemCheckbox.isSelected();
+		addressSizeSelection.setEnabled(!usingTargetSystem);
+		byteOrderSelection.setEnabled(!usingTargetSystem);
 	}
 
 	private void addOptimalThreadCountButtonListener()
@@ -965,12 +995,11 @@ public class UniversalPointerSearcherGUI extends JFrame
 	{
 		val minimumPointerDepth = parseLongSafely(minimumPointerSearchDepthField.getText());
 		val maximumPointerDepth = parseLongSafely(maximumPointerSearchDepthField.getText());
-		val isPointerDepthInvalid = minimumPointerDepth > maximumPointerDepth;
-		minimumPointerSearchDepthField.setBackground(GREEN);
-		maximumPointerSearchDepthField.setBackground(isPointerDepthInvalid ? RED : GREEN);
+		val isPointerDepthValid = minimumPointerDepth <= maximumPointerDepth;
+		minimumPointerSearchDepthField.setBackground(minimumPointerDepth > 0 ? GREEN : RED);
+		maximumPointerSearchDepthField.setBackground(isPointerDepthValid && maximumPointerDepth > 0 ? GREEN : RED);
 
 		val usingNativePointerSearcher = useNativePointerSearcherCheckBox.isSelected();
-		maximumPointerOffsetLabel.setText(usingNativePointerSearcher ? "Offset Range:" : "Maximum Offset:");
 		maximumPointerOffsetDelimiterLabel.setVisible(usingNativePointerSearcher);
 		minimumPointerOffsetField.setVisible(usingNativePointerSearcher);
 		val memoryDumps = memoryPointerSearcher.getMemoryDumps();
@@ -989,7 +1018,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 		val pointerSearchDepth = getPointerSearchDepth();
 		val lastPointerOffsetBackgroundColor = lastPointerOffsetsField.getBackground();
-		val isSearchButtonAvailable = !isPointerDepthInvalid &&
+		val isSearchButtonAvailable = isPointerDepthValid &&
 				pointerSearchDepth >= MINIMUM_POINTER_SEARCH_DEPTH_VALUE
 				&& memoryDumpsAdded && maximumPointerOffsetValid &&
 				(minimumPointerOffsetField.isVisible() && minimumPointerOffsetValid || !minimumPointerOffsetField.isVisible())
@@ -1018,6 +1047,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 		pointerValueAlignmentField.setVisible(false);
 		maximumMemoryChunkSizeField.setEnabled(!isSearching);
 		maximumPointersCountField.setEnabled(!isSearching);
+		maximumMemoryChunkSizeLabel.setVisible(!usingNativePointerSearcher);
+		maximumMemoryChunkSizeField.setVisible(!usingNativePointerSearcher);
+		readableMaximumMemoryChunkSizeLabel.setVisible(!usingNativePointerSearcher);
 		maximumPointersCountLabel.setVisible(usingNativePointerSearcher);
 		maximumPointersCountField.setVisible(usingNativePointerSearcher);
 		minimumPointerOffsetField.setEnabled(!isSearching);
@@ -1315,13 +1347,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 							? showConfirmDialog(rootPane,
 							"Do you want to perform a "
 									+ singleMemoryDumpMethodCheckBox.getText().toLowerCase()
-									+ " pointer search using the added memory dump"
+									+ " pointer search using the added input file"
 									+ addedGenitive + "?",
 							singleMemoryDumpMethodCheckBox.getText() + " Pointer Search?",
 							YES_NO_OPTION)
-							: showConfirmDialog(rootPane, "Do you want to perform a " +
-							(useNativePointerSearcherCheckBox.isSelected() ? "native " : "")
-							+ "pointer search using the added memory dump"
+							: showConfirmDialog(rootPane, "Do you want to perform a "
+							+ "pointer search using the added input file"
 							+ addedGenitive + "?", "Pointer Search?", YES_NO_OPTION);
 
 					if (selectedAnswer == YES_OPTION)
@@ -1496,6 +1527,37 @@ public class UniversalPointerSearcherGUI extends JFrame
 							{
 								val elapsedTime = benchmark.getElapsedTime();
 								setPointerSearchStatisticsLabel(elapsedTime);
+
+								if (nativePointerSearcherOutput != null)
+								{
+									var processOutput = nativePointerSearcherOutput.getProcessOutput();
+
+									val errorLineIndicator = "ERR| ";
+									val warningIndicator = "WARN| ";
+
+									val nativePointerSearcherName = "Universal Pointer Searcher Engine";
+									val processOutputLines = processOutput.split("\n");
+									for (val processOutputLine : processOutputLines)
+									{
+										if (processOutputLine.contains(errorLineIndicator))
+										{
+											val errorMessage = getLogMessage(processOutputLine, errorLineIndicator);
+											showMessageDialog(rootPane, "It seems like a " + nativePointerSearcherName + " error occurred:\n\"" + errorMessage + "\"\n"
+															+ "Please check the \"" + nativePointerSearcherOutputButton.getText() + "\" for further information/context.",
+													"Pointer Searcher Error", ERROR_MESSAGE);
+											break;
+										}
+
+										if (processOutputLine.contains(warningIndicator))
+										{
+											val warningMessage = getLogMessage(processOutputLine, warningIndicator);
+											showMessageDialog(rootPane, "It seems like the " + nativePointerSearcherName + " emitted a warning:\n\"" + warningMessage + "\"\n"
+															+ "It is recommended to not ignore it. Please check the \"" + nativePointerSearcherOutputButton.getText() + "\" for further information/context.",
+													"Pointer Searcher Warning", WARNING_MESSAGE);
+											break;
+										}
+									}
+								}
 							});
 						} catch (Exception exception)
 						{
@@ -1540,6 +1602,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 			pointerSearcherThread[0].execute();
 			waitForSwingWorkerToComplete(pointerSearcherThread[0]);
 		}
+	}
+
+	private String getLogMessage(String processOutputLine, String lineIndicator)
+	{
+		val lineIndicatorIndex = processOutputLine.indexOf(lineIndicator);
+		return processOutputLine.substring(lineIndicatorIndex + lineIndicator.length());
 	}
 
 	private void performNativePointerSearch() throws Exception
@@ -1700,7 +1768,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		});
 	}
 
-	private void waitForSwingWorkerToComplete(SwingWorker swingWorker)
+	private void waitForSwingWorkerToComplete(final SwingWorker<?, ?> swingWorker)
 	{
 		while (!swingWorker.isDone())
 		{
