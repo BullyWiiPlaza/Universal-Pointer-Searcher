@@ -45,7 +45,7 @@ public class NativePointerSearcherTest
 			nativePointerSearcherManager.setSaveAdditionalMemoryDumpRAM(false);
 			nativePointerSearcherManager.setPotentialPointerOffsetsCountPerAddressPrediction(40);
 			val maximumPointersCount = 100_000;
-			nativePointerSearcherManager.setMaximumPointersCount(maximumPointersCount);
+			nativePointerSearcherManager.setMaximumPointerCount(maximumPointersCount);
 			nativePointerSearcherManager.setPointerOffsetRange(0, 10_000);
 			nativePointerSearcherManager.setLastPointerOffsets(emptyList());
 			val firstMemoryDump = new MemoryDump("D:\\Cpp\\PointerSearcher\\card_ids",
@@ -89,7 +89,7 @@ public class NativePointerSearcherTest
 		nativePointerSearcherManager.setSaveAdditionalMemoryDumpRAM(false);
 		nativePointerSearcherManager.setPotentialPointerOffsetsCountPerAddressPrediction(40);
 		val maximumPointersCount = 100_000;
-		nativePointerSearcherManager.setMaximumPointersCount(maximumPointersCount);
+		nativePointerSearcherManager.setMaximumPointerCount(maximumPointersCount);
 		nativePointerSearcherManager.setPointerOffsetRange(-400, 400);
 		nativePointerSearcherManager.setLastPointerOffsets(emptyList());
 		val memoryDumpsBaseDirectory = "D:\\Programs\\Source Codes\\Java\\IntelliJ\\Universal-Pointer-Searcher\\dumps\\Epic Mickey (PS Vita)";
@@ -148,7 +148,7 @@ public class NativePointerSearcherTest
 		nativePointerSearcherManager.setSaveAdditionalMemoryDumpRAM(false);
 		nativePointerSearcherManager.setPotentialPointerOffsetsCountPerAddressPrediction(40);
 		val maximumPointersCount = 100_000;
-		nativePointerSearcherManager.setMaximumPointersCount(maximumPointersCount);
+		nativePointerSearcherManager.setMaximumPointerCount(maximumPointersCount);
 		nativePointerSearcherManager.setPointerOffsetRange(0, 500);
 		nativePointerSearcherManager.setLastPointerOffsets(emptyList());
 		val memoryDumpsBaseDirectory = "D:\\Programs\\Source Codes\\Java\\IntelliJ\\Universal-Pointer-Searcher\\dumps\\Monster Jam [Switch]";
@@ -198,7 +198,7 @@ public class NativePointerSearcherTest
 		nativePointerSearcherManager.setSaveAdditionalMemoryDumpRAM(false);
 		nativePointerSearcherManager.setPotentialPointerOffsetsCountPerAddressPrediction(40);
 		val maximumPointersCount = 100_000;
-		nativePointerSearcherManager.setMaximumPointersCount(maximumPointersCount);
+		nativePointerSearcherManager.setMaximumPointerCount(maximumPointersCount);
 		nativePointerSearcherManager.setPointerOffsetRange(0, 10_000);
 		nativePointerSearcherManager.setLastPointerOffsets(emptyList());
 		val firstMemoryDump = new MemoryDump("D:\\Cpp\\PointerSearcher\\card_ids_1",
@@ -253,7 +253,7 @@ public class NativePointerSearcherTest
 		nativePointerSearcherManager.setSaveAdditionalMemoryDumpRAM(false);
 		nativePointerSearcherManager.setPotentialPointerOffsetsCountPerAddressPrediction(40);
 		val maximumPointersCount = 100_000;
-		nativePointerSearcherManager.setMaximumPointersCount(maximumPointersCount);
+		nativePointerSearcherManager.setMaximumPointerCount(maximumPointersCount);
 		nativePointerSearcherManager.setPointerOffsetRange(0, 5_000);
 		nativePointerSearcherManager.setLastPointerOffsets(emptyList());
 		val firstMemoryDump = new MemoryDump("D:\\Cpp\\PointerSearcher\\smash_switch_2\\Dump1",
@@ -288,7 +288,7 @@ public class NativePointerSearcherTest
 		nativePointerSearcherManager.setSaveAdditionalMemoryDumpRAM(false);
 		nativePointerSearcherManager.setPotentialPointerOffsetsCountPerAddressPrediction(40);
 		val maximumPointersCount = 100_000;
-		nativePointerSearcherManager.setMaximumPointersCount(maximumPointersCount);
+		nativePointerSearcherManager.setMaximumPointerCount(maximumPointersCount);
 		val fromOffset = 0;
 		val toOffset = 0x400;
 		nativePointerSearcherManager.setPointerOffsetRange(fromOffset, toOffset);

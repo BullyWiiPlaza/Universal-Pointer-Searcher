@@ -13,7 +13,7 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
-	// TODO Add option for memory usage limit
+	// TODO Pointers list is not the same as the output?
 	// TODO Check provided addresses against address size
 	// TODO Starting address cursor flash
 	// TODO Save/Load pointer search configuration via menu bar

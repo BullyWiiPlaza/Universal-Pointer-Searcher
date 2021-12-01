@@ -3,6 +3,7 @@ package com.wiiudev.gecko.pointer;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer;
 import com.wiiudev.gecko.pointer.swing.TargetSystem;
+import com.wiiudev.gecko.pointer.swing.utilities.MemoryDumpsByteOrder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -73,7 +74,15 @@ public class NativePointerSearcherManager
 
 	@Getter
 	@Setter
+	private double maximumMemoryUtilizationFraction;
+
+	@Getter
+	@Setter
 	private boolean printVisitedAddresses;
+
+	@Getter
+	@Setter
+	private Path storeMemoryPointersFilePath;
 
 	@Getter
 	@Setter
@@ -113,11 +122,19 @@ public class NativePointerSearcherManager
 	private long potentialPointerOffsetsCountPerAddressPrediction;
 
 	@Getter
+	@Setter
+	private MemoryDumpsByteOrder byteOrder;
+
+	@Getter
+	@Setter
+	private int addressSize;
+
+	@Getter
 	private boolean isCanceled;
 
 	@Getter
 	@Setter
-	private long maximumPointersCount = 100000;
+	private long maximumPointerCount = 100000;
 
 	@Getter
 	@Setter
@@ -361,8 +378,8 @@ public class NativePointerSearcherManager
 			command.add(commaSeparatedLastPointerOffsets);
 		}
 
-		command.add("--maximum-pointers-printed-count");
-		command.add(maximumPointersCount + "");
+		command.add("--maximum-pointer-count");
+		command.add(maximumPointerCount + "");
 
 		command.add("--pointer-depth-range");
 		command.add(minimumPointerDepth + "," + maximumPointerDepth);
@@ -417,13 +434,18 @@ public class NativePointerSearcherManager
 			command.add(targetSystem.toString());
 		}
 
+		if (storeMemoryPointersFilePath != null)
+		{
+			command.add("--store-memory-pointers-file-path");
+			command.add(storeMemoryPointersFilePath.toString());
+		}
+
 		command.add("--endian");
-		val firstMemoryDump = memoryDumps.get(0);
-		val byteOrder = firstMemoryDump.getByteOrder();
-		command.add(byteOrder.equals(LITTLE_ENDIAN) ? "little" : "big");
+		val isLittleEndian = byteOrder.getByteOrder().equals(LITTLE_ENDIAN);
+		command.add(isLittleEndian ? "little" : "big");
 
 		command.add("--address-size");
-		command.add(firstMemoryDump.getAddressSize() + "");
+		command.add(addressSize + "");
 
 		command.add("--exclude-cycles");
 		command.add(excludeCycles + "");
@@ -440,6 +462,9 @@ public class NativePointerSearcherManager
 		{
 			command.add("--print-module-file-names");
 		}
+
+		command.add("--maximum-memory-utilization-fraction");
+		command.add((maximumMemoryUtilizationFraction / 100) + "");
 
 		/* TODO
 		command.add("--scan-deeper-by");
