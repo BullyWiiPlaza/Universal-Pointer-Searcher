@@ -86,6 +86,10 @@ public class NativePointerSearcherManager
 
 	@Getter
 	@Setter
+	private Path loadMemoryPointersFilePath;
+
+	@Getter
+	@Setter
 	private boolean verboseLogging;
 
 	// TODO Parsing the pointer expressions does not work with this flag turned on
@@ -96,6 +100,10 @@ public class NativePointerSearcherManager
 	@Getter
 	@Setter
 	private TargetSystem targetSystem;
+
+	@Getter
+	@Setter
+	private Integer scanDeeperBy;
 
 	@Setter
 	private long fromPointerOffset;
@@ -440,6 +448,12 @@ public class NativePointerSearcherManager
 			command.add(storeMemoryPointersFilePath.toString());
 		}
 
+		if (loadMemoryPointersFilePath != null)
+		{
+			command.add("--input-memory-pointers-file-path");
+			command.add(loadMemoryPointersFilePath.toString());
+		}
+
 		command.add("--endian");
 		val isLittleEndian = byteOrder.getByteOrder().equals(LITTLE_ENDIAN);
 		command.add(isLittleEndian ? "little" : "big");
@@ -465,6 +479,12 @@ public class NativePointerSearcherManager
 
 		command.add("--maximum-memory-utilization-fraction");
 		command.add((maximumMemoryUtilizationFraction / 100) + "");
+
+		if (scanDeeperBy != null)
+		{
+			command.add("--scan-deeper-by");
+			command.add(scanDeeperBy + "");
+		}
 
 		/* TODO
 		command.add("--scan-deeper-by");

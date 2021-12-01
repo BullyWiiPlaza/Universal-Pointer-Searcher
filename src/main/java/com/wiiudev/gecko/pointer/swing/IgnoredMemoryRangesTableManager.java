@@ -13,10 +13,10 @@ import static com.wiiudev.gecko.pointer.swing.utilities.JTableUtilities.*;
 
 public class IgnoredMemoryRangesTableManager
 {
-	private JTable table;
-	private List<MemoryRange> ignoredMemoryRanges;
+	private final JTable table;
+	private final List<MemoryRange> ignoredMemoryRanges;
 
-	public IgnoredMemoryRangesTableManager(JTable table)
+	public IgnoredMemoryRangesTableManager(final JTable table)
 	{
 		this.table = table;
 		ignoredMemoryRanges = new ArrayList<>();
@@ -29,7 +29,7 @@ public class IgnoredMemoryRangesTableManager
 		setCellsAlignment(table, SwingConstants.CENTER);
 	}
 
-	public void addMemoryRange(MemoryRange memoryRange)
+	public void addMemoryRange(final MemoryRange memoryRange)
 	{
 		val objects = new Object[]{Long.toHexString(memoryRange.getStartingOffset()).toUpperCase(),
 				Long.toHexString(memoryRange.getEndOffset()).toUpperCase()};

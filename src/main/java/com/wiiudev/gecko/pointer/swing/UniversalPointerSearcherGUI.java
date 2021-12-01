@@ -6,7 +6,10 @@ import com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerList;
 import com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.*;
 import com.wiiudev.gecko.pointer.swing.preprocessed_search.MemoryDumpDialog;
-import com.wiiudev.gecko.pointer.swing.utilities.*;
+import com.wiiudev.gecko.pointer.swing.utilities.JTextAreaLimit;
+import com.wiiudev.gecko.pointer.swing.utilities.MemoryDumpsByteOrder;
+import com.wiiudev.gecko.pointer.swing.utilities.PersistentSettingsManager;
+import com.wiiudev.gecko.pointer.swing.utilities.WindowsTaskBarProgress;
 import com.wiiudev.gecko.pointer.utilities.Benchmark;
 import lombok.val;
 import lombok.var;
@@ -14,7 +17,6 @@ import lombok.var;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
@@ -22,11 +24,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteOrder;
-import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,6 +42,7 @@ import static com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearche
 import static com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher.getSGenitive;
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.OffsetPrintingSetting.SIGNED;
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.OffsetPrintingSetting.UNSIGNED;
+import static com.wiiudev.gecko.pointer.swing.FileBrowserManager.OpenDialogType;
 import static com.wiiudev.gecko.pointer.swing.PersistentSetting.*;
 import static com.wiiudev.gecko.pointer.swing.utilities.DefaultContextMenu.addDefaultContextMenu;
 import static com.wiiudev.gecko.pointer.swing.utilities.FileSizePrinting.readableFileSize;
@@ -76,6 +77,7 @@ import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 public class UniversalPointerSearcherGUI extends JFrame
 {
 	public static final String APPLICATION_NAME = "Universal Pointer Searcher";
+	public static final Pattern NUMERIC_PATTERN = Pattern.compile("[0-9]+");
 	private static final Pattern PERCENTAGE_REGULAR_EXPRESSION = Pattern.compile("\\b(?<!\\.)(?!0+(?:\\.0+)?%)(?:\\d|[1-9]\\d|100)(?:(?<!100)\\.\\d+)?");
 	private static final String APPLICATION_VERSION = "v4.0";
 	private static final String STORED_POINTERS_FILE_NAME = "Pointers.txt";
@@ -159,6 +161,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JCheckBox loadMemoryPointerResultsCheckBox;
 	private JTextField loadMemoryPointersFilePathField;
 	private JButton loadMemoryPointerResultsBrowseButton;
+	private JCheckBox scanDeeperByCheckBox;
+	private JTextField scanDeeperByField;
 	private PersistentSettingsManager persistentSettingsManager;
 	private MemoryDumpTableManager memoryDumpTableManager;
 	private Path lastAddedFilePath;
@@ -228,9 +232,17 @@ public class UniversalPointerSearcherGUI extends JFrame
 		targetSystemCheckbox.addItemListener(itemEvent -> setTargetSystemComponentsAvailability());
 		addByteOrderInformationButtonListener();
 		addMaximumMemoryUtilizationPercentageFieldDocumentListener();
-		addSaveMemoryPointersFilePathDocumentListener();
-		addStoreMemoryPointerResultsBrowseButtonActionListener();
-		addStoreMemoryPointersResultsCheckboxItemListener();
+		val storeMemoryPointersFilePathFileBrowserManager = new FileBrowserManager(storeMemoryPointerResultsCheckBox,
+				storeMemoryPointersFilePathField, storeMemoryPointerResultsBrowseButton,
+				OpenDialogType.SAVE);
+		storeMemoryPointersFilePathFileBrowserManager.configure(rootPane);
+		val loadMemoryPointersFilePathFileBrowserManager = new FileBrowserManager(loadMemoryPointerResultsCheckBox,
+				loadMemoryPointersFilePathField, loadMemoryPointerResultsBrowseButton,
+				OpenDialogType.OPEN);
+		scanDeeperByCheckBox.addItemListener(itemEvent -> setScanDeeperByBackgroundColor());
+		addScanDeeperByFieldDocumentListener();
+		setScanDeeperByBackgroundColor();
+		loadMemoryPointersFilePathFileBrowserManager.configure(rootPane);
 		verifyMemoryUtilizationPercentageInput();
 		setTargetSystemComponentsAvailability();
 		configureAddedMemoryDumpsTable();
@@ -244,90 +256,39 @@ public class UniversalPointerSearcherGUI extends JFrame
 		configurePointerResultsPage();
 	}
 
-	private void addStoreMemoryPointerResultsBrowseButtonActionListener()
+	private void addScanDeeperByFieldDocumentListener()
 	{
-		storeMemoryPointerResultsBrowseButton.addActionListener(actionEvent ->
-		{
-			val fileChooser = new JFileChooser();
-			try
-			{
-				val storeMemoryPointersFilePath = storeMemoryPointersFilePathField.getText();
-				fileChooser.setCurrentDirectory(Paths.get(storeMemoryPointersFilePath).getParent().toFile());
-			} catch (final Exception ignored)
-			{
-				fileChooser.setCurrentDirectory(new File(ProgramDirectoryUtilities.getProgramDirectory()));
-				// We don't care if this fails
-			}
-			val filter = new FileNameExtensionFilter("Text files (.txt)", "txt");
-			fileChooser.setFileFilter(filter);
-			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			val selectedAnswer = fileChooser.showOpenDialog(rootPane);
-			if (selectedAnswer == JOptionPane.YES_OPTION)
-			{
-				val selectedFile = fileChooser.getSelectedFile();
-				var filePath = selectedFile.toPath().toString();
-				val forcedExtension = ".txt";
-				if (!filePath.toLowerCase().endsWith(forcedExtension))
-				{
-					filePath += forcedExtension;
-				}
-				storeMemoryPointersFilePathField.setText(filePath);
-			}
-		});
-	}
-
-	private void addStoreMemoryPointersResultsCheckboxItemListener()
-	{
-		storeMemoryPointerResultsCheckBox.addItemListener(itemEvent -> setStoreMemoryPointersResultsFieldAvailability());
-		setStoreMemoryPointersResultsFieldAvailability();
-	}
-
-	private void setStoreMemoryPointersResultsFieldAvailability()
-	{
-		val saveMemoryPointers = storeMemoryPointerResultsCheckBox.isSelected();
-		storeMemoryPointersFilePathField.setEnabled(saveMemoryPointers);
-		storeMemoryPointerResultsBrowseButton.setEnabled(saveMemoryPointers);
-		validateSaveMemoryPointersFilePath();
-	}
-
-	private void addSaveMemoryPointersFilePathDocumentListener()
-	{
-		val document = storeMemoryPointersFilePathField.getDocument();
+		val document = scanDeeperByField.getDocument();
 		document.addDocumentListener(new DocumentListener()
 		{
 			@Override
 			public void insertUpdate(final DocumentEvent documentEvent)
 			{
-				validateSaveMemoryPointersFilePath();
+				setScanDeeperByBackgroundColor();
 			}
 
 			@Override
 			public void removeUpdate(final DocumentEvent documentEvent)
 			{
-				validateSaveMemoryPointersFilePath();
+				setScanDeeperByBackgroundColor();
 			}
 
 			@Override
 			public void changedUpdate(final DocumentEvent documentEvent)
 			{
-				validateSaveMemoryPointersFilePath();
+				setScanDeeperByBackgroundColor();
 			}
 		});
-
-		validateSaveMemoryPointersFilePath();
 	}
 
-	private void validateSaveMemoryPointersFilePath()
+	private void setScanDeeperByBackgroundColor()
 	{
-		if (storeMemoryPointerResultsCheckBox.isSelected())
-		{
-			val saveMemoryPointersFilePath = Paths.get(storeMemoryPointersFilePathField.getText());
-			val isValidFilePath = !Files.isDirectory(saveMemoryPointersFilePath);
-			storeMemoryPointersFilePathField.setBackground(isValidFilePath ? GREEN : RED);
-		} else
-		{
-			storeMemoryPointersFilePathField.setBackground(GREEN);
-		}
+		val scanDeeperByFieldText = scanDeeperByField.getText();
+		val matcher = NUMERIC_PATTERN.matcher(scanDeeperByFieldText);
+		val matches = matcher.matches();
+		val isValid = !scanDeeperByCheckBox.isSelected() || matches;
+		val backgroundColor = isValid ? GREEN : RED;
+		scanDeeperByField.setBackground(backgroundColor);
 	}
 
 	private void addMaximumMemoryUtilizationPercentageFieldDocumentListener()
@@ -1777,10 +1738,23 @@ public class UniversalPointerSearcherGUI extends JFrame
 			nativePointerSearcher.setTargetSystem(targetSystem);
 		}
 
+		if (scanDeeperByCheckBox.isSelected())
+		{
+			val scanDeeperByText = scanDeeperByField.getText();
+			val scanDeeperBy = Integer.parseInt(scanDeeperByText);
+			nativePointerSearcher.setScanDeeperBy(scanDeeperBy);
+		}
+
 		if (storeMemoryPointerResultsCheckBox.isSelected())
 		{
-			val storeMemoryPointersFilePath = Paths.get(storeMemoryPointersFilePathField.getText());
-			nativePointerSearcher.setStoreMemoryPointersFilePath(storeMemoryPointersFilePath);
+			val memoryPointersFilePath = Paths.get(storeMemoryPointersFilePathField.getText());
+			nativePointerSearcher.setStoreMemoryPointersFilePath(memoryPointersFilePath);
+		}
+
+		if (loadMemoryPointerResultsCheckBox.isSelected())
+		{
+			val memoryPointersFilePath = Paths.get(loadMemoryPointersFilePathField.getText());
+			nativePointerSearcher.setLoadMemoryPointersFilePath(memoryPointersFilePath);
 		}
 
 		val byteOrder = getSelectedItem(byteOrderSelection);
