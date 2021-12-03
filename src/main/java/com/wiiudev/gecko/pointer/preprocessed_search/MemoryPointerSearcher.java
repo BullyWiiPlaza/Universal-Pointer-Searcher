@@ -589,13 +589,6 @@ public class MemoryPointerSearcher
 			return;
 		}
 
-		/* TODO REMOVE */
-		/* if (!(pointerOffset == 0x9D19168 && innerOffsets.length == 0
-				|| pointerOffset == 0x9D19168 && innerOffsets.length == 1))
-		{
-			return;
-		} */
-
 		val targetAddressOffset = targetAddress - pointerValue;
 
 		var isPointerOffsetAllowed = true;

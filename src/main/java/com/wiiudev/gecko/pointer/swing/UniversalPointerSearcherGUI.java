@@ -225,6 +225,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		configureSortingSelection();
 		singleMemoryDumpMethodCheckBox.setVisible(false);
 		singleMemoryDumpMethodInformationButton.setVisible(false);
+		pointerSearchProgressBar.setVisible(false);
 		innerPointerSearchProgressBar.setVisible(false);
 		useNativePointerSearcherCheckBox.setVisible(false);
 		writePointersToFileSystemCheckBox.setVisible(false);

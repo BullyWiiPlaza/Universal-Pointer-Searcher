@@ -60,7 +60,7 @@ public class MemoryPointer
 			baseAddress = parseUnsignedLong(baseAddressString, 16);
 		} else
 		{
-			parseBaseAddress(text);
+			parseBaseAddressExpression(text);
 		}
 
 		val pointerDepth = countMatches(text, OPENING_BRACKET);
@@ -88,7 +88,17 @@ public class MemoryPointer
 		}
 	}
 
-	private void parseBaseAddress(final String memoryPointerLine)
+	public long getAddressOrModuleOffset()
+	{
+		if (moduleName == null)
+		{
+			return baseAddress;
+		}
+
+		return moduleOffset;
+	}
+
+	private void parseBaseAddressExpression(final String memoryPointerLine)
 	{
 		var addressExpressionStartIndex = 0;
 		while (addressExpressionStartIndex < memoryPointerLine.length())
@@ -165,7 +175,8 @@ public class MemoryPointer
 
 		if (moduleName != null)
 		{
-			val moduleNameWithOffset = moduleName + " " + PLUS_SIGN + " 0x" + Long.toHexString(moduleOffset);
+			val moduleNameWithOffset = moduleName + " " + PLUS_SIGN +
+					" 0x" + Long.toHexString(moduleOffset).toUpperCase();
 			pointerBuilder.append(moduleNameWithOffset);
 		} else
 		{

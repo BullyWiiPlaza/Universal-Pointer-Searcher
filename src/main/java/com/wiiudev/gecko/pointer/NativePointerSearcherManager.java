@@ -92,7 +92,6 @@ public class NativePointerSearcherManager
 	@Setter
 	private boolean verboseLogging;
 
-	// TODO Parsing the pointer expressions does not work with this flag turned on
 	@Getter
 	@Setter
 	private boolean printModuleFileNames;
