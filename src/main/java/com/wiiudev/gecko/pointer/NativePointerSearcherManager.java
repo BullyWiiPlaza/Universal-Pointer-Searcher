@@ -387,6 +387,10 @@ public class NativePointerSearcherManager
 			command.add(commaSeparatedLastPointerOffsets);
 		}
 
+		command.add("--pointer-offset-range");
+		command.add(toHexadecimalString(fromPointerOffset)
+				+ "," + toHexadecimalString(toPointerOffset));
+
 		command.add("--maximum-pointer-count");
 		command.add(maximumPointerCount + "");
 		command.add("--maximum-pointers-printed-count");
