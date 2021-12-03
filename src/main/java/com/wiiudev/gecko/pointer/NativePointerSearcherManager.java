@@ -3,6 +3,7 @@ package com.wiiudev.gecko.pointer;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer;
 import com.wiiudev.gecko.pointer.swing.TargetSystem;
+import com.wiiudev.gecko.pointer.swing.preprocessed_search.InputType;
 import com.wiiudev.gecko.pointer.swing.utilities.MemoryDumpsByteOrder;
 import lombok.Getter;
 import lombok.Setter;
@@ -395,15 +396,29 @@ public class NativePointerSearcherManager
 		// Add commands for each memory dump
 		for (val memoryDump : memoryDumps)
 		{
+			val fileType = memoryDump.getInputType();
 			val memoryDumpFilePath = memoryDump.getFilePath().toAbsolutePath();
-			command.add("--initial-file-path");
-			command.add(memoryDumpFilePath.toString());
-			command.add("--initial-starting-address");
-			val startingAddress = memoryDump.getStartingAddress();
-			command.add("0x" + toHexadecimalString(startingAddress));
+			if (fileType.equals(InputType.INITIAL))
+			{
+				command.add("--initial-file-path");
+				command.add(memoryDumpFilePath.toString());
+				command.add("--initial-starting-address");
+				val startingAddress = memoryDump.getStartingAddress();
+				command.add("0x" + toHexadecimalString(startingAddress));
+			}
+			else
+			{
+				command.add("--comparison-file-path");
+				command.add(memoryDumpFilePath.toString());
+				command.add("--comparison-starting-address");
+				val startingAddress = memoryDump.getStartingAddress();
+				command.add("0x" + toHexadecimalString(startingAddress));
+			}
+
 			command.add("--target-address");
 			val targetAddress = memoryDump.getTargetAddress();
 			command.add("0x" + toHexadecimalString(targetAddress));
+
 			/* command.add("--file-path");
 			command.add(memoryDumpFilePath.toString());
 			addFileExtensionsCommand(command, memoryDump);
@@ -485,10 +500,6 @@ public class NativePointerSearcherManager
 			command.add("--scan-deeper-by");
 			command.add(scanDeeperBy + "");
 		}
-
-		/* TODO
-		command.add("--scan-deeper-by");
-		command.add("1"); */
 
 		return command;
 	}

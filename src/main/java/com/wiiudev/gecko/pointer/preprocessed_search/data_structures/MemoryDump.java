@@ -97,6 +97,7 @@ public class MemoryDump
 	private List<String> fileExtensions;
 
 	@Setter
+	@Getter
 	private InputType inputType;
 
 	public MemoryDump(String memoryDumpFilePath,

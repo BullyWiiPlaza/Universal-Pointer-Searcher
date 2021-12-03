@@ -1374,7 +1374,6 @@ public class UniversalPointerSearcherGUI extends JFrame
 		{
 			try
 			{
-				nativePointerSearcherOutput = null;
 				setPointerSearchOptions();
 
 				val minimumPointerAddress = getMinimumPointerAddressFieldValue();
@@ -1807,6 +1806,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 		try
 		{
+			nativePointerSearcherOutput = null;
 			nativePointerSearcherOutput = nativePointerSearcher.call();
 			val exceptionMessage = nativePointerSearcherOutput.getExceptionMessage();
 			val isCanceled = nativePointerSearcher.isCanceled();
@@ -1816,12 +1816,15 @@ public class UniversalPointerSearcherGUI extends JFrame
 			}
 		} finally
 		{
-			val processOutput = nativePointerSearcherOutput.getProcessOutput();
-			val memoryPointers = parseMemoryPointersFromOutput(processOutput);
+			if (nativePointerSearcherOutput != null)
+			{
+				val processOutput = nativePointerSearcherOutput.getProcessOutput();
+				val memoryPointers = parseMemoryPointersFromOutput(processOutput);
 
-			val memoryPointerList = new MemoryPointerList();
-			memoryPointerList.setMemoryPointers(memoryPointers);
-			memoryPointerSearcher.setMemoryPointerList(memoryPointerList);
+				val memoryPointerList = new MemoryPointerList();
+				memoryPointerList.setMemoryPointers(memoryPointers);
+				memoryPointerSearcher.setMemoryPointerList(memoryPointerList);
+			}
 		}
 	}
 

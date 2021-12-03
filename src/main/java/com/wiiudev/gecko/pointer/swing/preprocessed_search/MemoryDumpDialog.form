@@ -31,20 +31,12 @@
           <toolTipText value="The memory dump's file path"/>
         </properties>
       </component>
-      <component id="ac038" class="javax.swing.JLabel">
+      <component id="ac038" class="javax.swing.JLabel" binding="byteOrderLabel">
         <constraints>
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Byte Order:"/>
-        </properties>
-      </component>
-      <component id="16243" class="javax.swing.JComboBox" binding="byteOrderSelection">
-        <constraints>
-          <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <toolTipText value="The memory dump's byte order"/>
         </properties>
       </component>
       <component id="81b4e" class="javax.swing.JLabel">
@@ -192,6 +184,14 @@
           <grid row="5" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
+      </component>
+      <component id="16243" class="javax.swing.JComboBox" binding="byteOrderSelection">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <toolTipText value="The memory dump's byte order"/>
+        </properties>
       </component>
     </children>
   </grid>

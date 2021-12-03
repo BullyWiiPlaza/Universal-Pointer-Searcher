@@ -70,6 +70,7 @@ public class MemoryDumpDialog extends JDialog
 	private JLabel filePathValidatorLabel;
 	private JCheckBox addModuleDumpsFolderCheckBox;
 	private JComboBox<InputType> inputTypeSelection;
+	private JLabel byteOrderLabel;
 	private final List<JLabel> statusLabels;
 
 	@Getter
@@ -106,6 +107,9 @@ public class MemoryDumpDialog extends JDialog
 
 		configureFrameProperties();
 		populateByteOrders();
+		byteOrderLabel.setVisible(false);
+		byteOrderInformationButton.setVisible(false);
+		byteOrderSelection.setVisible(false);
 		addFilePathFieldDocumentListener();
 		addBrowseMemoryDumpButtonListener();
 		addAddMemoryDumpButtonListener();
@@ -275,6 +279,7 @@ public class MemoryDumpDialog extends JDialog
 			{
 				try
 				{
+					//noinspection BusyWait
 					Thread.sleep(10);
 				} catch (InterruptedException exception)
 				{
