@@ -54,7 +54,7 @@ public class MemoryPointerSearcher
 
 	@Getter
 	@Setter
-	private List<MemoryDump> importedPointerMaps;
+	private List<MemoryDump> importedPointerMaps = new ArrayList<>();
 
 	@Getter
 	@Setter

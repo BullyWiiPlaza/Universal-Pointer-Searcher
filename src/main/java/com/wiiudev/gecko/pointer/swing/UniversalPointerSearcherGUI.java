@@ -1110,7 +1110,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val lastPointerOffsetBackgroundColor = lastPointerOffsetsField.getBackground();
 		val isSearchButtonAvailable = isPointerDepthValid &&
 				pointerSearchDepth >= MINIMUM_POINTER_SEARCH_DEPTH_VALUE
-				&& memoryDumpsAdded && maximumPointerOffsetValid &&
+				&& (memoryDumpsAdded || memoryPointerSearcher.getImportedPointerMaps().size() > 0) && maximumPointerOffsetValid &&
 				(minimumPointerOffsetField.isVisible() && minimumPointerOffsetValid || !minimumPointerOffsetField.isVisible())
 				&& lastPointerOffsetBackgroundColor.equals(GREEN);
 		searchPointersButton.setEnabled(isSearchButtonAvailable && !isSearching);
@@ -1340,6 +1340,11 @@ public class UniversalPointerSearcherGUI extends JFrame
 	{
 		val memoryDumpDialog = new MemoryDumpDialog(memoryDump, mayParseFolder);
 		memoryDumpDialog.setFilePath(filePath);
+		if (memoryDump != null)
+		{
+			memoryDumpDialog.setFileType(memoryDump.getFileType());
+			memoryDumpDialog.setInputType(memoryDump.getInputType());
+		}
 		memoryDumpDialog.setLastAddedStartingAddress(lastAddedStartingAddress);
 		memoryDumpDialog.setLastAddedTargetAddress(lastAddedTargetAddress);
 		memoryDumpDialog.setByteOrder(lastAddedByteOrder);
@@ -1731,6 +1736,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 			val readPointerMaps = readPointerMapsCheckBox.isSelected();
 			memoryDump.setReadPointerMap(readPointerMaps);
 			nativePointerSearcher.addMemoryDump(memoryDump);
+		}
+
+		val importedPointerMaps = memoryPointerSearcher.getImportedPointerMaps();
+		for (val pointerMap : importedPointerMaps)
+		{
+			nativePointerSearcher.addPointerMap(pointerMap);
 		}
 
 		/* val allowNegativeOffsets = allowNegativeOffsetsCheckBox.isSelected();

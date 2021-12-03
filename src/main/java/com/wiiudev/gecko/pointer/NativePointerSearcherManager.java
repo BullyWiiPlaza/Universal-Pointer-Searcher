@@ -69,6 +69,8 @@ public class NativePointerSearcherManager
 
 	private final List<MemoryDump> memoryDumps;
 
+	private final List<MemoryDump> pointerMaps = new ArrayList<>();
+
 	@Setter
 	private boolean excludeCycles;
 
@@ -454,6 +456,14 @@ public class NativePointerSearcherManager
 			command.add(booleanToIntegerString(memoryDump.isReadPointerMap())); */
 		}
 
+		for (val pointerMap : pointerMaps)
+		{
+			command.add("--read-pointer-maps-file-paths");
+			command.add(pointerMap.getFilePath().toString());
+
+			passTargetAddress(command, pointerMap);
+		}
+
 		if (targetSystem != null)
 		{
 			command.add("--target-system");
@@ -697,5 +707,10 @@ public class NativePointerSearcherManager
 	{
 		this.fromPointerOffset = fromOffset;
 		this.toPointerOffset = toOffset;
+	}
+
+	public void addPointerMap(final MemoryDump pointerMap)
+	{
+		pointerMaps.add(pointerMap);
 	}
 }

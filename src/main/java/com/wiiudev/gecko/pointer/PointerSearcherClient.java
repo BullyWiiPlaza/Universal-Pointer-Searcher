@@ -13,9 +13,10 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
+	// TODO When adding another pointer map, re-populate file type
 	// TODO Implement minimum pointer address
 	// TODO Check provided addresses against address size
-	// TODO Starting address cursor flash
+	// TODO Starting address cursor flashing bug
 	// TODO Save/Load pointer search configuration via menu bar
 	// TODO Implement ignored memory ranges
 	private static void startGUI()

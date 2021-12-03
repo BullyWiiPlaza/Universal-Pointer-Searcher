@@ -48,10 +48,12 @@ public class MemoryDumpTableManager
 	{
 		val startingAddress = memoryDump.getStartingAddress();
 		val targetAddress = memoryDump.getTargetAddress();
+		val inputType = memoryDump.getInputType();
+		val fileType = memoryDump.getFileType();
 		val row = new Object[]{memoryDump.getFilePath().toFile().getName(),
 				startingAddress == null ? "" : toHexString(startingAddress).toUpperCase(),
-				targetAddress == null ? "" : toHexString(targetAddress).toUpperCase(), memoryDump.getFileType(),
-				memoryDump.getInputType()};
+				targetAddress == null ? "" : toHexString(targetAddress).toUpperCase(),
+				fileType, fileType.equals(POINTER_MAP) ? "" : inputType};
 		val tableModel = (DefaultTableModel) table.getModel();
 		tableModel.addRow(row);
 

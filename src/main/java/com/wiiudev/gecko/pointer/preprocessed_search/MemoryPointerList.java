@@ -19,7 +19,7 @@ public class MemoryPointerList
 
 	private int size;
 
-	private PointerSwapFile pointerSwapFile;
+	private final PointerSwapFile pointerSwapFile;
 
 	public MemoryPointerList()
 	{

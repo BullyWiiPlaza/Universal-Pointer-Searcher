@@ -311,10 +311,12 @@ public class MemoryDumpDialog extends JDialog
 				val isImportableFilesOkay = new boolean[]{true};
 				val finalIsFilePathValid = isFilePathValid;
 				val finalFilePathValidatorText = filePathValidatorText;
+				val selectedFileType = getSelectedItem(fileTypeSelection);
 				invokeLater(() ->
 				{
 					val isParsingEntireFolderAllowed = mayParseFolder && !addModuleDumpsFolderCheckBox.isSelected();
 					parseEntireFolderCheckBox.setEnabled(isParsingEntireFolderAllowed);
+					inputTypeSelection.setEnabled(selectedFileType.equals(FileTypeImport.MEMORY_DUMP));
 					addModuleDumpsFolderCheckBox.setEnabled(mayParseFolder && !parseEntireFolderCheckBox.isSelected());
 					filePathField.setBackground(finalIsFilePathValid ? VALID_INPUT_COLOR : INVALID_INPUT_COLOR);
 					setValidationLabel(finalIsFilePathValid, FILE_PATH_CHECK_OK,
@@ -325,8 +327,8 @@ public class MemoryDumpDialog extends JDialog
 					val detectedFileTypeImport = FileTypeImport.parseFileTypeImport(filePath);
 					if (detectedFileTypeImport != null)
 					{
-						fileTypeSelection.setSelectedItem(detectedFileTypeImport);
-						fileTypeSelection.setEnabled(false);
+						// fileTypeSelection.setSelectedItem(detectedFileTypeImport);
+						// fileTypeSelection.setEnabled(false);
 					}
 
 					if (shouldParseEntireFolder && finalIsFilePathValid)
@@ -356,7 +358,6 @@ public class MemoryDumpDialog extends JDialog
 				boolean isStartingAddressFieldValid = true;
 				String parsingExceptionMessage = null;
 
-				val selectedFileType = getSelectedItem(fileTypeSelection);
 				if (!selectedFileType.equals(FileTypeImport.POINTER_MAP))
 				{
 					try
@@ -803,5 +804,15 @@ public class MemoryDumpDialog extends JDialog
 	public void setAddModuleDumpsFolder(boolean addModuleDumpsFolder)
 	{
 		addModuleDumpsFolderCheckBox.setSelected(addModuleDumpsFolder);
+	}
+
+	public void setFileType(final FileTypeImport fileType)
+	{
+		fileTypeSelection.setSelectedItem(fileType);
+	}
+
+	public void setInputType(final InputType inputType)
+	{
+		inputTypeSelection.setSelectedItem(inputType);
 	}
 }
