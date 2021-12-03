@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer.parseMemoryPointer;
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.OffsetPrintingSetting.SIGNED;
 import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.MEMORY_DUMP;
 import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.MEMORY_DUMP_EXTENSION;
@@ -212,7 +211,7 @@ public class NativePointerSearcherManager
 		commandList.remove(executableFilePath.toString());
 		var executedCommand = toCommandString(commandList);
 		processBuilder.redirectErrorStream(true);
-		val pointerSearcherOutput = USE_FILE_OUTPUT ? createTempFile("prefix", "suffix") : null;
+		Path pointerSearcherOutput = USE_FILE_OUTPUT ? createTempFile("prefix", "suffix") : null;
 
 		try
 		{
@@ -254,7 +253,7 @@ public class NativePointerSearcherManager
 		{
 			try
 			{
-				parseMemoryPointer(line);
+				new MemoryPointer(line);
 
 				// Print out truncation
 				if (!reachedMemoryPointers)
@@ -584,11 +583,6 @@ public class NativePointerSearcherManager
 		return stringBuilder.toString();
 	}
 
-	private String booleanToIntegerString(boolean bool)
-	{
-		return bool ? "1" : "0";
-	}
-
 	private static Path getExecutableFilePath() throws IOException
 	{
 		val executableFileBytes = readExecutableFileBytes();
@@ -652,7 +646,7 @@ public class NativePointerSearcherManager
 		{
 			try
 			{
-				val memoryPointer = parseMemoryPointer(line);
+				val memoryPointer = new MemoryPointer(line);
 				memoryPointers.add(memoryPointer);
 			} catch (Exception ignored)
 			{

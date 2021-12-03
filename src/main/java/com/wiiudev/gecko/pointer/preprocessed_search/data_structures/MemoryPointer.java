@@ -18,9 +18,9 @@ public class MemoryPointer
 	private static final String HEXADECIMAL_HEADER = "0x";
 	private static final String CLOSING_BRACKET = "]";
 	private static final String OPENING_BRACKET = "[";
-	private static final String OPENING_ROUNDED_BRACKET = "(";
 	private static final String CLOSING_ROUNDED_BRACKET = ")";
 	private static final String EQUALS_SIGN = "=";
+	public static final String PLUS_SIGN = "+";
 
 	@Getter
 	@Setter
@@ -34,26 +34,21 @@ public class MemoryPointer
 	@Setter
 	private long[] offsets;
 
-	public MemoryPointer(String baseModuleNameWithOffset, long[] offsets)
+	public MemoryPointer(final String baseModuleNameWithOffset, final long[] offsets)
 	{
 		this.baseModuleNameWithOffset = baseModuleNameWithOffset;
 		this.offsets = offsets;
 	}
 
-	public MemoryPointer(long baseAddress, long[] offsets)
+	public MemoryPointer(final long baseAddress, final long[] offsets)
 	{
 		this.baseAddress = baseAddress;
 		this.offsets = offsets;
 	}
 
-	public static MemoryPointer parseMemoryPointer(String text)
+	public MemoryPointer(String text)
 	{
 		text = text.replace(" ", "");
-
-		parseBaseAddress(text);
-
-		String moduleExpression = null;
-		long baseAddress;
 
 		val firstOpeningBracketIndex = text.indexOf(OPENING_BRACKET);
 		val firstClosingBracketIndex = text.indexOf(CLOSING_BRACKET);
@@ -61,21 +56,19 @@ public class MemoryPointer
 				firstClosingBracketIndex);
 		if (baseAddressExpression.contains(" "))
 		{
-			val firstOpeningRoundedBracket = baseAddressExpression.indexOf(OPENING_ROUNDED_BRACKET) - 1;
-			moduleExpression = baseAddressExpression.substring(0, firstOpeningRoundedBracket);
 			val baseAddressStartIndex = baseAddressExpression.indexOf(EQUALS_SIGN) + 2 + HEXADECIMAL_HEADER.length();
 			val baseAddressEndIndex = baseAddressExpression.indexOf(CLOSING_ROUNDED_BRACKET);
 			val baseAddressString = baseAddressExpression.substring(baseAddressStartIndex, baseAddressEndIndex);
 			baseAddress = parseUnsignedLong(baseAddressString, 16);
 		} else
 		{
-			baseAddress = parseBaseAddress(text);
+			parseBaseAddress(text);
 		}
 
 		val pointerDepth = countMatches(text, OPENING_BRACKET);
 		var previousClosingBracketIndex = text.indexOf(CLOSING_BRACKET);
 		var pointerDepthIndex = 0;
-		val offsets = new long[pointerDepth];
+		offsets = new long[pointerDepth];
 		while (pointerDepthIndex < pointerDepth)
 		{
 			var innerClosingIndex = text.indexOf(CLOSING_BRACKET, previousClosingBracketIndex + 1);
@@ -85,7 +78,7 @@ public class MemoryPointer
 			}
 			val pointerOffsetString = text.substring(previousClosingBracketIndex + 1, innerClosingIndex);
 			val isHexadecimalOffset = pointerOffsetString.contains(HEXADECIMAL_HEADER);
-			val beginIndex =  1 + (isHexadecimalOffset ? HEXADECIMAL_HEADER.length() : 0);
+			val beginIndex = 1 + (isHexadecimalOffset ? HEXADECIMAL_HEADER.length() : 0);
 			var pointerOffset = parseUnsignedLong(pointerOffsetString.substring(beginIndex), isHexadecimalOffset ? 16 : 10);
 			if (pointerOffsetString.startsWith("-"))
 			{
@@ -95,34 +88,49 @@ public class MemoryPointer
 			previousClosingBracketIndex = innerClosingIndex;
 			pointerDepthIndex++;
 		}
-
-		if (moduleExpression != null)
-		{
-			val memoryPointer = new MemoryPointer(moduleExpression, offsets);
-			memoryPointer.setBaseAddress(baseAddress);
-			return memoryPointer;
-		} else
-		{
-			return new MemoryPointer(baseAddress, offsets);
-		}
 	}
 
-	private static long parseBaseAddress(String memoryPointerLine)
+	private void parseBaseAddress(final String memoryPointerLine)
 	{
-		if (memoryPointerLine.contains(EQUALS_SIGN))
+		var addressExpressionStartIndex = 0;
+		while (addressExpressionStartIndex < memoryPointerLine.length())
 		{
-			val equalsSignIndex = memoryPointerLine.indexOf(EQUALS_SIGN);
-			val baseAddressClosingIndex = memoryPointerLine.indexOf(CLOSING_ROUNDED_BRACKET);
-			val beginIndex = equalsSignIndex + 2 + HEXADECIMAL_HEADER.length();
-			val baseAddressString = memoryPointerLine.substring(beginIndex, baseAddressClosingIndex);
-			return parseUnsignedLong(baseAddressString, 16);
+			if (!(memoryPointerLine.charAt(addressExpressionStartIndex) + "").equals(OPENING_BRACKET))
+			{
+				break;
+			}
+			addressExpressionStartIndex++;
+		}
+
+		var addressExpressionEndIndex = addressExpressionStartIndex + 1;
+		while (addressExpressionEndIndex < memoryPointerLine.length())
+		{
+			if ((memoryPointerLine.charAt(addressExpressionEndIndex) + "").equals(CLOSING_BRACKET))
+			{
+				break;
+			}
+			addressExpressionEndIndex++;
+		}
+
+		val addressExpression = memoryPointerLine.substring(addressExpressionStartIndex, addressExpressionEndIndex);
+		if (addressExpression.contains(PLUS_SIGN))
+		{
+			val splitComponents = addressExpression.split("\\" + PLUS_SIGN);
+			if (splitComponents.length != 2)
+			{
+				throw new IllegalStateException("Unexpected split component count: " + splitComponents.length);
+			}
+			baseModuleNameWithOffset = splitComponents[0] + " " + PLUS_SIGN + " " + splitComponents[1];
 		} else
 		{
-			val baseAddressIndex = memoryPointerLine.indexOf(HEXADECIMAL_HEADER);
-			val baseAddressClosingIndex = memoryPointerLine.indexOf(CLOSING_BRACKET);
-			val beginIndex = baseAddressIndex + HEXADECIMAL_HEADER.length();
-			val baseAddressString = memoryPointerLine.substring(beginIndex, baseAddressClosingIndex);
-			return parseUnsignedLong(baseAddressString, 16);
+			if (addressExpression.startsWith(HEXADECIMAL_HEADER))
+			{
+				val hexadecimalAddressWithoutPrefix = addressExpression.substring(HEXADECIMAL_HEADER.length());
+				baseAddress = parseUnsignedLong(hexadecimalAddressWithoutPrefix, 16);
+			} else
+			{
+				baseAddress = parseUnsignedLong(addressExpression, 16);
+			}
 		}
 	}
 

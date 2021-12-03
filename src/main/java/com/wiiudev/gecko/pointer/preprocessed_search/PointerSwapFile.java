@@ -13,7 +13,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer.parseMemoryPointer;
 import static java.lang.System.gc;
 import static java.lang.System.getProperty;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -90,7 +89,7 @@ public class PointerSwapFile
 		val memoryPointerLines = memoryPointersString.split(LINE_SEPARATOR);
 		for (val memoryPointerLine : memoryPointerLines)
 		{
-			val memoryPointer = parseMemoryPointer(memoryPointerLine);
+			val memoryPointer = new MemoryPointer(memoryPointerLine);
 			memoryPointers.add(memoryPointer);
 		}
 

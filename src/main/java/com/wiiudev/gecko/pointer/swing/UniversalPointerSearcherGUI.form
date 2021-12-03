@@ -727,7 +727,7 @@
                     <properties>
                       <font size="14"/>
                       <foreground color="-11748608"/>
-                      <text value="Note: If your system isn't listed, you can pick the address size and byte order (= endian) manually"/>
+                      <text value="Note: If your system isn't listed, you can pick the address size and byte order (= endian) manually below"/>
                     </properties>
                   </component>
                   <component id="926d1" class="javax.swing.JLabel">
