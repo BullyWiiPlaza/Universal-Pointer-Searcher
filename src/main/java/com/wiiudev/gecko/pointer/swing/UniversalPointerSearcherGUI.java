@@ -1978,21 +1978,21 @@ public class UniversalPointerSearcherGUI extends JFrame
 		resultsPageSpinner.setValue((double) DEFAULT_RESULTS_PAGE_SIZE);
 	}
 
-	private String memoryPointersToString(OffsetPrintingSetting offsetPrintingSetting,
-	                                      int addressSize, List<MemoryPointer> memoryPointers)
+	private String memoryPointersToString(final OffsetPrintingSetting offsetPrintingSetting,
+	                                      final int addressSize, final List<MemoryPointer> memoryPointers)
 	{
 		applySorting(memoryPointers);
 		return MemoryPointer.toString(memoryPointers, addressSize, offsetPrintingSetting);
 	}
 
-	private void applySorting(List<MemoryPointer> memoryPointers)
+	private void applySorting(final List<MemoryPointer> memoryPointers)
 	{
 		val memoryPointerSorting = getSelectedItem(sortingSelection);
 		val comparator = memoryPointerSorting.getComparator();
 		memoryPointers.sort(comparator);
 	}
 
-	private void setMemoryPointersPagesCount(List<MemoryPointer> memoryPointers)
+	private void setMemoryPointersPagesCount(final List<MemoryPointer> memoryPointers)
 	{
 		val totalMemoryPointersCount = memoryPointers.size();
 		val memoryPointersPageSize = getPointerResultsPageSize();

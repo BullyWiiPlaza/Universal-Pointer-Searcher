@@ -24,7 +24,11 @@ public class MemoryPointer
 
 	@Getter
 	@Setter
-	private String baseModuleNameWithOffset;
+	private String moduleName;
+
+	@Getter
+	@Setter
+	private long moduleOffset;
 
 	@Getter
 	@Setter
@@ -33,12 +37,6 @@ public class MemoryPointer
 	@Getter
 	@Setter
 	private long[] offsets;
-
-	public MemoryPointer(final String baseModuleNameWithOffset, final long[] offsets)
-	{
-		this.baseModuleNameWithOffset = baseModuleNameWithOffset;
-		this.offsets = offsets;
-	}
 
 	public MemoryPointer(final long baseAddress, final long[] offsets)
 	{
@@ -120,7 +118,9 @@ public class MemoryPointer
 			{
 				throw new IllegalStateException("Unexpected split component count: " + splitComponents.length);
 			}
-			baseModuleNameWithOffset = splitComponents[0] + " " + PLUS_SIGN + " " + splitComponents[1];
+			moduleName = splitComponents[0];
+			val moduleOffsetText = splitComponents[1].substring(HEXADECIMAL_HEADER.length());
+			moduleOffset = parseUnsignedLong(moduleOffsetText, 16);
 		} else
 		{
 			if (addressExpression.startsWith(HEXADECIMAL_HEADER))
@@ -163,9 +163,10 @@ public class MemoryPointer
 			pointerBuilder.append(OPENING_BRACKET);
 		}
 
-		if (baseModuleNameWithOffset != null)
+		if (moduleName != null)
 		{
-			pointerBuilder.append(baseModuleNameWithOffset);
+			val moduleNameWithOffset = moduleName + " " + PLUS_SIGN + " 0x" + Long.toHexString(moduleOffset);
+			pointerBuilder.append(moduleNameWithOffset);
 		} else
 		{
 			val formattedBaseAddress = toHexadecimal(baseAddress, addressSize, false);

@@ -24,9 +24,9 @@ public class TestPointerExpressionParsing
 		val memoryPointer = new MemoryPointer(pointerExpression);
 		assertEquals(0x914B8554L, memoryPointer.getBaseAddress());
 		val offsets = memoryPointer.getOffsets();
-		assertEquals(offsets.length, 2);
-		assertEquals(offsets[0], 0x124);
-		assertEquals(offsets[1], 0x12A);
+		assertEquals(2, offsets.length);
+		assertEquals(0x124, offsets[0]);
+		assertEquals(0x12A, offsets[1]);
 	}
 
 	@Test
@@ -36,10 +36,10 @@ public class TestPointerExpressionParsing
 		val memoryPointer = new MemoryPointer(pointerExpression);
 		assertEquals(0x914B8554L, memoryPointer.getBaseAddress());
 		val offsets = memoryPointer.getOffsets();
-		assertEquals(offsets.length, 3);
-		assertEquals(offsets[0], 0x124);
-		assertEquals(offsets[1], 0x12A);
-		assertEquals(offsets[2], -0x4);
+		assertEquals(3, offsets.length);
+		assertEquals(0x124, offsets[0]);
+		assertEquals(0x12A, offsets[1]);
+		assertEquals(-0x4, offsets[2]);
 	}
 
 	@Test
@@ -57,11 +57,12 @@ public class TestPointerExpressionParsing
 	{
 		val pointerExpression = "[[SB4E01_DUMP80_1.bin + 0x1457AD8] + 0x74] + 0x5C";
 		val memoryPointer = new MemoryPointer(pointerExpression);
-		assertEquals("SB4E01_DUMP80_1.bin + 0x1457AD8", memoryPointer.getBaseModuleNameWithOffset());
+		assertEquals("SB4E01_DUMP80_1.bin", memoryPointer.getModuleName());
+		assertEquals(0x1457AD8, memoryPointer.getModuleOffset());
 		val offsets = memoryPointer.getOffsets();
-		assertEquals(offsets.length, 2);
-		assertEquals(offsets[0], 0x74);
-		assertEquals(offsets[1], 0x5C);
+		assertEquals(2, offsets.length);
+		assertEquals(0x74, offsets[0]);
+		assertEquals(0x5C, offsets[1]);
 	}
 
 	@Test
