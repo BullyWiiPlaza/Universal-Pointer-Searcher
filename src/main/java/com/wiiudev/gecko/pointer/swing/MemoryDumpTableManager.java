@@ -7,7 +7,6 @@ import lombok.var;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +14,11 @@ import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport
 import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.POINTER_MAP;
 import static com.wiiudev.gecko.pointer.swing.utilities.JTableUtilities.*;
 import static java.lang.Long.toHexString;
-import static java.nio.ByteOrder.BIG_ENDIAN;
 
 public class MemoryDumpTableManager
 {
-	private JTable table;
-
-	private List<MemoryDump> memoryDumps;
+	private final JTable table;
+	private final List<MemoryDump> memoryDumps;
 
 	MemoryDumpTableManager(JTable table)
 	{
@@ -37,27 +34,24 @@ public class MemoryDumpTableManager
 	private void configure()
 	{
 		val columns = new String[]{"File Name", "Starting Address",
-				"Target Address", "Byte Order", "File Type"};
+				"Target Address", "File Type", "Input Type"};
 		configureTable(table, columns);
 		setCellsAlignment(table, SwingConstants.CENTER);
 	}
 
-	void addMemoryDump(MemoryDump memoryDump)
+	void addMemoryDump(final MemoryDump memoryDump)
 	{
 		addMemoryDump(memoryDump, true);
 	}
 
-	private void addMemoryDump(MemoryDump memoryDump, boolean addToList)
+	private void addMemoryDump(final MemoryDump memoryDump, final boolean addToList)
 	{
-		val fileType = memoryDump.getFileType();
-		val chosenByteOrder = memoryDump.getByteOrder();
-		val byteOrder = fileType.equals(POINTER_MAP) ? "" : byteOrderToString(chosenByteOrder);
 		val startingAddress = memoryDump.getStartingAddress();
 		val targetAddress = memoryDump.getTargetAddress();
 		val row = new Object[]{memoryDump.getFilePath().toFile().getName(),
 				startingAddress == null ? "" : toHexString(startingAddress).toUpperCase(),
-				targetAddress == null ? "" : toHexString(targetAddress).toUpperCase(),
-				byteOrder, memoryDump.getFileType()};
+				targetAddress == null ? "" : toHexString(targetAddress).toUpperCase(), memoryDump.getFileType(),
+				memoryDump.getInputType()};
 		val tableModel = (DefaultTableModel) table.getModel();
 		tableModel.addRow(row);
 
@@ -65,16 +59,6 @@ public class MemoryDumpTableManager
 		{
 			memoryDumps.add(memoryDump);
 		}
-	}
-
-	private String byteOrderToString(ByteOrder chosenByteOrder)
-	{
-		if (chosenByteOrder == null)
-		{
-			return "";
-		}
-
-		return BIG_ENDIAN.equals(chosenByteOrder) ? "Big Endian" : "Little Endian";
 	}
 
 	void removeMemoryDumps()
@@ -94,7 +78,7 @@ public class MemoryDumpTableManager
 		return memoryDumps.get(selectedRow);
 	}
 
-	void replaceSelectedMemoryDumpWith(MemoryDump memoryDump)
+	void replaceSelectedMemoryDumpWith(final MemoryDump memoryDump)
 	{
 		val selectedRow = table.getSelectedRow();
 		memoryDumps.set(selectedRow, memoryDump);
@@ -124,7 +108,7 @@ public class MemoryDumpTableManager
 		return getList(POINTER_MAP);
 	}
 
-	private List<MemoryDump> getList(FileTypeImport fileTypeImport)
+	private List<MemoryDump> getList(final FileTypeImport fileTypeImport)
 	{
 		val actualMemoryDumps = new ArrayList<MemoryDump>();
 		for (val memoryDump : memoryDumps)

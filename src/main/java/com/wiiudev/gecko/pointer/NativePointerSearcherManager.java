@@ -393,6 +393,7 @@ public class NativePointerSearcherManager
 		command.add("--pointer-depth-range");
 		command.add(minimumPointerDepth + "," + maximumPointerDepth);
 
+		var isInitialTargetAddressPassed = false;
 		// Add commands for each memory dump
 		for (val memoryDump : memoryDumps)
 		{
@@ -405,19 +406,21 @@ public class NativePointerSearcherManager
 				command.add("--initial-starting-address");
 				val startingAddress = memoryDump.getStartingAddress();
 				command.add("0x" + toHexadecimalString(startingAddress));
-			}
-			else
+
+				if (!isInitialTargetAddressPassed)
+				{
+					passTargetAddress(command, memoryDump);
+					isInitialTargetAddressPassed = true;
+				}
+			} else
 			{
 				command.add("--comparison-file-path");
 				command.add(memoryDumpFilePath.toString());
 				command.add("--comparison-starting-address");
 				val startingAddress = memoryDump.getStartingAddress();
 				command.add("0x" + toHexadecimalString(startingAddress));
+				passTargetAddress(command, memoryDump);
 			}
-
-			command.add("--target-address");
-			val targetAddress = memoryDump.getTargetAddress();
-			command.add("0x" + toHexadecimalString(targetAddress));
 
 			/* command.add("--file-path");
 			command.add(memoryDumpFilePath.toString());
@@ -504,6 +507,13 @@ public class NativePointerSearcherManager
 		return command;
 	}
 
+	private void passTargetAddress(final List<String> command, final MemoryDump memoryDump)
+	{
+		command.add("--target-address");
+		val targetAddress = memoryDump.getTargetAddress();
+		command.add("0x" + toHexadecimalString(targetAddress));
+	}
+
 	private String toHexadecimalString(long value)
 	{
 		if (value >= 0)
@@ -516,7 +526,7 @@ public class NativePointerSearcherManager
 		}
 	}
 
-	private void addFileExtensionsCommand(List<String> command, MemoryDump memoryDump)
+	private void addFileExtensionsCommand(final List<String> command, final MemoryDump memoryDump)
 	{
 		command.add("--file-extensions");
 		val fileExtensions = memoryDump.getFileExtensions();
@@ -534,7 +544,7 @@ public class NativePointerSearcherManager
 		}
 	}
 
-	private String buildFileExtensionsCommand(List<String> fileExtensions)
+	private String buildFileExtensionsCommand(final List<String> fileExtensions)
 	{
 		val stringBuilder = new StringBuilder();
 		var fileExtensionsIndex = 0;
