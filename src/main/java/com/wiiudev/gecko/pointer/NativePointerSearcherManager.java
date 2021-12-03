@@ -389,6 +389,8 @@ public class NativePointerSearcherManager
 
 		command.add("--maximum-pointer-count");
 		command.add(maximumPointerCount + "");
+		command.add("--maximum-pointers-printed-count");
+		command.add(maximumPointerCount + "");
 
 		command.add("--pointer-depth-range");
 		command.add(minimumPointerDepth + "," + maximumPointerDepth);

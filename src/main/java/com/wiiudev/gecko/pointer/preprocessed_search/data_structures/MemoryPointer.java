@@ -48,6 +48,8 @@ public class MemoryPointer
 
 	public static MemoryPointer parseMemoryPointer(String text)
 	{
+		text = text.replace(" ", "");
+
 		parseBaseAddress(text);
 
 		String moduleExpression = null;
@@ -81,9 +83,10 @@ public class MemoryPointer
 			{
 				innerClosingIndex = text.length();
 			}
-			val pointerOffsetString = text.substring(previousClosingBracketIndex + 2, innerClosingIndex);
-			val beginIndex = 2 + HEXADECIMAL_HEADER.length();
-			var pointerOffset = parseUnsignedLong(pointerOffsetString.substring(beginIndex), 16);
+			val pointerOffsetString = text.substring(previousClosingBracketIndex + 1, innerClosingIndex);
+			val isHexadecimalOffset = pointerOffsetString.contains(HEXADECIMAL_HEADER);
+			val beginIndex =  1 + (isHexadecimalOffset ? HEXADECIMAL_HEADER.length() : 0);
+			var pointerOffset = parseUnsignedLong(pointerOffsetString.substring(beginIndex), isHexadecimalOffset ? 16 : 10);
 			if (pointerOffsetString.startsWith("-"))
 			{
 				pointerOffset *= -1;

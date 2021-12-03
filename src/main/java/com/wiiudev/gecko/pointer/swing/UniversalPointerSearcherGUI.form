@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="716" height="1095"/>
+      <xy x="20" y="20" width="716" height="1121"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -344,7 +344,7 @@
                       </component>
                     </children>
                   </scrollpane>
-                  <grid id="47ac4" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="47ac4" layout-manager="GridLayoutManager" row-count="6" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="21" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -420,7 +420,7 @@
                       </grid>
                       <component id="220c7" class="javax.swing.JCheckBox" binding="useNativePointerSearcherCheckBox">
                         <constraints>
-                          <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <selected value="true"/>
@@ -439,7 +439,7 @@
                       </component>
                       <component id="504e6" class="javax.swing.JCheckBox" binding="writePointersToFileSystemCheckBox" default-binding="true">
                         <constraints>
-                          <grid row="4" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="5" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <selected value="true"/>
@@ -474,6 +474,15 @@
                         <properties>
                           <text value="Print Visited Addresses"/>
                           <toolTipText value="Whether the pointer searcher will print the visited addresses of each pointer result"/>
+                        </properties>
+                      </component>
+                      <component id="cc1" class="javax.swing.JCheckBox" binding="truncateMemoryPointersDebuggingOutputCheckBox" default-binding="true">
+                        <constraints>
+                          <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Truncate Memory Pointers Debugging Output"/>
+                          <toolTipText value="Whether memory pointers are removed from the debugging output (for readability and viewing performance)"/>
                         </properties>
                       </component>
                     </children>

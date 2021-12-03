@@ -163,6 +163,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JButton loadMemoryPointerResultsBrowseButton;
 	private JCheckBox scanDeeperByCheckBox;
 	private JTextField scanDeeperByField;
+	private JCheckBox truncateMemoryPointersDebuggingOutputCheckBox;
 	private PersistentSettingsManager persistentSettingsManager;
 	private MemoryDumpTableManager memoryDumpTableManager;
 	private Path lastAddedFilePath;
@@ -498,7 +499,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 					val dialogTitle = nativePointerSearcherOutputButton.getText();
 					nativePointerSearcherOutputDialog.setTitle(dialogTitle);
 					var processOutput = nativePointerSearcherOutput.getProcessOutput();
-					processOutput = compressProcessOutput(processOutput);
+					if (truncateMemoryPointersDebuggingOutputCheckBox.isSelected())
+					{
+						processOutput = compressProcessOutput(processOutput);
+					}
 					nativePointerSearcherOutputDialog.setText(processOutput);
 					nativePointerSearcherOutputDialog.setLocationRelativeTo(this);
 					nativePointerSearcherOutputDialog.setVisible(true);
@@ -2039,7 +2043,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		}
 	}
 
-	private void setFoundPointersText(String foundPointersText)
+	private void setFoundPointersText(final String foundPointersText)
 	{
 		// Disable the cursor position from changing when the text area is updated
 		val caret = (DefaultCaret) foundPointersOutputArea.getCaret();
