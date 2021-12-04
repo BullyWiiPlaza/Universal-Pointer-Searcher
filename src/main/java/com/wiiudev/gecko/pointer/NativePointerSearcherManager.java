@@ -18,6 +18,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeMap;
 
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.OffsetPrintingSetting.SIGNED;
 import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.MEMORY_DUMP;
@@ -399,34 +400,133 @@ public class NativePointerSearcherManager
 		command.add("--pointer-depth-range");
 		command.add(minimumPointerDepth + "," + maximumPointerDepth);
 
-		var isInitialTargetAddressPassed = false;
-		// Add commands for each memory dump
+		val targetAddresses = new ArrayList<Long>();
+
+		// Combine multiple arguments into a single command line switch
+		val initialFilePaths = new ArrayList<Path>();
+		val initialStartingAddresses = new ArrayList<Long>();
 		for (val memoryDump : memoryDumps)
 		{
 			val fileType = memoryDump.getInputType();
-			val memoryDumpFilePath = memoryDump.getFilePath().toAbsolutePath();
 			if (fileType.equals(InputType.INITIAL))
 			{
-				command.add("--initial-file-path");
-				command.add(memoryDumpFilePath.toString());
-				command.add("--initial-starting-address");
-				val startingAddress = memoryDump.getStartingAddress();
-				command.add("0x" + toHexadecimalString(startingAddress));
+				val filePath = memoryDump.getFilePath();
+				initialFilePaths.add(filePath);
 
-				if (!isInitialTargetAddressPassed)
+				val startingAddress = memoryDump.getStartingAddress();
+				initialStartingAddresses.add(startingAddress);
+			}
+		}
+
+		if (memoryDumps.size() > 0)
+		{
+			val memoryDump = memoryDumps.get(0);
+			val targetAddress = memoryDump.getTargetAddress();
+			targetAddresses.add(targetAddress);
+		}
+
+		if (!initialFilePaths.isEmpty())
+		{
+			command.add("--initial-file-path");
+			for (val filePath : initialFilePaths)
+			{
+				command.add(filePath.toString());
+			}
+		}
+
+		if (!initialStartingAddresses.isEmpty())
+		{
+			command.add("--initial-starting-address");
+			for (val startingAddress : initialStartingAddresses)
+			{
+				val hexadecimalStartingAddress = "0x" + toHexadecimalString(startingAddress);
+				command.add(hexadecimalStartingAddress);
+			}
+		}
+
+		val comparisonFilePathEntries = new TreeMap<Integer, ArrayList<Path>>();
+		val comparisonStartingAddressesEntries = new TreeMap<Integer, ArrayList<Long>>();
+		val comparisonGroupNumberTargetAddresses = new TreeMap<Integer, Long>();
+		for (val memoryDump : memoryDumps)
+		{
+			val inputType = memoryDump.getInputType();
+			if (inputType.equals(InputType.COMPARISON))
+			{
+				val comparisonGroupNumber = memoryDump.getComparisonGroupNumber();
+
+				val filePath = memoryDump.getFilePath();
+				var comparisonFilePathsList = comparisonFilePathEntries.computeIfAbsent(comparisonGroupNumber,
+						k -> new ArrayList<>());
+				comparisonFilePathsList.add(filePath);
+
+				val startingAddress = memoryDump.getStartingAddress();
+				var comparisonStartingAddressesList = comparisonStartingAddressesEntries.computeIfAbsent(comparisonGroupNumber, k -> new ArrayList<>());
+				comparisonStartingAddressesList.add(startingAddress);
+
+				val targetAddress = memoryDump.getTargetAddress();
+				comparisonGroupNumberTargetAddresses.put(comparisonGroupNumber, targetAddress);
+			}
+		}
+
+		if (!comparisonFilePathEntries.isEmpty())
+		{
+			command.add("--comparison-file-path");
+			var currentComparisonGroupNumber = 1;
+			for (val comparisonFilePathEntry : comparisonFilePathEntries.entrySet())
+			{
+				val comparisonGroupNumber = comparisonFilePathEntry.getKey();
+				if (comparisonGroupNumber != currentComparisonGroupNumber)
 				{
-					passTargetAddress(command, memoryDump);
-					isInitialTargetAddressPassed = true;
+					command.add("%%");
+					currentComparisonGroupNumber = comparisonGroupNumber;
 				}
-			} else
+
+				val comparisonFilePaths = comparisonFilePathEntry.getValue();
+				for (val comparisonFilePath : comparisonFilePaths)
+				{
+					command.add(comparisonFilePath.toString());
+				}
+			}
+		}
+
+		if (!comparisonStartingAddressesEntries.isEmpty())
+		{
+			command.add("--comparison-starting-address");
+			var currentComparisonGroupNumber = 1;
+			for (val comparisonStartingAddressEntry : comparisonStartingAddressesEntries.entrySet())
+			{
+				val comparisonGroupNumber = comparisonStartingAddressEntry.getKey();
+				if (comparisonGroupNumber != currentComparisonGroupNumber)
+				{
+					command.add("%%");
+					currentComparisonGroupNumber = comparisonGroupNumber;
+				}
+
+				val startingAddresses = comparisonStartingAddressEntry.getValue();
+				for (val startingAddress : startingAddresses)
+				{
+					val hexadecimalStartingAddress = "0x" + toHexadecimalString(startingAddress);
+					command.add(hexadecimalStartingAddress);
+				}
+			}
+		}
+
+		targetAddresses.addAll(comparisonGroupNumberTargetAddresses.values());
+
+		// Add commands for each memory dump
+		for (val memoryDump : memoryDumps)
+		{
+			/* val fileType = memoryDump.getInputType();
+			if (fileType.equals(InputType.COMPARISON))
 			{
 				command.add("--comparison-file-path");
+				val memoryDumpFilePath = memoryDump.getFilePath().toAbsolutePath();
 				command.add(memoryDumpFilePath.toString());
 				command.add("--comparison-starting-address");
 				val startingAddress = memoryDump.getStartingAddress();
 				command.add("0x" + toHexadecimalString(startingAddress));
 				passTargetAddress(command, memoryDump);
-			}
+			} */
 
 			/* command.add("--file-path");
 			command.add(memoryDumpFilePath.toString());
@@ -458,6 +558,17 @@ public class NativePointerSearcherManager
 			command.add(booleanToIntegerString(memoryDump.isGeneratePointerMap()));
 			command.add("--read-pointer-map");
 			command.add(booleanToIntegerString(memoryDump.isReadPointerMap())); */
+		}
+
+		if (!targetAddresses.isEmpty())
+		{
+			// Pass the target addresses (one per memory snapshot)
+			command.add("--target-address");
+			for (val targetAddress : targetAddresses)
+			{
+				val hexadecimalTargetAddress = "0x" + toHexadecimalString(targetAddress);
+				command.add(hexadecimalTargetAddress);
+			}
 		}
 
 		for (val pointerMap : pointerMaps)

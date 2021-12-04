@@ -71,6 +71,7 @@ public class MemoryDumpDialog extends JDialog
 	private JCheckBox addModuleDumpsFolderCheckBox;
 	private JComboBox<InputType> inputTypeSelection;
 	private JLabel byteOrderLabel;
+	private JSpinner comparisonGroupNumberSpinner;
 	private final List<JLabel> statusLabels;
 
 	@Getter
@@ -117,6 +118,8 @@ public class MemoryDumpDialog extends JDialog
 		runComponentAvailabilitySetter();
 		addTextFieldInputRestrictions();
 		considerPopulatingFields();
+		val comparisonGroupSpinnerNumberModel = new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1);
+		comparisonGroupNumberSpinner.setModel(comparisonGroupSpinnerNumberModel);
 		fileTypeSelection.setModel(new DefaultComboBoxModel<>(FileTypeImport.values()));
 		inputTypeSelection.setModel(new DefaultComboBoxModel<>(InputType.values()));
 	}
@@ -317,6 +320,9 @@ public class MemoryDumpDialog extends JDialog
 					val isParsingEntireFolderAllowed = mayParseFolder && !addModuleDumpsFolderCheckBox.isSelected();
 					parseEntireFolderCheckBox.setEnabled(isParsingEntireFolderAllowed);
 					inputTypeSelection.setEnabled(selectedFileType.equals(FileTypeImport.MEMORY_DUMP));
+					val isComparisonGroupNumberEnabled = getSelectedItem(inputTypeSelection).equals(InputType.COMPARISON)
+							&& getSelectedItem(fileTypeSelection).equals(FileTypeImport.MEMORY_DUMP);
+					comparisonGroupNumberSpinner.setEnabled(isComparisonGroupNumberEnabled);
 					addModuleDumpsFolderCheckBox.setEnabled(mayParseFolder && !parseEntireFolderCheckBox.isSelected());
 					filePathField.setBackground(finalIsFilePathValid ? VALID_INPUT_COLOR : INVALID_INPUT_COLOR);
 					setValidationLabel(finalIsFilePathValid, FILE_PATH_CHECK_OK,
@@ -698,6 +704,8 @@ public class MemoryDumpDialog extends JDialog
 					? null : (Long) parseUnsignedLong(targetAddressFieldText, 16);
 			memoryDump = new MemoryDump(filePath, startingAddress, targetAddress, byteOrder);
 			memoryDump.setInputType(getSelectedItem(inputTypeSelection));
+			val comparisonGroupNumber = Integer.parseInt(comparisonGroupNumberSpinner.getValue() + "");
+			memoryDump.setComparisonGroupNumber(comparisonGroupNumber);
 			memoryDump.setAddedAsFolder(addModuleDumpsFolderCheckBox.isSelected());
 
 			val parseEntireFolderCheckBoxSelected = parseEntireFolderCheckBox.isSelected();

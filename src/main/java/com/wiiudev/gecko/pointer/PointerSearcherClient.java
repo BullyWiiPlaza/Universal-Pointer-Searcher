@@ -13,7 +13,8 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
-	// TODO "Scan Deeper By" only available when "Load Memory Pointer Results" used
+	// TODO Move input file(s) up/down
+	// TODO Checkboxes for enabling/disabling input files: https://stackoverflow.com/questions/7391877
 	// TODO When adding another pointer map, re-populate file type
 	// TODO Implement minimum pointer address
 	// TODO Check provided addresses against address size

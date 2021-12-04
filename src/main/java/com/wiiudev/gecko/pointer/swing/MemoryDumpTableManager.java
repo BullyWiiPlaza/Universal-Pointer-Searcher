@@ -2,6 +2,7 @@ package com.wiiudev.gecko.pointer.swing;
 
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
 import com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport;
+import com.wiiudev.gecko.pointer.swing.preprocessed_search.InputType;
 import lombok.val;
 import lombok.var;
 
@@ -49,11 +50,12 @@ public class MemoryDumpTableManager
 		val startingAddress = memoryDump.getStartingAddress();
 		val targetAddress = memoryDump.getTargetAddress();
 		val inputType = memoryDump.getInputType();
+		val comparisonGroupNumber = memoryDump.getComparisonGroupNumber();
 		val fileType = memoryDump.getFileType();
 		val row = new Object[]{memoryDump.getFilePath().toFile().getName(),
 				startingAddress == null ? "" : toHexString(startingAddress).toUpperCase(),
 				targetAddress == null ? "" : toHexString(targetAddress).toUpperCase(),
-				fileType, fileType.equals(POINTER_MAP) ? "" : inputType};
+				fileType, fileType.equals(POINTER_MAP) ? "" : renderInputType(inputType, comparisonGroupNumber)};
 		val tableModel = (DefaultTableModel) table.getModel();
 		tableModel.addRow(row);
 
@@ -61,6 +63,16 @@ public class MemoryDumpTableManager
 		{
 			memoryDumps.add(memoryDump);
 		}
+	}
+
+	private String renderInputType(final InputType inputType, final int comparisonGroupNumber)
+	{
+		if (inputType.equals(InputType.COMPARISON))
+		{
+			return inputType + " " + comparisonGroupNumber;
+		}
+
+		return inputType.toString();
 	}
 
 	void removeMemoryDumps()

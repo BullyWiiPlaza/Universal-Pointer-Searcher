@@ -94,6 +94,10 @@ public class MemoryDump
 
 	@Getter
 	@Setter
+	private int comparisonGroupNumber;
+
+	@Getter
+	@Setter
 	private List<String> fileExtensions;
 
 	@Setter

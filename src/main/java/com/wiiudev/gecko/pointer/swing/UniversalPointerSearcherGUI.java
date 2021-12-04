@@ -235,6 +235,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val loadMemoryPointersFilePathFileBrowserManager = new FileBrowserManager(loadMemoryPointerResultsCheckBox,
 				loadMemoryPointersFilePathField, loadMemoryPointerResultsBrowseButton,
 				OpenDialogType.OPEN);
+		loadMemoryPointerResultsCheckBox.addItemListener(itemEvent -> setButtonAvailability());
 		scanDeeperByCheckBox.addItemListener(itemEvent -> setScanDeeperByBackgroundColor());
 		addScanDeeperByFieldDocumentListener();
 		setScanDeeperByBackgroundColor();
@@ -1127,6 +1128,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private void setButtonAvailability()
 	{
+		scanDeeperByCheckBox.setEnabled(loadMemoryPointerResultsCheckBox.isSelected());
+		scanDeeperByField.setEnabled(loadMemoryPointerResultsCheckBox.isSelected());
 		val minimumPointerDepth = parseLongSafely(minimumPointerSearchDepthField.getText());
 		val maximumPointerDepth = parseLongSafely(maximumPointerSearchDepthField.getText());
 		val isPointerDepthValid = minimumPointerDepth <= maximumPointerDepth;
