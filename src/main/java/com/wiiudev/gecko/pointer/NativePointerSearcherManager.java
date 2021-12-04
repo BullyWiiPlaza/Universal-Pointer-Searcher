@@ -392,11 +392,6 @@ public class NativePointerSearcherManager
 		command.add(toHexadecimalString(fromPointerOffset)
 				+ "," + toHexadecimalString(toPointerOffset));
 
-		command.add("--maximum-pointer-count");
-		command.add(maximumPointerCount + "");
-		command.add("--maximum-pointers-printed-count");
-		command.add(maximumPointerCount + "");
-
 		command.add("--pointer-depth-range");
 		command.add(minimumPointerDepth + "," + maximumPointerDepth);
 
@@ -579,7 +574,15 @@ public class NativePointerSearcherManager
 			passTargetAddress(command, pointerMap);
 		}
 
-		if (targetSystem != null)
+		if (targetSystem == null)
+		{
+			command.add("--endian");
+			val isLittleEndian = byteOrder.getByteOrder().equals(LITTLE_ENDIAN);
+			command.add(isLittleEndian ? "little" : "big");
+
+			command.add("--address-size");
+			command.add(addressSize + "");
+		} else
 		{
 			command.add("--target-system");
 			command.add(targetSystem.toString());
@@ -597,23 +600,22 @@ public class NativePointerSearcherManager
 			command.add(loadMemoryPointersFilePath.toString());
 		}
 
-		command.add("--endian");
-		val isLittleEndian = byteOrder.getByteOrder().equals(LITTLE_ENDIAN);
-		command.add(isLittleEndian ? "little" : "big");
-
-		command.add("--address-size");
-		command.add(addressSize + "");
-
-		command.add("--exclude-cycles");
-		command.add(excludeCycles + "");
+		if (!excludeCycles)
+		{
+			command.add("--exclude-cycles");
+			command.add(false + "");
+		}
 
 		if (printVisitedAddresses)
 		{
 			command.add("--print-visited-addresses");
 		}
 
-		command.add("--verbose");
-		command.add(verboseLogging + "");
+		if (verboseLogging)
+		{
+			command.add("--verbose");
+			command.add(true + "");
+		}
 
 		if (printModuleFileNames)
 		{
@@ -628,6 +630,11 @@ public class NativePointerSearcherManager
 			command.add("--scan-deeper-by");
 			command.add(scanDeeperBy + "");
 		}
+
+		command.add("--maximum-pointer-count");
+		command.add(maximumPointerCount + "");
+		command.add("--maximum-pointers-printed-count");
+		command.add(maximumPointerCount + "");
 
 		return command;
 	}

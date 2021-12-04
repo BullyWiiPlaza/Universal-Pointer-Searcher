@@ -13,6 +13,8 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
+	// TODO Adding memory dumps/pointers maps by folder
+	// TODO Cancel pointer search not working?
 	// TODO Move input file(s) up/down
 	// TODO Checkboxes for enabling/disabling input files: https://stackoverflow.com/questions/7391877
 	// TODO When adding another pointer map, re-populate file type
