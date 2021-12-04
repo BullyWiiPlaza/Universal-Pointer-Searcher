@@ -6,10 +6,7 @@ import com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerList;
 import com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.*;
 import com.wiiudev.gecko.pointer.swing.preprocessed_search.MemoryDumpDialog;
-import com.wiiudev.gecko.pointer.swing.utilities.JTextAreaLimit;
-import com.wiiudev.gecko.pointer.swing.utilities.MemoryDumpsByteOrder;
-import com.wiiudev.gecko.pointer.swing.utilities.PersistentSettingsManager;
-import com.wiiudev.gecko.pointer.swing.utilities.WindowsTaskBarProgress;
+import com.wiiudev.gecko.pointer.swing.utilities.*;
 import com.wiiudev.gecko.pointer.utilities.Benchmark;
 import lombok.val;
 import lombok.var;
@@ -20,10 +17,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteOrder;
@@ -256,6 +250,56 @@ public class UniversalPointerSearcherGUI extends JFrame
 		setButtonAvailability();
 		handlePersistentSettings();
 		configurePointerResultsPage();
+		addGUIMenuBar();
+	}
+
+	private void addGUIMenuBar()
+	{
+		val menuBar = new JMenuBar();
+		val menu = new JMenu("File...");
+
+		try
+		{
+			val pointerSearcherConfigurations = Paths.get(ProgramDirectoryUtilities.getProgramDirectory()).resolve("Pointer Searcher Configurations");
+			val guiSettingsManager = new GUISettingsManager(pointerSearcherConfigurations);
+
+			val loadMenuItem = new JMenuItem("Load...", KeyEvent.VK_T);
+			loadMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.ALT_DOWN_MASK));
+			loadMenuItem.setToolTipText("Allows you to choose a configuration to load");
+			loadMenuItem.addActionListener(actionEvent ->
+			{
+				try
+				{
+					guiSettingsManager.loadSettings(rootPane);
+				} catch (IOException exception)
+				{
+					exception.printStackTrace();
+				}
+			});
+			menu.add(loadMenuItem);
+
+			val saveMenuItem = new JMenuItem("Save...",
+					KeyEvent.VK_T);
+			saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+					KeyEvent.VK_2, InputEvent.ALT_DOWN_MASK));
+			saveMenuItem.setToolTipText("Allows you to choose a file to save the current configuration to");
+			saveMenuItem.addActionListener(actionEvent ->
+			{
+				try
+				{
+					guiSettingsManager.saveSettings(rootPane);
+				} catch (IOException exception)
+				{
+					exception.printStackTrace();
+				}
+			});
+			menu.add(saveMenuItem);
+			menuBar.add(menu);
+			setJMenuBar(menuBar);
+		} catch (IOException exception)
+		{
+			handleException(exception);
+		}
 	}
 
 	private void addScanDeeperByFieldDocumentListener()
@@ -1358,12 +1402,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 		return memoryDumpDialog;
 	}
 
-	private void handleException(Throwable throwable)
+	private void handleException(final Throwable throwable)
 	{
 		StackTraceUtilities.handleException(rootPane, throwable);
 	}
 
-	private boolean addMemoryDump(MemoryDump memoryDump)
+	private boolean addMemoryDump(final MemoryDump memoryDump)
 	{
 		/* val memoryDumps = memoryPointerSearcher.getMemoryDumps();
 

@@ -13,6 +13,7 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
+	// TODO "Scan Deeper By" only available when "Load Memory Pointer Results" used
 	// TODO When adding another pointer map, re-populate file type
 	// TODO Implement minimum pointer address
 	// TODO Check provided addresses against address size
