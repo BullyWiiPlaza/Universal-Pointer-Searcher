@@ -105,6 +105,10 @@ public class NativePointerSearcherManager
 
 	@Getter
 	@Setter
+	private String[] fileExtensions;
+
+	@Getter
+	@Setter
 	private Integer scanDeeperBy;
 
 	@Setter
@@ -624,6 +628,12 @@ public class NativePointerSearcherManager
 
 		command.add("--maximum-memory-utilization-fraction");
 		command.add((maximumMemoryUtilizationFraction / 100) + "");
+
+		if (fileExtensions != null)
+		{
+			command.add("--file-extensions");
+			command.addAll(asList(fileExtensions));
+		}
 
 		if (scanDeeperBy != null)
 		{

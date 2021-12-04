@@ -158,6 +158,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JCheckBox scanDeeperByCheckBox;
 	private JTextField scanDeeperByField;
 	private JCheckBox truncateMemoryPointersDebuggingOutputCheckBox;
+	private JTextField fileExtensionsField;
 	private PersistentSettingsManager persistentSettingsManager;
 	private MemoryDumpTableManager memoryDumpTableManager;
 	private Path lastAddedFilePath;
@@ -252,6 +253,47 @@ public class UniversalPointerSearcherGUI extends JFrame
 		handlePersistentSettings();
 		configurePointerResultsPage();
 		addGUIMenuBar();
+
+		val document = fileExtensionsField.getDocument();
+		document.addDocumentListener(new DocumentListener()
+		{
+			@Override
+			public void insertUpdate(final DocumentEvent documentEvent)
+			{
+				validateEnteredFileExtensions();
+			}
+
+			@Override
+			public void removeUpdate(final DocumentEvent documentEvent)
+			{
+				validateEnteredFileExtensions();
+			}
+
+			@Override
+			public void changedUpdate(final DocumentEvent documentEvent)
+			{
+				validateEnteredFileExtensions();
+			}
+		});
+
+		validateEnteredFileExtensions();
+	}
+
+	private void validateEnteredFileExtensions()
+	{
+		val enteredText = fileExtensionsField.getText();
+		val fileExtensions = enteredText.split(",");
+		var isValid = true;
+		for (val fileExtension : fileExtensions)
+		{
+			// TODO Validate properly
+			if (false)
+			{
+				isValid = false;
+				break;
+			}
+		}
+		fileExtensionsField.setBackground(isValid ? GREEN : RED);
 	}
 
 	private void addGUIMenuBar()
@@ -1334,10 +1376,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 					parseEntireFolder = memoryDumpDialog.isParseEntireFolderSelected();
 					addModuleDumpsFolder = memoryDumpDialog.isAddModuleDumpsFolderSelected();
 
-					if (memoryDumpDialog.shouldParseEntireFolder()
-							&& !memoryDumpDialog.isAddModuleDumpsFolderSelected())
+					if (false/* memoryDumpDialog.shouldParseEntireFolder()
+							&& !memoryDumpDialog.isAddModuleDumpsFolderSelected() */)
 					{
-						val memoryDumps = memoryDumpDialog.getMemoryDumps();
+						/* val memoryDumps = memoryDumpDialog.getMemoryDumps();
 						if (memoryDumps != null)
 						{
 							for (val memoryDump : memoryDumps)
@@ -1353,7 +1395,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 							{
 								addMemoryDump(pointerMap);
 							}
-						}
+						} */
 					} else
 					{
 						val successfullyAdded = addMemoryDump(addedMemoryDump);
@@ -1790,6 +1832,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 		{
 			nativePointerSearcher.addPointerMap(pointerMap);
 		}
+
+		val fileExtensionsText = fileExtensionsField.getText();
+		val fileExtensions = fileExtensionsText.split(",");
+		nativePointerSearcher.setFileExtensions(fileExtensions);
 
 		/* val allowNegativeOffsets = allowNegativeOffsetsCheckBox.isSelected();
 		nativePointerSearcher.setAllowNegativeOffsets(allowNegativeOffsets); */

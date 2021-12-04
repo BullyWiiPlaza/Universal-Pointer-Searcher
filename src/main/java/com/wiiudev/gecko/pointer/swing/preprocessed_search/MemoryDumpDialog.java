@@ -327,7 +327,8 @@ public class MemoryDumpDialog extends JDialog
 					filePathField.setBackground(finalIsFilePathValid ? VALID_INPUT_COLOR : INVALID_INPUT_COLOR);
 					setValidationLabel(finalIsFilePathValid, FILE_PATH_CHECK_OK,
 							finalFilePathValidatorText, filePathValidatorLabel);
-					targetAddressField.setEnabled(!shouldParseEntireFolder || addModuleDumpsFolderCheckBox.isSelected());
+					targetAddressField.setEnabled(true);
+					// targetAddressField.setEnabled(!shouldParseEntireFolder || addModuleDumpsFolderCheckBox.isSelected());
 					fileTypeSelection.setEnabled(!shouldParseEntireFolder && !addModuleDumpsFolderCheckBox.isSelected());
 
 					val detectedFileTypeImport = FileTypeImport.parseFileTypeImport(filePath);
@@ -386,6 +387,7 @@ public class MemoryDumpDialog extends JDialog
 					try
 					{
 						areAllMemoryDumpsOkay = areAllMemoryDumpsOkay(startingAddress, memoryDumps);
+						areAllMemoryDumpsOkay = true;
 
 						/* if (areAllMemoryDumpsOkay)
 						{
