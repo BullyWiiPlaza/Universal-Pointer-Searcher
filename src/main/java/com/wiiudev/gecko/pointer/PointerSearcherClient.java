@@ -13,6 +13,7 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
+	// TODO File extensions without prepended dot "."
 	// TODO Debugging output line numbers
 	// TODO Adding memory dumps/pointers maps by folder
 	// TODO Cancel pointer search not working?
@@ -45,7 +46,7 @@ public class PointerSearcherClient
 		setCurrentManager(repaintManager);
 	}
 
-	public static void main(String[] arguments) throws Exception
+	public static void main(final String[] arguments) throws Exception
 	{
 		val systemLookAndFeelClassName = getSystemLookAndFeelClassName();
 		setLookAndFeel(systemLookAndFeelClassName);

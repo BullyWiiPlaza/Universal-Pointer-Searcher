@@ -47,4 +47,9 @@ public class DataConversions
 		}
 		return stringBuilder.toString();
 	}
+
+	public static String toHexadecimal(final Long startingAddress)
+	{
+		return "0x" + Long.toHexString(startingAddress).toUpperCase();
+	}
 }

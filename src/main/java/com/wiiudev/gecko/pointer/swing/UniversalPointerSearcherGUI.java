@@ -8,6 +8,7 @@ import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.*;
 import com.wiiudev.gecko.pointer.swing.preprocessed_search.MemoryDumpDialog;
 import com.wiiudev.gecko.pointer.swing.utilities.*;
 import com.wiiudev.gecko.pointer.utilities.Benchmark;
+import lombok.Getter;
 import lombok.val;
 import lombok.var;
 
@@ -84,7 +85,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JPanel rootPanel;
 
 	private JCheckBox allowNegativeOffsetsCheckBox;
+
+	@Getter
 	private JTextField maximumPointerOffsetField;
+
 	private JTextArea foundPointersOutputArea;
 	private JButton searchPointersButton;
 	private JButton addMemoryDumpButton;
@@ -92,7 +96,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JLabel pointerSearchStatisticsLabel;
 	private JFormattedTextField pointerValueAlignmentField;
 	private JFormattedTextField maximumMemoryChunkSizeField;
+
+	@Getter
 	private JFormattedTextField maximumPointerSearchDepthField;
+
 	private JComboBox<OffsetPrintingSetting> offsetPrintingSettingSelection;
 	private JTable addedMemoryDumpsTable;
 	private JButton cancelSearchButton;
@@ -117,20 +124,32 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JCheckBox writePointersToFileSystemCheckBox;
 	private JCheckBox excludeCyclesCheckBox;
 	private JTextField minimumPointerAddressField;
+
+	@Getter
 	private JComboBox<Integer> addressSizeSelection;
+
 	private JSpinner resultsPageSpinner;
 	private JTextField pointerResultsPageSizeField;
 	private JLabel pageResultsLabel;
 	private JCheckBox useNativePointerSearcherCheckBox;
 	private JButton nativePointerSearcherOutputButton;
+
+	@Getter
 	private JFormattedTextField maximumPointersCountField;
+
 	private JCheckBox readPointerMapsCheckBox;
 	private JFormattedTextField pointerAddressAlignmentField;
 	private JLabel readableMaximumMemoryChunkSizeLabel;
 	private JTextField lastPointerOffsetsField;
+
+	@Getter
 	private JFormattedTextField minimumPointerSearchDepthField;
+
 	private JFormattedTextField threadCountField;
+
+	@Getter
 	private JTextField minimumPointerOffsetField;
+
 	private JLabel maximumPointerOffsetDelimiterLabel;
 	private JLabel processorCountLabel;
 	private JButton optimalThreadCountButton;
@@ -145,10 +164,16 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JComboBox<TargetSystem> targetSystemSelection;
 	private JCheckBox targetSystemCheckbox;
 	private JCheckBox printModuleFileNamesCheckBox;
+
+	@Getter
 	private JComboBox<MemoryDumpsByteOrder> byteOrderSelection;
+
 	private JLabel maximumMemoryChunkSizeLabel;
 	private JButton byteOrderInformationButton;
+
+	@Getter
 	private JTextField maximumMemoryUtilizationPercentageField;
+
 	private JCheckBox storeMemoryPointerResultsCheckBox;
 	private JTextField storeMemoryPointersFilePathField;
 	private JButton storeMemoryPointerResultsBrowseButton;
@@ -160,7 +185,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JCheckBox truncateMemoryPointersDebuggingOutputCheckBox;
 	private JTextField fileExtensionsField;
 	private PersistentSettingsManager persistentSettingsManager;
+
+	@Getter
 	private MemoryDumpTableManager memoryDumpTableManager;
+
 	private Path lastAddedFilePath;
 	private ByteOrder lastAddedByteOrder;
 	private Long lastAddedStartingAddress;
@@ -281,8 +309,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private void validateEnteredFileExtensions()
 	{
-		val enteredText = fileExtensionsField.getText();
-		val fileExtensions = enteredText.split(",");
+		val fileExtensions = parseFileExtensions();
 		var isValid = true;
 		for (val fileExtension : fileExtensions)
 		{
@@ -330,7 +357,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			{
 				try
 				{
-					guiSettingsManager.saveSettings(rootPane);
+					guiSettingsManager.saveSettings(UniversalPointerSearcherGUI.this);
 				} catch (IOException exception)
 				{
 					exception.printStackTrace();
@@ -1833,8 +1860,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			nativePointerSearcher.addPointerMap(pointerMap);
 		}
 
-		val fileExtensionsText = fileExtensionsField.getText();
-		val fileExtensions = fileExtensionsText.split(",");
+		val fileExtensions = parseFileExtensions();
 		nativePointerSearcher.setFileExtensions(fileExtensions);
 
 		/* val allowNegativeOffsets = allowNegativeOffsetsCheckBox.isSelected();
@@ -1935,6 +1961,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 				memoryPointerSearcher.setMemoryPointerList(memoryPointerList);
 			}
 		}
+	}
+
+	public String[] parseFileExtensions()
+	{
+		val fileExtensionsText = fileExtensionsField.getText();
+		return fileExtensionsText.split(",");
 	}
 
 	private long getMinimumPointerAddress(MemoryDump memoryDump)

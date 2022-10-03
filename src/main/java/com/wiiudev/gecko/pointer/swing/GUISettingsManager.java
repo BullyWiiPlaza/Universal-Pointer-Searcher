@@ -2,6 +2,8 @@ package com.wiiudev.gecko.pointer.swing;
 
 import lombok.val;
 import lombok.var;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -12,6 +14,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.cedarsoftware.util.io.JsonWriter.formatJson;
+import static com.wiiudev.gecko.pointer.preprocessed_search.utilities.DataConversions.toHexadecimal;
+import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.getSelectedItem;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.readAllBytes;
 import static javax.swing.JOptionPane.showMessageDialog;
@@ -74,16 +79,71 @@ public class GUISettingsManager
 	}
 
 	// TODO Implement saving settings fully
-	public void saveSettings(final Component rootPane) throws IOException
+	public void saveSettings(final UniversalPointerSearcherGUI pointerSearcherGUI) throws IOException
 	{
-		val filePath = showFileChooser(rootPane, FileChooserOpenDialogType.SAVE_DIALOG);
+		val filePath = showFileChooser(pointerSearcherGUI, FileChooserOpenDialogType.SAVE_DIALOG);
 		if (filePath != null)
 		{
-			Files.write(filePath, "".getBytes(StandardCharsets.UTF_8));
-			showMessageDialog(rootPane,
+			val formattedJSON = buildPointerSearcherProfileJSON(pointerSearcherGUI);
+			Files.write(filePath, formattedJSON.getBytes(StandardCharsets.UTF_8));
+			showMessageDialog(pointerSearcherGUI,
 					"The configuration has been saved successfully.",
 					"Successfully saved",
 					JOptionPane.INFORMATION_MESSAGE);
 		}
+	}
+
+	private static String buildPointerSearcherProfileJSON(final UniversalPointerSearcherGUI pointerSearcherGUI)
+	{
+		val rootJSONObject = new JSONObject();
+		val memoryDumpTableManager = pointerSearcherGUI.getMemoryDumpTableManager();
+		val memoryDumps = memoryDumpTableManager.getMemoryDumps();
+		val inputFilesJSONObject = new JSONObject();
+		for (val memoryDump : memoryDumps)
+		{
+			val inputFileJSONObject = new JSONObject();
+			inputFileJSONObject.put("file-path", memoryDump.getFilePath().toString());
+			inputFileJSONObject.put("input-type", memoryDump.getInputType());
+			inputFileJSONObject.put("starting-address", toHexadecimal(memoryDump.getStartingAddress()));
+
+			inputFilesJSONObject.put("input-file", inputFileJSONObject);
+		}
+		rootJSONObject.put("input-files", inputFilesJSONObject);
+
+		if (memoryDumps.size() != 0)
+		{
+			val firstMemoryDump = memoryDumps.get(0);
+			rootJSONObject.put("target-address", toHexadecimal(firstMemoryDump.getTargetAddress()));
+		}
+
+		val pointerDepthRangeJSONObject = buildRangeJSON(pointerSearcherGUI.getMinimumPointerSearchDepthField(),
+				pointerSearcherGUI.getMaximumPointerSearchDepthField(), false);
+		rootJSONObject.put("pointer-depth-range", pointerDepthRangeJSONObject);
+		val pointerOffsetRangeJSONObject = buildRangeJSON(pointerSearcherGUI.getMinimumPointerOffsetField(),
+				pointerSearcherGUI.getMaximumPointerOffsetField(), true);
+		rootJSONObject.put("pointer-offset-range", pointerOffsetRangeJSONObject);
+		rootJSONObject.put("maximum-result-count", Long.parseLong(pointerSearcherGUI.getMaximumPointersCountField().getText()));
+		rootJSONObject.put("maximum-memory-utilization-percentage", Double.parseDouble(pointerSearcherGUI.getMaximumMemoryUtilizationPercentageField().getText()));
+		val fileExtensionsJSON = new JSONArray();
+		val fileExtensions = pointerSearcherGUI.parseFileExtensions();
+		for (val fileExtension : fileExtensions)
+		{
+			fileExtensionsJSON.put(fileExtension);
+		}
+		rootJSONObject.put("file-extensions", fileExtensionsJSON);
+		rootJSONObject.put("address-size", getSelectedItem(pointerSearcherGUI.getAddressSizeSelection()));
+		rootJSONObject.put("byte-order", getSelectedItem(pointerSearcherGUI.getByteOrderSelection()).toString());
+
+		return formatJson(rootJSONObject.toString());
+	}
+
+	private static JSONObject buildRangeJSON(final JTextField minimumPointerSearchDepthField,
+	                                         final JTextField maximumPointerSearchDepthField,
+	                                         final boolean isHexadecimal)
+	{
+		val pointerDepthRangeJSONObject = new JSONObject();
+		pointerDepthRangeJSONObject.put("from", isHexadecimal ? minimumPointerSearchDepthField.getText() : Long.parseLong(minimumPointerSearchDepthField.getText()));
+		pointerDepthRangeJSONObject.put("to", isHexadecimal ? maximumPointerSearchDepthField.getText() : Long.parseLong(maximumPointerSearchDepthField.getText()));
+		return pointerDepthRangeJSONObject;
 	}
 }
