@@ -15,7 +15,7 @@ public enum MemoryDumpsByteOrder
 	@Getter
 	private final ByteOrder byteOrder;
 
-	MemoryDumpsByteOrder(String text, ByteOrder byteOrder)
+	MemoryDumpsByteOrder(final String text, final ByteOrder byteOrder)
 	{
 		this.text = text;
 		this.byteOrder = byteOrder;
@@ -26,13 +26,30 @@ public enum MemoryDumpsByteOrder
 		return text;
 	}
 
-	public static MemoryDumpsByteOrder getMemoryDumpsByteOrder(ByteOrder byteOrder)
+	public static MemoryDumpsByteOrder getMemoryDumpsByteOrder(final ByteOrder byteOrder)
 	{
 		val memoryDumpsByteOrders = MemoryDumpsByteOrder.values();
 
 		for (val memoryDumpsByteOrder : memoryDumpsByteOrders)
 		{
-			if (memoryDumpsByteOrder.getByteOrder() == byteOrder)
+			val currentByteOrder = memoryDumpsByteOrder.getByteOrder();
+			if (currentByteOrder == byteOrder)
+			{
+				return memoryDumpsByteOrder;
+			}
+		}
+
+		return null;
+	}
+
+	public static MemoryDumpsByteOrder parseMemoryDumpsByteOrder(final String text)
+	{
+		val memoryDumpsByteOrders = MemoryDumpsByteOrder.values();
+
+		for (val memoryDumpsByteOrder : memoryDumpsByteOrders)
+		{
+			val currentByteOrder = memoryDumpsByteOrder.toString();
+			if (currentByteOrder.equals(text))
 			{
 				return memoryDumpsByteOrder;
 			}

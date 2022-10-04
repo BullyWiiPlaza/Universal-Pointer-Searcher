@@ -111,5 +111,12 @@
             <artifactId>json-io</artifactId>
             <version>4.13.0</version>
         </dependency>
+
+        <!-- Listing classpath resources -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>5.3.23</version>
+        </dependency>
     </dependencies>
 </project>

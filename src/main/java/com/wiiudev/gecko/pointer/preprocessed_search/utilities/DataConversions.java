@@ -52,4 +52,15 @@ public class DataConversions
 	{
 		return "0x" + Long.toHexString(startingAddress).toUpperCase();
 	}
+
+	public static Long parseNumeric(String hexadecimal)
+	{
+		val hexadecimalPrefix = "0x";
+		if (hexadecimal.startsWith(hexadecimalPrefix))
+		{
+			hexadecimal = hexadecimal.substring(hexadecimalPrefix.length());
+		}
+
+		return Long.parseLong(hexadecimal, 16);
+	}
 }

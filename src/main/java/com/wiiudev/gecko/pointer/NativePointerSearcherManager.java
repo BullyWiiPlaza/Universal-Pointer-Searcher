@@ -10,9 +10,13 @@ import lombok.Setter;
 import lombok.val;
 import lombok.var;
 import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
@@ -26,7 +30,6 @@ import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport
 import static java.io.File.separator;
 import static java.lang.Integer.toHexString;
 import static java.lang.Long.toHexString;
-import static java.lang.Runtime.getRuntime;
 import static java.lang.System.*;
 import static java.lang.Thread.sleep;
 import static java.nio.ByteOrder.BIG_ENDIAN;
@@ -171,18 +174,6 @@ public class NativePointerSearcherManager
 				{
 					exception.printStackTrace();
 				}
-
-				val runtime = getRuntime();
-				runtime.addShutdownHook(new Thread(() ->
-				{
-					try
-					{
-						delete(executableFilePath);
-					} catch (IOException exception)
-					{
-						exception.printStackTrace();
-					}
-				}));
 			}
 		});
 
@@ -734,18 +725,51 @@ public class NativePointerSearcherManager
 		return stringBuilder.toString();
 	}
 
+	private static Resource[] getDLLResources() throws IOException
+	{
+		val classLoader = MethodHandles.lookup().getClass().getClassLoader();
+		val resolver = new PathMatchingResourcePatternResolver(classLoader);
+
+		return resolver.getResources("classpath:*.dll");
+	}
+
 	private static Path getExecutableFilePath() throws IOException
 	{
+		val temporaryDirectory = Files.createTempDirectory("prefix");
+
+		if (IS_OS_WINDOWS)
+		{
+			val dllResources = getDLLResources();
+			for (val dllResource : dllResources)
+			{
+				try (val inputStream = dllResource.getInputStream())
+				{
+					val byteArray = toByteArray(inputStream);
+					val fileName = dllResource.getFilename();
+					if (fileName == null)
+					{
+						throw new IOException("File name may not be null");
+					}
+
+					val outputFilePath = temporaryDirectory.resolve(fileName);
+					Files.write(outputFilePath, byteArray);
+					outputFilePath.toFile().deleteOnExit();
+				}
+			}
+		}
+
 		val executableFileBytes = readExecutableFileBytes();
-		val temporaryExecutableFile = createTempFile(BINARY_NAME, DOT_EXTENSION);
-		write(temporaryExecutableFile, executableFileBytes);
+		val fileName = BINARY_NAME + DOT_EXTENSION;
+		val executableFilePath = temporaryDirectory.resolve(fileName);
+		Files.write(executableFilePath, executableFileBytes);
+		executableFilePath.toFile().deleteOnExit();
 
 		if (IS_OS_UNIX)
 		{
-			giveAllPosixFilePermissions(temporaryExecutableFile);
+			giveAllPosixFilePermissions(executableFilePath);
 		}
 
-		return temporaryExecutableFile;
+		return executableFilePath;
 	}
 
 	public static void giveAllPosixFilePermissions(Path filePath) throws IOException
@@ -759,14 +783,15 @@ public class NativePointerSearcherManager
 	{
 		val clazz = NativePointerSearcherManager.class;
 		val classLoader = clazz.getClassLoader();
-		val resourceAsStream = classLoader.getResourceAsStream(POINTER_SEARCHER_BINARY);
-
-		if (resourceAsStream == null)
+		try (val resourceAsStream = classLoader.getResourceAsStream(POINTER_SEARCHER_BINARY))
 		{
-			throw new IllegalStateException("Cannot find pointer searcher native binary");
-		}
+			if (resourceAsStream == null)
+			{
+				throw new IllegalStateException("Cannot find pointer searcher native binary");
+			}
 
-		return toByteArray(resourceAsStream);
+			return toByteArray(resourceAsStream);
+		}
 	}
 
 	public static String readFromProcess(Process process) throws IOException

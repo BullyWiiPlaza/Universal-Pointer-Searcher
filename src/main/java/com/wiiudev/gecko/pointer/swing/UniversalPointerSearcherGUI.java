@@ -340,10 +340,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 			{
 				try
 				{
-					guiSettingsManager.loadSettings(rootPane);
-				} catch (IOException exception)
+					guiSettingsManager.loadSettings(UniversalPointerSearcherGUI.this);
+					setMemoryPointerSearcherMemoryDumps();
+					setButtonAvailability();
+				} catch (final Exception exception)
 				{
-					exception.printStackTrace();
+					handleException(exception);
 				}
 			});
 			menu.add(loadMenuItem);
@@ -1591,7 +1593,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 						}
 					}
 				}
-			} catch (Exception exception)
+			} catch (final Exception exception)
 			{
 				handleException(exception);
 			}
