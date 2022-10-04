@@ -37,6 +37,7 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.*;
 import static java.util.Arrays.asList;
+import static org.apache.commons.io.FileUtils.deleteDirectory;
 import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.apache.commons.lang3.SystemUtils.*;
 
@@ -737,6 +738,18 @@ public class NativePointerSearcherManager
 	{
 		val temporaryDirectory = Files.createTempDirectory("prefix");
 
+		val runtime = Runtime.getRuntime();
+		runtime.addShutdownHook(new Thread(() ->
+		{
+			try
+			{
+				deleteDirectory(temporaryDirectory.toFile());
+			} catch (final IOException exception)
+			{
+				exception.printStackTrace();
+			}
+		}));
+
 		if (IS_OS_WINDOWS)
 		{
 			val dllResources = getDLLResources();
@@ -753,7 +766,6 @@ public class NativePointerSearcherManager
 
 					val outputFilePath = temporaryDirectory.resolve(fileName);
 					Files.write(outputFilePath, byteArray);
-					outputFilePath.toFile().deleteOnExit();
 				}
 			}
 		}
@@ -762,7 +774,6 @@ public class NativePointerSearcherManager
 		val fileName = BINARY_NAME + DOT_EXTENSION;
 		val executableFilePath = temporaryDirectory.resolve(fileName);
 		Files.write(executableFilePath, executableFileBytes);
-		executableFilePath.toFile().deleteOnExit();
 
 		if (IS_OS_UNIX)
 		{

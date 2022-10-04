@@ -119,10 +119,17 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JCheckBox singleMemoryDumpMethodCheckBox;
 	private JButton removeMemoryDumpButton;
 	private JButton singleMemoryDumpMethodInformationButton;
+
+	@Getter
 	private JCheckBox generatePointerMapsCheckBox;
+
 	private JProgressBar innerPointerSearchProgressBar;
 	private JCheckBox writePointersToFileSystemCheckBox;
+
+	@Getter
 	private JCheckBox excludeCyclesCheckBox;
+
+	@Getter
 	private JTextField minimumPointerAddressField;
 
 	@Getter
@@ -137,9 +144,13 @@ public class UniversalPointerSearcherGUI extends JFrame
 	@Getter
 	private JFormattedTextField maximumPointersCountField;
 
+	@Getter
 	private JCheckBox readPointerMapsCheckBox;
+
 	private JFormattedTextField pointerAddressAlignmentField;
 	private JLabel readableMaximumMemoryChunkSizeLabel;
+
+	@Getter
 	private JTextField lastPointerOffsetsField;
 
 	@Getter
@@ -158,11 +169,22 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JLabel pointerAddressAlignmentLabel;
 	private JLabel lastPointerOffsetsLabel;
 	private JLabel maximumPointersCountLabel;
+
+	@Getter
 	private JCheckBox verboseLoggingCheckBox;
+
+	@Getter
 	private JCheckBox printVisitedAddressesCheckBox;
+
 	private JLabel pointerValueAlignmentLabel;
+
+	@Getter
 	private JComboBox<TargetSystem> targetSystemSelection;
+
+	@Getter
 	private JCheckBox targetSystemCheckbox;
+
+	@Getter
 	private JCheckBox printModuleFileNamesCheckBox;
 
 	@Getter
@@ -174,15 +196,27 @@ public class UniversalPointerSearcherGUI extends JFrame
 	@Getter
 	private JTextField maximumMemoryUtilizationPercentageField;
 
+	@Getter
 	private JCheckBox storeMemoryPointerResultsCheckBox;
+
+	@Getter
 	private JTextField storeMemoryPointersFilePathField;
+
 	private JButton storeMemoryPointerResultsBrowseButton;
+
+	@Getter
 	private JCheckBox loadMemoryPointerResultsCheckBox;
+
+	@Getter
 	private JTextField loadMemoryPointersFilePathField;
+
 	private JButton loadMemoryPointerResultsBrowseButton;
 	private JCheckBox scanDeeperByCheckBox;
 	private JTextField scanDeeperByField;
+
+	@Getter
 	private JCheckBox truncateMemoryPointersDebuggingOutputCheckBox;
+
 	private JTextField fileExtensionsField;
 	private PersistentSettingsManager persistentSettingsManager;
 
