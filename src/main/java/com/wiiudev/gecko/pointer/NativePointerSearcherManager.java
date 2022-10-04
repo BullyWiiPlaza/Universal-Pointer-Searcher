@@ -219,6 +219,7 @@ public class NativePointerSearcherManager
 			}
 
 			process = processBuilder.start();
+			runningNativePointerSearcher = process;
 			val exitCode = process.waitFor();
 
 			executedCommand = considerReplacingTemporaryDirectoryFilePath(executedCommand);
@@ -734,6 +735,8 @@ public class NativePointerSearcherManager
 		return resolver.getResources("classpath:*.dll");
 	}
 
+	public static Process runningNativePointerSearcher = null;
+
 	private static Path getExecutableFilePath() throws IOException
 	{
 		val temporaryDirectory = Files.createTempDirectory("prefix");
@@ -741,12 +744,36 @@ public class NativePointerSearcherManager
 		val runtime = Runtime.getRuntime();
 		runtime.addShutdownHook(new Thread(() ->
 		{
-			try
+			if (runningNativePointerSearcher != null)
 			{
-				deleteDirectory(temporaryDirectory.toFile());
-			} catch (final IOException exception)
+				// Checking for isAlive() isn't necessary
+				System.out.println("Killing potentially running pointer searcher...");
+				runningNativePointerSearcher.destroy();
+			}
+
+			var repeatIndex = 0;
+			val maximumRepetitionCount = 10;
+			while (repeatIndex < maximumRepetitionCount)
 			{
-				exception.printStackTrace();
+				try
+				{
+					System.out.println("Cleanup attempt: " + (repeatIndex + 1) + "/" + maximumRepetitionCount + "...");
+					deleteDirectory(temporaryDirectory.toFile());
+					break;
+				} catch (final Exception ignored)
+				{
+
+				}
+
+				repeatIndex++;
+
+				try
+				{
+					Thread.sleep(1_000);
+				} catch (final InterruptedException ignored)
+				{
+
+				}
 			}
 		}));
 
