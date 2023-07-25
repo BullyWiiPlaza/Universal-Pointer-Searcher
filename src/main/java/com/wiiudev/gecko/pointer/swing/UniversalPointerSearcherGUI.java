@@ -288,7 +288,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		writePointersToFileSystemCheckBox.setVisible(false);
 		byteOrderSelection.setModel(new DefaultComboBoxModel<>(MemoryDumpsByteOrder.values()));
 		targetSystemSelection.setModel(new DefaultComboBoxModel<>(TargetSystem.values()));
-		targetSystemCheckbox.addItemListener(itemEvent -> setTargetSystemComponentsAvailability());
+		targetSystemCheckbox.addItemListener(itemEvent -> setButtonAvailability());
 		addByteOrderInformationButtonListener();
 		addMaximumMemoryUtilizationPercentageFieldDocumentListener();
 		val storeMemoryPointersFilePathFileBrowserManager = new FileBrowserManager(storeMemoryPointerResultsCheckBox,
@@ -484,8 +484,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private void setTargetSystemComponentsAvailability()
 	{
 		val usingTargetSystem = targetSystemCheckbox.isSelected();
-		addressSizeSelection.setEnabled(!usingTargetSystem);
-		byteOrderSelection.setEnabled(!usingTargetSystem);
+		addressSizeSelection.setEnabled(!usingTargetSystem && !isSearching);
+		byteOrderSelection.setEnabled(!usingTargetSystem && !isSearching);
+		targetSystemCheckbox.setEnabled(!isSearching);
+		targetSystemSelection.setEnabled(!isSearching);
 	}
 
 	private void addOptimalThreadCountButtonListener()
@@ -982,8 +984,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 								byteOrderToString(lastAddedByteOrder));
 					}
 
-					persistentSettingsManager.put(ADD_MEMORY_DUMPS_POINTER_MAPS_FOLDER.toString(), parseEntireFolder + "");
-					persistentSettingsManager.put(ADD_MODULE_DUMPS_FOLDER.toString(), addModuleDumpsFolder + "");
+					persistentSettingsManager.put(ADD_MEMORY_DUMPS_POINTER_MAPS_FOLDER.toString(), String.valueOf(parseEntireFolder));
+					persistentSettingsManager.put(ADD_MODULE_DUMPS_FOLDER.toString(), String.valueOf(addModuleDumpsFolder));
 
 					if (lastAddedStartingAddress != null)
 					{
@@ -1004,17 +1006,17 @@ public class UniversalPointerSearcherGUI extends JFrame
 					persistentSettingsManager.put(MAXIMUM_POINTERS_COUNT.toString(), maximumPointersCountField.getText());
 					persistentSettingsManager.put(MINIMUM_OFFSET.toString(), minimumPointerOffsetField.getText());
 					persistentSettingsManager.put(MAXIMUM_OFFSET.toString(), maximumPointerOffsetField.getText());
-					persistentSettingsManager.put(ADDRESS_SIZE.toString(), getSelectedItem(addressSizeSelection) + "");
+					persistentSettingsManager.put(ADDRESS_SIZE.toString(), String.valueOf(getSelectedItem(addressSizeSelection)));
 					persistentSettingsManager.put(MINIMUM_POINTER_ADDRESS.toString(), minimumPointerAddressField.getText());
 					persistentSettingsManager.put(POINTER_RESULTS_PAGE_SIZE.toString(), pointerResultsPageSizeField.getText());
 					persistentSettingsManager.put(LAST_POINTER_OFFSETS.toString(), lastPointerOffsetsField.getText());
-					persistentSettingsManager.put(ALLOW_NEGATIVE_OFFSETS.toString(), allowNegativeOffsetsCheckBox.isSelected() + "");
-					persistentSettingsManager.put(SINGLE_MEMORY_DUMP_METHOD.toString(), singleMemoryDumpMethodCheckBox.isSelected() + "");
-					persistentSettingsManager.put(GENERATE_POINTER_MAPS.toString(), generatePointerMapsCheckBox.isSelected() + "");
-					persistentSettingsManager.put(WRITE_POINTERS_TO_FILE_SYSTEM.toString(), writePointersToFileSystemCheckBox.isSelected() + "");
-					persistentSettingsManager.put(BASE_OFFSET_RANGE.toString(), baseOffsetRangeSelection.isSelected() + "");
-					persistentSettingsManager.put(EXCLUDE_POINTER_CYCLES.toString(), excludeCyclesCheckBox.isSelected() + "");
-					persistentSettingsManager.put(USE_NATIVE_POINTER_ENGINE.toString(), useNativePointerSearcherCheckBox.isSelected() + "");
+					persistentSettingsManager.put(ALLOW_NEGATIVE_OFFSETS.toString(), String.valueOf(allowNegativeOffsetsCheckBox.isSelected()));
+					persistentSettingsManager.put(SINGLE_MEMORY_DUMP_METHOD.toString(), String.valueOf(singleMemoryDumpMethodCheckBox.isSelected()));
+					persistentSettingsManager.put(GENERATE_POINTER_MAPS.toString(), String.valueOf(generatePointerMapsCheckBox.isSelected()));
+					persistentSettingsManager.put(WRITE_POINTERS_TO_FILE_SYSTEM.toString(), String.valueOf(writePointersToFileSystemCheckBox.isSelected()));
+					persistentSettingsManager.put(BASE_OFFSET_RANGE.toString(), String.valueOf(baseOffsetRangeSelection.isSelected()));
+					persistentSettingsManager.put(EXCLUDE_POINTER_CYCLES.toString(), String.valueOf(excludeCyclesCheckBox.isSelected()));
+					persistentSettingsManager.put(USE_NATIVE_POINTER_ENGINE.toString(), String.valueOf(useNativePointerSearcherCheckBox.isSelected()));
 					persistentSettingsManager.put(STARTING_BASE_ADDRESS.toString(), startingBaseAddressField.getText());
 					persistentSettingsManager.put(END_BASE_ADDRESS.toString(), endBaseAddressField.getText());
 					persistentSettingsManager.writeToFile();
@@ -1296,7 +1298,6 @@ public class UniversalPointerSearcherGUI extends JFrame
 		maximumPointersCountField.setVisible(usingNativePointerSearcher);
 		minimumPointerOffsetField.setEnabled(!isSearching);
 		maximumPointerOffsetField.setEnabled(!isSearching);
-		addressSizeSelection.setEnabled(!isSearching);
 		minimumPointerAddressField.setEnabled(!isSearching);
 		allowNegativeOffsetsCheckBox.setEnabled(!isSearching);
 		allowNegativeOffsetsCheckBox.setVisible(!usingNativePointerSearcher);
@@ -1315,10 +1316,16 @@ public class UniversalPointerSearcherGUI extends JFrame
 		lastPointerOffsetsLabel.setVisible(usingNativePointerSearcher);
 		lastPointerOffsetsField.setVisible(usingNativePointerSearcher);
 		pointerResultsPageSizeField.setEnabled(!isSearching);
+		fileExtensionsField.setEnabled(!isSearching);
+		maximumMemoryUtilizationPercentageField.setEnabled(!isSearching);
+		truncateMemoryPointersDebuggingOutputCheckBox.setEnabled(!isSearching);
 		sortingSelection.setEnabled(!isSearching &&
 				(singleMemoryDumpPointers == null || singleMemoryDumpPointers.isEmpty()));
 		offsetPrintingSettingSelection.setEnabled(!isSearching);
 		addMemoryDumpButton.setEnabled(!isSearching);
+		printModuleFileNamesCheckBox.setEnabled(!isSearching);
+		storeMemoryPointerResultsCheckBox.setEnabled(!isSearching);
+		loadMemoryPointerResultsCheckBox.setEnabled(!isSearching);
 		resetMemoryDumpsButton.setEnabled(memoryDumpsAdded && !isSearching);
 		editMemoryDumpButton.setEnabled(memoryDumpTableManager.isMemoryDumpSelected() && !isSearching);
 		removeMemoryDumpButton.setEnabled(memoryDumpTableManager.isMemoryDumpSelected() && !isSearching);
@@ -1332,6 +1339,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		resultsPageSpinner.setEnabled(!foundPointersOutputAreaText.isEmpty());
 
 		setOffsetPrintingSetting();
+		setTargetSystemComponentsAvailability();
 	}
 
 	private int getPointerSearchDepth()
@@ -1356,23 +1364,23 @@ public class UniversalPointerSearcherGUI extends JFrame
 		minimumPointerSearchDepthField.setText(MINIMUM_POINTER_SEARCH_DEPTH_VALUE + "");
 
 		val pointerSearchDepth = memoryPointerSearcher.getPointerSearchDepth();
-		maximumPointerSearchDepthField.setText(pointerSearchDepth + "");
+		maximumPointerSearchDepthField.setText(String.valueOf(pointerSearchDepth));
 
 		val maximumMemoryChunkSize = memoryPointerSearcher.getMaximumMemoryChunkSize();
-		maximumMemoryChunkSizeField.setText(maximumMemoryChunkSize + "");
+		maximumMemoryChunkSizeField.setText(String.valueOf(maximumMemoryChunkSize));
 
 		val nativePointerSearcherManager = new NativePointerSearcherManager();
 		val maximumPointersCount = nativePointerSearcherManager.getMaximumPointerCount();
-		maximumPointersCountField.setText(maximumPointersCount + "");
+		maximumPointersCountField.setText(String.valueOf(maximumPointersCount));
 
 		val minimumPointerOffset = memoryPointerSearcher.getMinimumPointerOffset();
-		minimumPointerOffsetField.setText(toHexString(minimumPointerOffset).toUpperCase() + "");
+		minimumPointerOffsetField.setText(toHexString(minimumPointerOffset).toUpperCase());
 
 		val maximumPointerOffset = memoryPointerSearcher.getMaximumPointerOffset();
-		maximumPointerOffsetField.setText(toHexString(maximumPointerOffset).toUpperCase() + "");
+		maximumPointerOffsetField.setText(toHexString(maximumPointerOffset).toUpperCase());
 
 		val minimumPointerAddress = memoryPointerSearcher.getMinimumPointerAddress();
-		minimumPointerAddressField.setText(toHexString(minimumPointerAddress).toUpperCase() + "");
+		minimumPointerAddressField.setText(toHexString(minimumPointerAddress).toUpperCase());
 
 		pointerResultsPageSizeField.setText(DEFAULT_POINTER_RESULTS_PAGE_SIZE + "");
 
@@ -1388,19 +1396,19 @@ public class UniversalPointerSearcherGUI extends JFrame
 			if (stateChange == SELECTED)
 			{
 				val selectedAddressSize = getSelectedItem(addressSizeSelection);
-				pointerAddressAlignmentField.setText(selectedAddressSize + "");
-				pointerValueAlignmentField.setText(selectedAddressSize + "");
+				pointerAddressAlignmentField.setText(String.valueOf(selectedAddressSize));
+				pointerValueAlignmentField.setText(String.valueOf(selectedAddressSize));
 			}
 		});
 
 		val pointerValueAlignment = memoryPointerSearcher.getPointerValueAlignment();
-		pointerValueAlignmentField.setText(pointerValueAlignment + "");
+		pointerValueAlignmentField.setText(String.valueOf(pointerValueAlignment));
 
 		val pointerAddressAlignment = memoryPointerSearcher.getPointerAddressAlignment();
-		pointerAddressAlignmentField.setText(pointerAddressAlignment + "");
+		pointerAddressAlignmentField.setText(String.valueOf(pointerAddressAlignment));
 
 		val threadCount = memoryPointerSearcher.getThreadCount();
-		threadCountField.setText(threadCount + "");
+		threadCountField.setText(String.valueOf(threadCount));
 
 		val allowNegativeOffsets = memoryPointerSearcher.isAllowNegativeOffsets();
 		allowNegativeOffsetsCheckBox.setSelected(allowNegativeOffsets);
