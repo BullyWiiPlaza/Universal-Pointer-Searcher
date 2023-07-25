@@ -12,6 +12,20 @@
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <spring-core.version>5.3.23</spring-core.version>
+        <json-io.version>4.13.0</json-io.version>
+        <json.version>20230227</json.version>
+        <guava.version>32.0.1-jre</guava.version>
+        <slf4j-simple.version>2.0.1</slf4j-simple.version>
+        <oshi-core.version>3.4.0</oshi-core.version>
+        <commons-io.version>2.11.0</commons-io.version>
+        <lz4-java.version>1.8.0</lz4-java.version>
+        <gson.version>2.9.0</gson.version>
+        <jide-oss.version>3.6.18</jide-oss.version>
+        <bridj.version>0.7.0</bridj.version>
+        <commons-lang3.version>3.11</commons-lang3.version>
+        <junit.version>4.13.2</junit.version>
+        <lombok.version>1.18.24</lombok.version>
     </properties>
 
     <dependencies>
@@ -19,14 +33,14 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.18</version>
+            <version>${lombok.version}</version>
         </dependency>
 
         <!-- Testing -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -34,89 +48,89 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.11</version>
+            <version>${commons-lang3.version}</version>
         </dependency>
 
         <!-- Windows Taskbar Progress -->
         <dependency>
             <groupId>com.nativelibs4java</groupId>
             <artifactId>bridj</artifactId>
-            <version>0.7.0</version>
+            <version>${bridj.version}</version>
         </dependency>
 
         <!-- ThreadCheckingRepaintManager -->
         <dependency>
             <groupId>com.jidesoft</groupId>
             <artifactId>jide-oss</artifactId>
-            <version>3.6.18</version>
+            <version>${jide-oss.version}</version>
         </dependency>
 
         <!-- JSON Serialization for Pointer Maps -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.9.0</version>
+            <version>${gson.version}</version>
         </dependency>
 
         <!-- Fast LZ4 pointer maps compression -->
         <dependency>
             <groupId>org.lz4</groupId>
             <artifactId>lz4-java</artifactId>
-            <version>1.8.0</version>
+            <version>${lz4-java.version}</version>
         </dependency>
 
         <!-- FilenameUtils -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
+            <version>${commons-io.version}</version>
         </dependency>
 
         <!-- Memory checking -->
         <dependency>
             <groupId>com.github.dblock</groupId>
             <artifactId>oshi-core</artifactId>
-            <version>3.4.0</version>
+            <version>${oshi-core.version}</version>
         </dependency>
 
         <!-- Suppress slf4j logger warning print -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.1</version>
+            <version>${slf4j-simple.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>2.0.1</version>
+            <version>${slf4j-simple.version}</version>
         </dependency>
 
         <!-- StopWatch -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>32.0.1-jre</version>
+            <version>${guava.version}</version>
         </dependency>
 
         <!-- Loading and saving pointer searcher profiles -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20230227</version>
+            <version>${json.version}</version>
         </dependency>
 
         <!-- JSON pretty printing -->
         <dependency>
             <groupId>com.cedarsoftware</groupId>
             <artifactId>json-io</artifactId>
-            <version>4.13.0</version>
+            <version>${json-io.version}</version>
         </dependency>
 
         <!-- Listing classpath resources -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>5.3.23</version>
+            <version>${spring-core.version}</version>
         </dependency>
     </dependencies>
 </project>
