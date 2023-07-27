@@ -575,7 +575,7 @@ public class NativePointerSearcherManager
 			command.add(isLittleEndian ? "little" : "big");
 
 			command.add("--address-size");
-			command.add(addressSize + "");
+			command.add(String.valueOf(addressSize));
 		} else
 		{
 			command.add("--target-system");
@@ -608,7 +608,6 @@ public class NativePointerSearcherManager
 		if (verboseLogging)
 		{
 			command.add("--verbose");
-			command.add(true + "");
 		}
 
 		if (printModuleFileNames)
@@ -617,7 +616,7 @@ public class NativePointerSearcherManager
 		}
 
 		command.add("--maximum-memory-utilization-fraction");
-		command.add((maximumMemoryUtilizationFraction / 100) + "");
+		command.add(String.valueOf(maximumMemoryUtilizationFraction / 100));
 
 		if (fileExtensions != null)
 		{
@@ -628,13 +627,13 @@ public class NativePointerSearcherManager
 		if (scanDeeperBy != null)
 		{
 			command.add("--scan-deeper-by");
-			command.add(scanDeeperBy + "");
+			command.add(String.valueOf(scanDeeperBy));
 		}
 
 		command.add("--maximum-pointer-count");
-		command.add(maximumPointerCount + "");
+		command.add(String.valueOf(maximumPointerCount));
 		command.add("--maximum-pointers-printed-count");
-		command.add(maximumPointerCount + "");
+		command.add(String.valueOf(maximumPointerCount));
 
 		return command;
 	}
