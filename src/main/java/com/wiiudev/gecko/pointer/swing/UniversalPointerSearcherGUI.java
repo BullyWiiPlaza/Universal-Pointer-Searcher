@@ -219,7 +219,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 	@Getter
 	private JCheckBox truncateMemoryPointersDebuggingOutputCheckBox;
 
+	@Getter
 	private JTextField fileExtensionsField;
+
 	private PersistentSettingsManager persistentSettingsManager;
 
 	@Getter

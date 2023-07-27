@@ -139,6 +139,10 @@ public class GUISettingsManager
 				}
 			}
 
+			val fileExtensionsJSONArray = jsonObject.getJSONArray(FILE_EXTENSIONS_JSON_KEY);
+			val fileExtensions = buildFileExtensionsString(fileExtensionsJSONArray);
+			pointerSearcherGUI.getFileExtensionsField().setText(fileExtensions);
+
 			val addressSize = jsonObject.getInt(ADDRESS_SIZE_JSON_KEY);
 			pointerSearcherGUI.getAddressSizeSelection().setSelectedItem(addressSize);
 
@@ -150,11 +154,59 @@ public class GUISettingsManager
 			val targetSystem = jsonObject.getString(TARGET_SYSTEM_JSON_KEY);
 			pointerSearcherGUI.getTargetSystemSelection().setSelectedItem(TargetSystem.parseTargetSystem(targetSystem));
 
+			val storeMemoryPointerResults = jsonObject.getBoolean(STORE_MEMORY_POINTER_RESULTS_JSON_KEY);
+			pointerSearcherGUI.getStoreMemoryPointerResultsCheckBox().setSelected(storeMemoryPointerResults);
+			val storeMemoryPointerResultsFilePath = jsonObject.getString(STORE_MEMORY_POINTER_RESULTS_JSON_KEY_FILE_PATH);
+			pointerSearcherGUI.getStoreMemoryPointersFilePathField().setText(storeMemoryPointerResultsFilePath);
+
+			val loadMemoryPointerResults = jsonObject.getBoolean(LOAD_MEMORY_POINTER_RESULTS_JSON_KEY);
+			pointerSearcherGUI.getLoadMemoryPointerResultsCheckBox().setSelected(loadMemoryPointerResults);
+			val loadMemoryPointerResultsFilePath = jsonObject.getString(LOAD_MEMORY_POINTER_RESULTS_JSON_KEY_FILE_PATH);
+			pointerSearcherGUI.getLoadMemoryPointersFilePathField().setText(loadMemoryPointerResultsFilePath);
+
+			val printModuleFileNames = jsonObject.getBoolean(PRINT_MODULE_FILE_NAMES_JSON_KEY);
+			pointerSearcherGUI.getPrintModuleFileNamesCheckBox().setSelected(printModuleFileNames);
+
+			val verboseLogging = jsonObject.getBoolean(VERBOSE_LOGGING_JSON_KEY);
+			pointerSearcherGUI.getVerboseLoggingCheckBox().setSelected(verboseLogging);
+
+			val excludeCycles = jsonObject.getBoolean(EXCLUDE_CYCLES_JSON_KEY);
+			pointerSearcherGUI.getExcludeCyclesCheckBox().setSelected(excludeCycles);
+
+			val printVisitedAddresses = jsonObject.getBoolean(PRINT_VISITED_ADDRESSES_JSON_KEY);
+			pointerSearcherGUI.getPrintVisitedAddressesCheckBox().setSelected(printVisitedAddresses);
+
+			val readPointerMaps = jsonObject.getBoolean(READ_POINTER_MAPS_JSON_KEY);
+			pointerSearcherGUI.getReadPointerMapsCheckBox().setSelected(readPointerMaps);
+
+			val generatePointerMaps = jsonObject.getBoolean(GENERATE_POINTER_MAPS_JSON_KEY);
+			pointerSearcherGUI.getGeneratePointerMapsCheckBox().setSelected(generatePointerMaps);
+
+			val truncateMemoryPointersDebuggingOutput = jsonObject.getBoolean(TRUNCATE_MEMORY_POINTERS_DEBUGGING_OUTPUT_JSON_KEY);
+			pointerSearcherGUI.getTruncateMemoryPointersDebuggingOutputCheckBox().setSelected(truncateMemoryPointersDebuggingOutput);
+
 			showMessageDialog(pointerSearcherGUI.getRootPane(),
 					"The configuration has been restored successfully.",
 					"Successfully restored",
 					JOptionPane.INFORMATION_MESSAGE);
 		}
+	}
+
+	private static String buildFileExtensionsString(final JSONArray fileExtensionsJSONArray)
+	{
+		val joinedFileExtensionsBuilder = new StringBuilder();
+		var fileExtensionsJSONArrayIndex = 0;
+		for (val fileExtension : fileExtensionsJSONArray)
+		{
+			joinedFileExtensionsBuilder.append(fileExtension.toString());
+			if (fileExtensionsJSONArrayIndex != fileExtensionsJSONArray.toList().size() - 1)
+			{
+				joinedFileExtensionsBuilder.append(",");
+			}
+
+			fileExtensionsJSONArrayIndex++;
+		}
+		return joinedFileExtensionsBuilder.toString();
 	}
 
 	public void saveSettings(final UniversalPointerSearcherGUI pointerSearcherGUI) throws IOException
