@@ -526,7 +526,8 @@ public class MemoryDumpDialog extends JDialog
 			{
 				val listedFilePath = listedFile.toString();
 				if (listedFilePath.endsWith("." + FileTypeImport.MEMORY_DUMP.getExtension())
-						|| listedFilePath.endsWith("." + FileTypeImport.MEMORY_DUMP_EXTENSION))
+						|| listedFilePath.endsWith("." + FileTypeImport.MEMORY_DUMP_EXTENSION_DMP)
+				        || listedFilePath.endsWith("." + FileTypeImport.MEMORY_DUMP_EXTENSION_RAW))
 				{
 					memoryDumps.add(listedFile);
 				} else if (listedFilePath.endsWith("." + FileTypeImport.POINTER_MAP.getExtension()))

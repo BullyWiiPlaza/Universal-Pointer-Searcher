@@ -920,7 +920,7 @@
                       </grid>
                     </constraints>
                     <properties>
-                      <text value=".dmp,.bin"/>
+                      <text value=""/>
                       <toolTipText value="The file extensions (separated by commas) to look for when parsing input files from a folder"/>
                     </properties>
                   </component>

@@ -8,7 +8,8 @@ public enum FileTypeImport
 	MEMORY_DUMP("Memory Dump", "bin"),
 	POINTER_MAP("Pointer Map", "pointermap");
 
-	public static final String MEMORY_DUMP_EXTENSION = "dmp";
+	public static final String MEMORY_DUMP_EXTENSION_DMP = "dmp";
+	public static final String MEMORY_DUMP_EXTENSION_RAW = "raw";
 
 	@Getter
 	private final String extension;

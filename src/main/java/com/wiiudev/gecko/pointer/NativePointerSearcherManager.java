@@ -22,8 +22,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.OffsetPrintingSetting.SIGNED;
-import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.MEMORY_DUMP;
-import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.MEMORY_DUMP_EXTENSION;
+import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.*;
 import static java.io.File.separator;
 import static java.lang.Integer.toHexString;
 import static java.lang.Long.toHexString;
@@ -665,7 +664,8 @@ public class NativePointerSearcherManager
 		{
 			val defaultFileExtensions = new ArrayList<String>();
 			defaultFileExtensions.add(MEMORY_DUMP.getExtension());
-			defaultFileExtensions.add(MEMORY_DUMP_EXTENSION);
+			defaultFileExtensions.add(MEMORY_DUMP_EXTENSION_DMP);
+			defaultFileExtensions.add(MEMORY_DUMP_EXTENSION_RAW);
 			val fileExtensionsCommand = buildFileExtensionsCommand(defaultFileExtensions);
 			command.add(fileExtensionsCommand);
 		} else

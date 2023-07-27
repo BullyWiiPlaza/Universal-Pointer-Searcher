@@ -43,7 +43,7 @@ class MemoryDumpChooser extends JFileChooser
 
 		if (!selectFolders)
 		{
-			val memoryDumpsFilter = new FileNameExtensionFilter("Memory Dumps", MEMORY_DUMP.getExtension(), MEMORY_DUMP_EXTENSION);
+			val memoryDumpsFilter = new FileNameExtensionFilter("Memory Dumps", MEMORY_DUMP.getExtension(), MEMORY_DUMP_EXTENSION_DMP, MEMORY_DUMP_EXTENSION_RAW);
 			val pointerMapsFilter = new FileNameExtensionFilter("Pointer Maps", POINTER_MAP.getExtension());
 			addChoosableFileFilter(memoryDumpsFilter);
 			addChoosableFileFilter(pointerMapsFilter);

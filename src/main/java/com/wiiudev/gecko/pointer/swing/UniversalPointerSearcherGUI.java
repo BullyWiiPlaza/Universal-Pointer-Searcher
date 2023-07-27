@@ -5,6 +5,7 @@ import com.wiiudev.gecko.pointer.NativePointerSearcherOutput;
 import com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerList;
 import com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.*;
+import com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport;
 import com.wiiudev.gecko.pointer.swing.preprocessed_search.InputType;
 import com.wiiudev.gecko.pointer.swing.preprocessed_search.MemoryDumpDialog;
 import com.wiiudev.gecko.pointer.swing.utilities.*;
@@ -325,6 +326,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		configurePointerResultsPage();
 		addGUIMenuBar();
 
+		fileExtensionsField.setText(renderDefaultFileExtensions());
 		val document = fileExtensionsField.getDocument();
 		document.addDocumentListener(new DocumentListener()
 		{
@@ -348,6 +350,13 @@ public class UniversalPointerSearcherGUI extends JFrame
 		});
 
 		validateEnteredFileExtensions();
+	}
+
+	private static String renderDefaultFileExtensions()
+	{
+		return "." + FileTypeImport.MEMORY_DUMP_EXTENSION_DMP + ",."
+		       + FileTypeImport.MEMORY_DUMP.getExtension()
+		       + ",." + FileTypeImport.MEMORY_DUMP_EXTENSION_RAW;
 	}
 
 	private void validateEnteredFileExtensions()
