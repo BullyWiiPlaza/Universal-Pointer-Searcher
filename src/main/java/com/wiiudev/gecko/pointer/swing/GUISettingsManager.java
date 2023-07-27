@@ -56,6 +56,8 @@ public class GUISettingsManager
 	private static final String TRUNCATE_MEMORY_POINTERS_DEBUGGING_OUTPUT_JSON_KEY = "truncate-memory-pointers-debugging-output";
 	private static final String PRINT_VISITED_ADDRESSES_JSON_KEY = "print-visited-addresses";
 	private static final String COMPARISON_GROUP_NUMBER_JSON_KEY = "comparison-group-number";
+	public static final String POINTER_DEPTH_RANGE_FROM_JSON_KEY = "from";
+	public static final String POINTER_DEPTH_RANGE_TO_JSON_KEY = "to";
 
 	private final Path settingsFolderPath;
 
@@ -137,6 +139,43 @@ public class GUISettingsManager
 					memoryDumpTableManager.addMemoryDump(memoryDump);
 				}
 			}
+
+			val pointerDepthRangeJSONObject = jsonObject.getJSONObject(POINTER_DEPTH_RANGE_JSON_KEY);
+			val pointerDepthRangeFrom = pointerDepthRangeJSONObject.getInt(POINTER_DEPTH_RANGE_FROM_JSON_KEY);
+			pointerSearcherGUI.getMinimumPointerSearchDepthField().setText(String.valueOf(pointerDepthRangeFrom));
+			val pointerDepthRangeTo = pointerDepthRangeJSONObject.getInt(POINTER_DEPTH_RANGE_TO_JSON_KEY);
+			pointerSearcherGUI.getMaximumPointerSearchDepthField().setText(String.valueOf(pointerDepthRangeTo));
+
+			val maximumMemoryUtilizationPercentage = jsonObject.getInt(MAXIMUM_MEMORY_UTILIZATION_PERCENTAGE_JSON_KEY);
+			pointerSearcherGUI.getMaximumMemoryUtilizationPercentageField().setText(String.valueOf(maximumMemoryUtilizationPercentage));
+
+			val maximumResultCount = jsonObject.getLong(MAXIMUM_RESULT_COUNT_JSON_KEY);
+			pointerSearcherGUI.getMaximumPointersCountField().setText(String.valueOf(maximumResultCount));
+
+			val pointerOffsetRangeJSONArray = jsonObject.getJSONObject(POINTER_OFFSET_RANGE_JSON_KEY);
+			val pointerOffsetRangeFrom = pointerOffsetRangeJSONArray.getString(POINTER_DEPTH_RANGE_FROM_JSON_KEY);
+			pointerSearcherGUI.getMinimumPointerOffsetField().setText(pointerOffsetRangeFrom);
+			val pointerOffsetRangeTo = pointerOffsetRangeJSONArray.getString(POINTER_DEPTH_RANGE_TO_JSON_KEY);
+			pointerSearcherGUI.getMaximumPointerOffsetField().setText(pointerOffsetRangeTo);
+
+			val minimumPointerAddress = jsonObject.getString(MINIMUM_POINTER_ADDRESS_JSON_KEY);
+			pointerSearcherGUI.getMinimumPointerAddressField().setText(minimumPointerAddress);
+
+			val lastPointerOffsetsJSONArray = jsonObject.getJSONArray(LAST_POINTER_OFFSETS_JSON_KEY);
+			val lastPointerOffsetBuilder = new StringBuilder();
+			var lastPointerOffsetsJSONArrayIndex = 0;
+			for (val lastPointerOffset : lastPointerOffsetsJSONArray)
+			{
+				lastPointerOffsetBuilder.append(lastPointerOffset);
+
+				if (lastPointerOffsetsJSONArrayIndex != lastPointerOffsetsJSONArray.toList().size() - 1)
+				{
+					lastPointerOffsetBuilder.append(",");
+				}
+
+				lastPointerOffsetsJSONArrayIndex++;
+			}
+			pointerSearcherGUI.getLastPointerOffsetsField().setText(lastPointerOffsetBuilder.toString());
 
 			val fileExtensionsJSONArray = jsonObject.getJSONArray(FILE_EXTENSIONS_JSON_KEY);
 			val fileExtensions = buildFileExtensionsString(fileExtensionsJSONArray);
@@ -259,7 +298,14 @@ public class GUISettingsManager
 				pointerSearcherGUI.getMaximumPointerOffsetField(), true);
 		rootJSONObject.put(POINTER_OFFSET_RANGE_JSON_KEY, pointerOffsetRangeJSONObject);
 		rootJSONObject.put(MINIMUM_POINTER_ADDRESS_JSON_KEY, pointerSearcherGUI.getMinimumPointerAddressField().getText());
-		rootJSONObject.put(LAST_POINTER_OFFSETS_JSON_KEY, pointerSearcherGUI.getLastPointerOffsetsField().getText());
+		val lastPointerOffsets = pointerSearcherGUI.getLastPointerOffsetsField().getText();
+		val lastPointerOffsetsArray = lastPointerOffsets.split(",");
+		val lastPointerOffsetsJSONArray = new JSONArray();
+		for (val lastPointerOffset : lastPointerOffsetsArray)
+		{
+			lastPointerOffsetsJSONArray.put(lastPointerOffset);
+		}
+		rootJSONObject.put(LAST_POINTER_OFFSETS_JSON_KEY, lastPointerOffsetsJSONArray);
 		val fileExtensionsJSON = new JSONArray();
 		val fileExtensions = pointerSearcherGUI.parseFileExtensions();
 		for (val fileExtension : fileExtensions)
@@ -291,8 +337,8 @@ public class GUISettingsManager
 	                                         final boolean isHexadecimal)
 	{
 		val pointerDepthRangeJSONObject = new JSONObject();
-		pointerDepthRangeJSONObject.put("from", isHexadecimal ? minimumPointerSearchDepthField.getText() : Long.parseLong(minimumPointerSearchDepthField.getText()));
-		pointerDepthRangeJSONObject.put("to", isHexadecimal ? maximumPointerSearchDepthField.getText() : Long.parseLong(maximumPointerSearchDepthField.getText()));
+		pointerDepthRangeJSONObject.put(POINTER_DEPTH_RANGE_FROM_JSON_KEY, isHexadecimal ? minimumPointerSearchDepthField.getText() : Long.parseLong(minimumPointerSearchDepthField.getText()));
+		pointerDepthRangeJSONObject.put(POINTER_DEPTH_RANGE_TO_JSON_KEY, isHexadecimal ? maximumPointerSearchDepthField.getText() : Long.parseLong(maximumPointerSearchDepthField.getText()));
 		return pointerDepthRangeJSONObject;
 	}
 }
