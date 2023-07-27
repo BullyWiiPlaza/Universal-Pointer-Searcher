@@ -10,11 +10,8 @@ import lombok.Setter;
 import lombok.val;
 import lombok.var;
 import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.io.IOException;
-import java.lang.invoke.MethodHandles;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -727,14 +724,6 @@ public class NativePointerSearcherManager
 		return stringBuilder.toString();
 	}
 
-	private static Resource[] getDLLResources() throws IOException
-	{
-		val classLoader = MethodHandles.lookup().getClass().getClassLoader();
-		val resolver = new PathMatchingResourcePatternResolver(classLoader);
-
-		return resolver.getResources("classpath:*.dll");
-	}
-
 	public static Process runningNativePointerSearcher = null;
 
 	private static Path getExecutableFilePath() throws IOException
@@ -776,26 +765,6 @@ public class NativePointerSearcherManager
 				}
 			}
 		}));
-
-		if (IS_OS_WINDOWS)
-		{
-			val dllResources = getDLLResources();
-			for (val dllResource : dllResources)
-			{
-				try (val inputStream = dllResource.getInputStream())
-				{
-					val byteArray = toByteArray(inputStream);
-					val fileName = dllResource.getFilename();
-					if (fileName == null)
-					{
-						throw new IOException("File name may not be null");
-					}
-
-					val outputFilePath = temporaryDirectory.resolve(fileName);
-					Files.write(outputFilePath, byteArray);
-				}
-			}
-		}
 
 		val executableFileBytes = readExecutableFileBytes();
 		val fileName = BINARY_NAME + DOT_EXTENSION;
