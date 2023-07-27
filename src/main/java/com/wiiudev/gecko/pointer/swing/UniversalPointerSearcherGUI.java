@@ -1340,6 +1340,15 @@ public class UniversalPointerSearcherGUI extends JFrame
 		printModuleFileNamesCheckBox.setEnabled(!isSearching);
 		storeMemoryPointerResultsCheckBox.setEnabled(!isSearching);
 		loadMemoryPointerResultsCheckBox.setEnabled(!isSearching);
+		/* if (isSearching)
+		{
+			storeMemoryPointersFilePathField.setEnabled(false);
+			storeMemoryPointerResultsBrowseButton.setEnabled(false);
+			loadMemoryPointersFilePathField.setEnabled(false);
+			loadMemoryPointerResultsBrowseButton.setEnabled(false);
+			scanDeeperByCheckBox.setEnabled(!isSearching);
+			scanDeeperByField.setEnabled(!isSearching);
+		} */
 		resetMemoryDumpsButton.setEnabled(memoryDumpsAdded && !isSearching);
 		editMemoryDumpButton.setEnabled(memoryDumpTableManager.isMemoryDumpSelected() && !isSearching);
 		removeMemoryDumpButton.setEnabled(memoryDumpTableManager.isMemoryDumpSelected() && !isSearching);

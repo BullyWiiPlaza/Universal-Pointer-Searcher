@@ -13,6 +13,8 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
+	// TODO storeMemoryPointersFilePathField, storeMemoryPointerResultsBrowseButton etc. disable correctly while searching
+	// TODO Add InputFilter to scan deeper by field to only allow numbers
 	// TODO File extensions without prepended dot "."
 	// TODO Debugging output line numbers
 	// TODO Adding memory dumps/pointers maps by folder
