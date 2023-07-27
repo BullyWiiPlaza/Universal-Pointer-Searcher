@@ -1516,6 +1516,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		{
 			memoryDumpDialog.setFileType(memoryDump.getFileType());
 			memoryDumpDialog.setInputType(memoryDump.getInputType());
+			memoryDumpDialog.getComparisonGroupNumberSpinner().setValue(memoryDump.getComparisonGroupNumber());
 		}
 		memoryDumpDialog.setLastAddedStartingAddress(lastAddedStartingAddress);
 		memoryDumpDialog.setLastAddedTargetAddress(lastAddedTargetAddress);

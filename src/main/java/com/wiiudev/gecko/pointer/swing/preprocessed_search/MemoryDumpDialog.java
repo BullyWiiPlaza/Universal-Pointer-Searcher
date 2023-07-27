@@ -71,7 +71,10 @@ public class MemoryDumpDialog extends JDialog
 	private JCheckBox addModuleDumpsFolderCheckBox;
 	private JComboBox<InputType> inputTypeSelection;
 	private JLabel byteOrderLabel;
+
+	@Getter
 	private JSpinner comparisonGroupNumberSpinner;
+
 	private final List<JLabel> statusLabels;
 
 	@Getter
