@@ -29,7 +29,6 @@ import static javax.swing.JOptionPane.showMessageDialog;
 public class GUISettingsManager
 {
 	private static final String INPUT_FILES_JSON_KEY = "input-files";
-	private static final String INPUT_FILE_JSON_KEY = "input-file";
 	private static final String STARTING_ADDRESS_JSON_KEY = "starting-address";
 	private static final String INPUT_TYPE_JSON_KEY = "input-type";
 	private static final String FILE_PATH_JSON_KEY = "file-path";
