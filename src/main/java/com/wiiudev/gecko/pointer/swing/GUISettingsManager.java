@@ -151,7 +151,11 @@ public class GUISettingsManager
 			val usingTargetSystem = jsonObject.getBoolean(USING_TARGET_SYSTEM_JSON_KEY);
 			pointerSearcherGUI.getTargetSystemCheckbox().setSelected(usingTargetSystem);
 			val targetSystem = jsonObject.getString(TARGET_SYSTEM_JSON_KEY);
-			pointerSearcherGUI.getTargetSystemSelection().setSelectedItem(TargetSystem.parseTargetSystem(targetSystem));
+			val parsedTargetSystem = TargetSystem.parseTargetSystem(targetSystem);
+			if (parsedTargetSystem != null)
+			{
+				pointerSearcherGUI.getTargetSystemSelection().setSelectedItem(parsedTargetSystem);
+			}
 
 			val storeMemoryPointerResults = jsonObject.getBoolean(STORE_MEMORY_POINTER_RESULTS_JSON_KEY);
 			pointerSearcherGUI.getStoreMemoryPointerResultsCheckBox().setSelected(storeMemoryPointerResults);

@@ -294,6 +294,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		writePointersToFileSystemCheckBox.setVisible(false);
 		byteOrderSelection.setModel(new DefaultComboBoxModel<>(MemoryDumpsByteOrder.values()));
 		targetSystemSelection.setModel(new DefaultComboBoxModel<>(TargetSystem.values()));
+		targetSystemSelection.setSelectedItem(TargetSystem.MICROSOFT_WINDOWS_X64);
 		targetSystemCheckbox.addItemListener(itemEvent -> setButtonAvailability());
 		addByteOrderInformationButtonListener();
 		addAddressSizeInformationButtonListener();
@@ -1862,7 +1863,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 										{
 											val warningMessage = getLogMessage(processOutputLine, warningIndicator);
 											showMessageDialog(rootPane, "It seems like the " + nativePointerSearcherName + " emitted a warning:\n\"" + warningMessage + "\"\n"
-											                            + "It is recommended to not ignore it. Please check the \"" + nativePointerSearcherOutputButton.getText() + "\" for further information/context.",
+											                            + "It's not recommended to ignore it.\n" +
+											                            "Please check the \"" + nativePointerSearcherOutputButton.getText() + "\" for further information or context.",
 													"Pointer Searcher Warning", WARNING_MESSAGE);
 											break;
 										}
