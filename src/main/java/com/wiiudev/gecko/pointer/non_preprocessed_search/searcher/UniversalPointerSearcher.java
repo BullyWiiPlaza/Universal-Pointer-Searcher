@@ -24,7 +24,7 @@ public abstract class UniversalPointerSearcher
 	private PointerAddressRange pointerAddressRange;
 	private ByteOrder byteOrder;
 	private PointerOffsetChecker pointerOffsetChecker;
-	private Set<MemoryPointer> memoryPointers;
+	private final Set<MemoryPointer> memoryPointers;
 	public static int INTEGER_SIZE = 4;
 
 	UniversalPointerSearcher()

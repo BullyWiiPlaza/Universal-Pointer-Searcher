@@ -9,8 +9,8 @@ import java.util.List;
 
 public class MemoryPointer implements Comparable<MemoryPointer>
 {
-	private long baseAddress;
-	private int[] offsets;
+	private final long baseAddress;
+	private final int[] offsets;
 
 	public MemoryPointer(long baseAddress, int[] offsets)
 	{

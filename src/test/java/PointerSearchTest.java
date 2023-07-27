@@ -21,11 +21,11 @@ import static org.junit.Assert.fail;
 
 public class PointerSearchTest
 {
-	private static MemoryPointerSearcher memoryPointerSearcher = new MemoryPointerSearcher();
-	private static MemoryRange baseAddressRange = new MemoryRange(0x39520BA0, 0x39CDDB0C);
-	private static List<MemoryRange> baseAddressMemoryRanges = new ArrayList<>();
-	private static MemoryRange ignoredAddressRange = new MemoryRange(0x39520BA0, 0x39530000);
-	private static List<MemoryRange> ignoredMemoryRanges = new ArrayList<>();
+	private static final MemoryPointerSearcher memoryPointerSearcher = new MemoryPointerSearcher();
+	private static final MemoryRange baseAddressRange = new MemoryRange(0x39520BA0, 0x39CDDB0C);
+	private static final List<MemoryRange> baseAddressMemoryRanges = new ArrayList<>();
+	private static final MemoryRange ignoredAddressRange = new MemoryRange(0x39520BA0, 0x39530000);
+	private static final List<MemoryRange> ignoredMemoryRanges = new ArrayList<>();
 	private static final int MAXIMUM_POINTER_OFFSET = 0x400;
 	private static final int POINTER_SEARCH_DEPTH = 3;
 	private static final int MEMORY_POINTER_ALIGNMENT = 4;

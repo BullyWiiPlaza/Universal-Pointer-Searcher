@@ -704,7 +704,7 @@ public class MemoryDumpDialog extends JDialog
 					? null : (Long) parseUnsignedLong(targetAddressFieldText, 16);
 			memoryDump = new MemoryDump(filePath, startingAddress, targetAddress, byteOrder);
 			memoryDump.setInputType(getSelectedItem(inputTypeSelection));
-			val comparisonGroupNumber = Integer.parseInt(comparisonGroupNumberSpinner.getValue() + "");
+			val comparisonGroupNumber = Integer.parseInt(String.valueOf(comparisonGroupNumberSpinner.getValue()));
 			memoryDump.setComparisonGroupNumber(comparisonGroupNumber);
 			memoryDump.setAddedAsFolder(addModuleDumpsFolderCheckBox.isSelected());
 

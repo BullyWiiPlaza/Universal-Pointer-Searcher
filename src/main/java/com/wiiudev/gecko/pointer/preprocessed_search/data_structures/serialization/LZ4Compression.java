@@ -10,9 +10,9 @@ import static java.util.Arrays.copyOf;
 
 class LZ4Compression
 {
-	private static LZ4Factory lz4Factory = LZ4Factory.safeInstance();
-	private static LZ4SafeDecompressor deCompressor = lz4Factory.safeDecompressor();
-	private static LZ4Compressor fastCompressor = lz4Factory.highCompressor();
+	private static final LZ4Factory lz4Factory = LZ4Factory.safeInstance();
+	private static final LZ4SafeDecompressor deCompressor = lz4Factory.safeDecompressor();
+	private static final LZ4Compressor fastCompressor = lz4Factory.highCompressor();
 
 	static byte[] compress(byte[] raw)
 	{

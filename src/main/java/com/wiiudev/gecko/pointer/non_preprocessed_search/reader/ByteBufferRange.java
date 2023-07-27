@@ -6,9 +6,9 @@ import static java.lang.Long.toHexString;
 
 public class ByteBufferRange
 {
-	private long startOffset;
-	private long endOffset;
-	private ByteBuffer byteBuffer;
+	private final long startOffset;
+	private final long endOffset;
+	private final ByteBuffer byteBuffer;
 
 	public ByteBufferRange(long startingOffset, long endOffset, ByteBuffer byteBuffer)
 	{

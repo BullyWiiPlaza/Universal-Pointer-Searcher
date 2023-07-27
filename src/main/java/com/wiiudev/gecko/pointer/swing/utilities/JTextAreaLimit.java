@@ -10,7 +10,7 @@ import static com.wiiudev.gecko.pointer.swing.utilities.TextAreaLimitType.HEXADE
 
 public class JTextAreaLimit extends PlainDocument
 {
-	private int lengthLimit;
+	private final int lengthLimit;
 	private final TextAreaLimitType textAreaLimitType;
 	private final boolean allowNegative;
 

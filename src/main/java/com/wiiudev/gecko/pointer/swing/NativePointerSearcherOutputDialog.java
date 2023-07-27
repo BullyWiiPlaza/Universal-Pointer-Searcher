@@ -28,7 +28,7 @@ public class NativePointerSearcherOutputDialog extends JDialog
 	private static final String SCRIPT_FILE_EXTENSION = IS_OS_WINDOWS ? ".bat" : ".sh";
 	private static final String SCRIPT_FILE_HEADER = IS_OS_UNIX ? "#!/usr/bin/env bash"
 			+ lineSeparator() + lineSeparator() : "";
-	private String SCRIPT_FILE_POSTFIX = IS_OS_LINUX ? ";read" : "";
+	private final String SCRIPT_FILE_POSTFIX = IS_OS_LINUX ? ";read" : "";
 
 	private JPanel contentPane;
 	private JTextArea outputArea;

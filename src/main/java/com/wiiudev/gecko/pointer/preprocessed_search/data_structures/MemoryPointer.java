@@ -103,7 +103,7 @@ public class MemoryPointer
 		var addressExpressionStartIndex = 0;
 		while (addressExpressionStartIndex < memoryPointerLine.length())
 		{
-			if (!(memoryPointerLine.charAt(addressExpressionStartIndex) + "").equals(OPENING_BRACKET))
+			if (!(String.valueOf(memoryPointerLine.charAt(addressExpressionStartIndex))).equals(OPENING_BRACKET))
 			{
 				break;
 			}
@@ -113,7 +113,7 @@ public class MemoryPointer
 		var addressExpressionEndIndex = addressExpressionStartIndex + 1;
 		while (addressExpressionEndIndex < memoryPointerLine.length())
 		{
-			if ((memoryPointerLine.charAt(addressExpressionEndIndex) + "").equals(CLOSING_BRACKET))
+			if ((String.valueOf(memoryPointerLine.charAt(addressExpressionEndIndex))).equals(CLOSING_BRACKET))
 			{
 				break;
 			}

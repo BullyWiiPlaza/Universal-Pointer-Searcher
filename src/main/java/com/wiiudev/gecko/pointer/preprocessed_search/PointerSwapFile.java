@@ -26,7 +26,7 @@ public class PointerSwapFile
 	public static final int STARTING_SWAP_FILE_NUMBER = 1;
 
 	private final Path targetDirectory;
-	private String formattedDate;
+	private final String formattedDate;
 	private int currentSwapFileNumber = STARTING_SWAP_FILE_NUMBER;
 
 	public PointerSwapFile()

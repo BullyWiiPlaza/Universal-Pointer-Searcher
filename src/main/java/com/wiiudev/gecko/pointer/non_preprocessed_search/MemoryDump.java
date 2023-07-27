@@ -19,10 +19,10 @@ import static java.nio.file.Files.newDirectoryStream;
 
 public class MemoryDump
 {
-	private Path binaryFilePath;
-	private long targetAddress;
-	private RandomAccessFile randomAccessFile;
-	private ByteBuffer byteBuffer;
+	private final Path binaryFilePath;
+	private final long targetAddress;
+	private final RandomAccessFile randomAccessFile;
+	private final ByteBuffer byteBuffer;
 
 	private MemoryDump(Path binaryFilePath) throws IOException
 	{

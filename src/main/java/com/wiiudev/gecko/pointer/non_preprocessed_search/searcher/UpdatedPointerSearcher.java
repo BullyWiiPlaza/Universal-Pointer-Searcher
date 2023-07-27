@@ -15,13 +15,13 @@ public abstract class UpdatedPointerSearcher
 	private boolean allowPointerInPointers;
 	private PointerAddressRange pointerAddressRange;
 	private long memoryDumpStartingOffset;
-	private List<MemoryDump> memoryDumps;
+	private final List<MemoryDump> memoryDumps;
 	private PossiblePointers possiblePointers;
 	private List<Long> possiblePointerAddresses;
-	private MemoryDump memoryDump;
+	private final MemoryDump memoryDump;
 	private ByteOrder byteOrder;
 	private PointerOffsetChecker pointerOffsetChecker;
-	private List<ByteBuffer> memoryDumpBuffers;
+	private final List<ByteBuffer> memoryDumpBuffers;
 
 	public UpdatedPointerSearcher(List<MemoryDump> memoryDumps, int memoryDumpStartingOffset, ByteOrder byteOrder) throws IOException
 	{

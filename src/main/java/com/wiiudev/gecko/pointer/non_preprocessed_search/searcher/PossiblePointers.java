@@ -13,8 +13,8 @@ import static java.lang.Long.toHexString;
 
 public class PossiblePointers extends HashMap<Long, List<Long>>
 {
-	private PointerAddressRange pointerAddressRange;
-	private List<ByteBuffer> byteBuffers;
+	private final PointerAddressRange pointerAddressRange;
+	private final List<ByteBuffer> byteBuffers;
 
 	public PossiblePointers(List<ByteBuffer> byteBuffers, PointerAddressRange pointerAddressRange)
 	{

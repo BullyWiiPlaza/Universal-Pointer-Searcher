@@ -5,8 +5,8 @@ import lombok.val;
 
 public class PointerAddressRange
 {
-	private long startingAddress;
-	private long endAddress;
+	private final long startingAddress;
+	private final long endAddress;
 
 	public PointerAddressRange(long startingAddress, long endAddress)
 	{

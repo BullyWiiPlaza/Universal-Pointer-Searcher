@@ -4,8 +4,8 @@ import lombok.val;
 
 public class PossiblePointer
 {
-	private long address;
-	private long value;
+	private final long address;
+	private final long value;
 
 	public PossiblePointer(long address, long value)
 	{
