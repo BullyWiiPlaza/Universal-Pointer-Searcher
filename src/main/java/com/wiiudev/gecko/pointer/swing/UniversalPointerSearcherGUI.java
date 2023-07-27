@@ -5,6 +5,7 @@ import com.wiiudev.gecko.pointer.NativePointerSearcherOutput;
 import com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerList;
 import com.wiiudev.gecko.pointer.preprocessed_search.MemoryPointerSearcher;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.*;
+import com.wiiudev.gecko.pointer.swing.preprocessed_search.InputType;
 import com.wiiudev.gecko.pointer.swing.preprocessed_search.MemoryDumpDialog;
 import com.wiiudev.gecko.pointer.swing.utilities.*;
 import com.wiiudev.gecko.pointer.utilities.Benchmark;
@@ -27,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -497,7 +499,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			val buttons = new String[]{"Yes", "No"};
 			val selectedAnswer = showOptionDialog(rootPane,
 					"Usually, you should pick a thread count equal to your logical processors count or slightly above.\n" +
-							"This requires some testing since every machine is different. Do you want to read more about this topic?",
+					"This requires some testing since every machine is different. Do you want to read more about this topic?",
 					optimalThreadCountButton.getText(), YES_NO_CANCEL_OPTION, QUESTION_MESSAGE, null, buttons, null);
 
 			if (selectedAnswer == YES_OPTION)
@@ -759,8 +761,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 			{
 				setFoundPointersText(pointersText);
 				pageResultsLabel.setText("You are currently viewing pointer results " + (finalFromIndex + 1) +
-						" to " + actualToIndex + " from page "
-						+ finalCurrentPageNumber + " out of " + pagesCount + " total pages");
+				                         " to " + actualToIndex + " from page "
+				                         + finalCurrentPageNumber + " out of " + pagesCount + " total pages");
 			});
 		}
 	}
@@ -782,26 +784,26 @@ public class UniversalPointerSearcherGUI extends JFrame
 		singleMemoryDumpMethodInformationButton.addActionListener(actionEvent ->
 		{
 			val message = "Explanation by skoolzout1:\n\n" +
-					"If you decide you want to attempt searching beyond a depth of 2, the way I do it is to start with 2 unique memory dumps.\n" +
-					"Then, run a pointer scan using each of the dumps alone, in order to generate 2 huge lists of pointers.\n" +
-					"After that I effectively look through each list of pointers to try and find offset patterns that remained the same between the two dumps.\n" +
-					"\n" +
-					"Example: \n" +
-					"[[0x12345678] + 0x458] + 0xABC\n" +
-					"compared to: \n" +
-					"[[0x11111111] + 0x458] + 0xABC\n" +
-					"\n" +
-					"So I look for pointers that have the same offset pattern, but different base addresses between the dumps.\n" +
-					"\n" +
-					"So after that, I would try my luck again running a pointer scan using both of the dumps,\n" +
-					"but searching for pointers based on 0x12345678 for the first dump and 0x11111111 for the second one.\n" +
-					"And see if I have any results after that.\n" +
-					"\n" +
-					"If you get results you can paste one of resulting pointers into your framework of [[--------] + 0x458] + 0xABC and then test it out.\n\n" +
-					"Additional notes:\n" +
-					"* When a line contains more than 2 entries, it means that the leftmost one matches multiple pointers on the rightmost memory dump(s).\n" +
-					"* The " + singleMemoryDumpMethodCheckBox.getText().toLowerCase() + " is only useful for making deeper pointer searches since it doesn't deliver finalized pointers (only intermediate results).\n" +
-					"You therefore need to perform a regular pointer search at the end to finish the \"chain\". This way, you can go as deep as you want.";
+			              "If you decide you want to attempt searching beyond a depth of 2, the way I do it is to start with 2 unique memory dumps.\n" +
+			              "Then, run a pointer scan using each of the dumps alone, in order to generate 2 huge lists of pointers.\n" +
+			              "After that I effectively look through each list of pointers to try and find offset patterns that remained the same between the two dumps.\n" +
+			              "\n" +
+			              "Example: \n" +
+			              "[[0x12345678] + 0x458] + 0xABC\n" +
+			              "compared to: \n" +
+			              "[[0x11111111] + 0x458] + 0xABC\n" +
+			              "\n" +
+			              "So I look for pointers that have the same offset pattern, but different base addresses between the dumps.\n" +
+			              "\n" +
+			              "So after that, I would try my luck again running a pointer scan using both of the dumps,\n" +
+			              "but searching for pointers based on 0x12345678 for the first dump and 0x11111111 for the second one.\n" +
+			              "And see if I have any results after that.\n" +
+			              "\n" +
+			              "If you get results you can paste one of resulting pointers into your framework of [[--------] + 0x458] + 0xABC and then test it out.\n\n" +
+			              "Additional notes:\n" +
+			              "* When a line contains more than 2 entries, it means that the leftmost one matches multiple pointers on the rightmost memory dump(s).\n" +
+			              "* The " + singleMemoryDumpMethodCheckBox.getText().toLowerCase() + " is only useful for making deeper pointer searches since it doesn't deliver finalized pointers (only intermediate results).\n" +
+			              "You therefore need to perform a regular pointer search at the end to finish the \"chain\". This way, you can go as deep as you want.";
 
 			showMessageDialog(UniversalPointerSearcherGUI.this,
 					message,
@@ -1263,10 +1265,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val pointerSearchDepth = getPointerSearchDepth();
 		val lastPointerOffsetBackgroundColor = lastPointerOffsetsField.getBackground();
 		val isSearchButtonAvailable = isPointerDepthValid &&
-				pointerSearchDepth >= MINIMUM_POINTER_SEARCH_DEPTH_VALUE
-				&& (memoryDumpsAdded || memoryPointerSearcher.getImportedPointerMaps().size() > 0) && maximumPointerOffsetValid &&
-				(minimumPointerOffsetField.isVisible() && minimumPointerOffsetValid || !minimumPointerOffsetField.isVisible())
-				&& lastPointerOffsetBackgroundColor.equals(GREEN);
+		                              pointerSearchDepth >= MINIMUM_POINTER_SEARCH_DEPTH_VALUE
+		                              && (memoryDumpsAdded || memoryPointerSearcher.getImportedPointerMaps().size() > 0) && maximumPointerOffsetValid &&
+		                              (minimumPointerOffsetField.isVisible() && minimumPointerOffsetValid || !minimumPointerOffsetField.isVisible())
+		                              && lastPointerOffsetBackgroundColor.equals(GREEN);
 		searchPointersButton.setEnabled(isSearchButtonAvailable && !isSearching);
 		cancelSearchButton.setVisible(isSearching);
 		nativePointerSearcherOutputButton.setVisible(nativePointerSearcherOutput != null);
@@ -1320,7 +1322,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		maximumMemoryUtilizationPercentageField.setEnabled(!isSearching);
 		truncateMemoryPointersDebuggingOutputCheckBox.setEnabled(!isSearching);
 		sortingSelection.setEnabled(!isSearching &&
-				(singleMemoryDumpPointers == null || singleMemoryDumpPointers.isEmpty()));
+		                            (singleMemoryDumpPointers == null || singleMemoryDumpPointers.isEmpty()));
 		offsetPrintingSettingSelection.setEnabled(!isSearching);
 		addMemoryDumpButton.setEnabled(!isSearching);
 		printModuleFileNamesCheckBox.setEnabled(!isSearching);
@@ -1332,7 +1334,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		baseOffsetRangeSelection.setEnabled(!isSearching);
 		baseOffsetRangePanel.setVisible(!usingNativePointerSearcher);
 		val isBaseOffsetRangeEnabled = baseOffsetRangeSelection.isSelected()
-				&& baseOffsetRangeSelection.isEnabled();
+		                               && baseOffsetRangeSelection.isEnabled();
 		startingBaseAddressField.setEnabled(isBaseOffsetRangeEnabled);
 		endBaseAddressField.setEnabled(isBaseOffsetRangeEnabled);
 		val foundPointersOutputAreaText = foundPointersOutputArea.getText();
@@ -1552,9 +1554,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 				{
 					val confirmed = showConfirmDialog(rootPane,
 							"You configured the minimum pointer address to be " + minimumPointerAddress + ".\n" +
-									"This makes no sense since " + minimumPointerAddress + " is usually defined as the invalid pointer.\n" +
-									"Furthermore, this pointer search may take far longer than usual.\n" +
-									"Do you really want to continue?",
+							"This makes no sense since " + minimumPointerAddress + " is usually defined as the invalid pointer.\n" +
+							"Furthermore, this pointer search may take far longer than usual.\n" +
+							"Do you really want to continue?",
 							"Continue?", YES_NO_OPTION, WARNING_MESSAGE);
 
 					if (confirmed != YES_OPTION)
@@ -1564,6 +1566,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 				}
 
 				val memoryDumps = memoryDumpTableManager.getMemoryDumps();
+
+				if (validateGroupNumbersFailed(memoryDumps))
+				{
+					return;
+				}
+
 				memoryPointerSearcher.setMemoryDumps(memoryDumps);
 
 				val pointerMaps = memoryDumpTableManager.getPointerMaps();
@@ -1577,10 +1585,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 					singleMemoryDumpMethodSelectedAnswer = showConfirmDialog(
 							rootPane,
 							"You have chosen to use the \""
-									+ singleMemoryDumpMethodCheckBox.getText()
-									+ "\" but you only added 1 memory dump.\n" +
-									"You have to add more than 1 memory dump to make sense out of this.\n" +
-									"Do you want to perform a regular pointer search?",
+							+ singleMemoryDumpMethodCheckBox.getText()
+							+ "\" but you only added 1 memory dump.\n" +
+							"You have to add more than 1 memory dump to make sense out of this.\n" +
+							"Do you want to perform a regular pointer search?",
 							"Regular Pointer Search?",
 							YES_NO_OPTION);
 
@@ -1600,14 +1608,14 @@ public class UniversalPointerSearcherGUI extends JFrame
 					val selectedAnswer = singleMemoryDumpMethodCheckBox.isSelected()
 							? showConfirmDialog(rootPane,
 							"Do you want to perform a "
-									+ singleMemoryDumpMethodCheckBox.getText().toLowerCase()
-									+ " pointer search using the added input file"
-									+ addedGenitive + "?",
+							+ singleMemoryDumpMethodCheckBox.getText().toLowerCase()
+							+ " pointer search using the added input file"
+							+ addedGenitive + "?",
 							singleMemoryDumpMethodCheckBox.getText() + " Pointer Search?",
 							YES_NO_OPTION)
 							: showConfirmDialog(rootPane, "Do you want to perform a "
-							+ "pointer search using the added input file"
-							+ addedGenitive + "?", "Pointer Search?", YES_NO_OPTION);
+							                              + "pointer search using the added input file"
+							                              + addedGenitive + "?", "Pointer Search?", YES_NO_OPTION);
 
 					if (selectedAnswer == YES_OPTION)
 					{
@@ -1640,6 +1648,43 @@ public class UniversalPointerSearcherGUI extends JFrame
 				handleException(exception);
 			}
 		});
+	}
+
+	private boolean validateGroupNumbersFailed(List<MemoryDump> memoryDumps)
+	{
+		List<Integer> comparisonGroupNumbers = new ArrayList<>();
+		for (val memoryDump : memoryDumps)
+		{
+			val inputType = memoryDump.getInputType();
+			if (inputType.equals(InputType.COMPARISON))
+			{
+				comparisonGroupNumbers.add(memoryDump.getComparisonGroupNumber());
+			}
+		}
+
+		if (!comparisonGroupNumbers.isEmpty())
+		{
+			comparisonGroupNumbers.sort(Comparator.naturalOrder());
+			val biggestComparisonGroupNumber = comparisonGroupNumbers.get(comparisonGroupNumbers.size() - 1);
+
+			for (var currentComparisonGroupNumber = 1;
+			     currentComparisonGroupNumber < biggestComparisonGroupNumber;
+			     currentComparisonGroupNumber++)
+			{
+				if (!comparisonGroupNumbers.contains(currentComparisonGroupNumber))
+				{
+					val errorMessage = "Comparison group number "
+					                   + currentComparisonGroupNumber
+					                   + " expected to be contained in the input.\n" +
+					                   "When using comparison input, the numbering starts at 1\n" +
+					                   "and you may not leave out any group numbers if you are using multiple groups.";
+					showMessageDialog(this,
+							errorMessage, "Input Validation Error", ERROR_MESSAGE);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private void setPointerSearchOptions()
@@ -1797,7 +1842,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 										{
 											val errorMessage = getLogMessage(processOutputLine, errorLineIndicator);
 											showMessageDialog(rootPane, "It seems like a " + nativePointerSearcherName + " error occurred:\n\"" + errorMessage + "\"\n"
-															+ "Please check the \"" + nativePointerSearcherOutputButton.getText() + "\" for further information/context.",
+											                            + "Please check the \"" + nativePointerSearcherOutputButton.getText() + "\" for further information/context.",
 													"Pointer Searcher Error", ERROR_MESSAGE);
 											break;
 										}
@@ -1806,7 +1851,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 										{
 											val warningMessage = getLogMessage(processOutputLine, warningIndicator);
 											showMessageDialog(rootPane, "It seems like the " + nativePointerSearcherName + " emitted a warning:\n\"" + warningMessage + "\"\n"
-															+ "It is recommended to not ignore it. Please check the \"" + nativePointerSearcherOutputButton.getText() + "\" for further information/context.",
+											                            + "It is recommended to not ignore it. Please check the \"" + nativePointerSearcherOutputButton.getText() + "\" for further information/context.",
 													"Pointer Searcher Warning", WARNING_MESSAGE);
 											break;
 										}
@@ -1819,8 +1864,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 						} finally
 						{
 							if (!singleMemoryDumpMethodCheckBox.isSelected()
-									|| singleMemoryDumpPointers.size()
-									== memoryDumpTableManager.getMemoryDumps().size() - 1)
+							    || singleMemoryDumpPointers.size()
+							       == memoryDumpTableManager.getMemoryDumps().size() - 1)
 							{
 								disableSearching();
 							}
@@ -2091,7 +2136,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val memoryPointers = memoryPointerSearcher.getMemoryPointerList();
 		val memoryPointersCount = memoryPointers == null ? 0 : memoryPointers.size();
 		val pointerSearchStatisticsText = memoryPointersCount
-				+ " pointer(s) found in " + formattedElapsedTime + " second(s).";
+		                                  + " pointer(s) found in " + formattedElapsedTime + " second(s).";
 		pointerSearchStatisticsLabel.setText(pointerSearchStatisticsText);
 	}
 
@@ -2136,7 +2181,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 					val elapsedTime = singleMemoryDumpBenchmark.getElapsedTime();
 					val formattedElapsedTime = formatElapsedTime(elapsedTime);
 					invokeLater(() -> pointerSearchStatisticsLabel.setText(potentialPointerPairs.size()
-							+ " pointer list(s) in " + formattedElapsedTime + " second(s) found."));
+					                                                       + " pointer list(s) in " + formattedElapsedTime + " second(s) found."));
 				}
 			} else
 			{

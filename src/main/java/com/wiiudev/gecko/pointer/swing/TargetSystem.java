@@ -1,6 +1,7 @@
 package com.wiiudev.gecko.pointer.swing;
 
 import lombok.Getter;
+import lombok.val;
 
 public enum TargetSystem
 {
@@ -19,6 +20,19 @@ public enum TargetSystem
 	TargetSystem(final String value)
 	{
 		this.value = value;
+	}
+
+	public static TargetSystem parseTargetSystem(final String targetSystemText)
+	{
+		for (val currentTargetSystem : values())
+		{
+			if (currentTargetSystem.getValue().equals(targetSystemText))
+			{
+				return currentTargetSystem;
+			}
+		}
+
+		return null;
 	}
 
 	@Override

@@ -80,7 +80,7 @@ public class GUISettingsManager
 		fileChooser.setCurrentDirectory(settingsFolderPath.toFile());
 		val forcedExtension = "json";
 		val fileNameExtensionFilter = new FileNameExtensionFilter(forcedExtension.toUpperCase()
-				+ " Files (*." + forcedExtension + ")", forcedExtension);
+		                                                          + " Files (*." + forcedExtension + ")", forcedExtension);
 		fileChooser.setFileFilter(fileNameExtensionFilter);
 		val selectedAnswer = fileChooserOpenDialogType.equals(FileChooserOpenDialogType.OPEN_DIALOG)
 				? fileChooser.showOpenDialog(rootPane)
@@ -144,6 +144,11 @@ public class GUISettingsManager
 
 			val byteOrder = parseMemoryDumpsByteOrder(jsonObject.getString(BYTE_ORDER_JSON_KEY));
 			pointerSearcherGUI.getByteOrderSelection().setSelectedItem(byteOrder);
+
+			val usingTargetSystem = jsonObject.getBoolean(USING_TARGET_SYSTEM_JSON_KEY);
+			pointerSearcherGUI.getTargetSystemCheckbox().setSelected(usingTargetSystem);
+			val targetSystem = jsonObject.getString(TARGET_SYSTEM_JSON_KEY);
+			pointerSearcherGUI.getTargetSystemSelection().setSelectedItem(TargetSystem.parseTargetSystem(targetSystem));
 
 			showMessageDialog(pointerSearcherGUI.getRootPane(),
 					"The configuration has been restored successfully.",
