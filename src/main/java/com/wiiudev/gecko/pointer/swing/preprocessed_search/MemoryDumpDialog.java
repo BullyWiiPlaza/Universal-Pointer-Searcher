@@ -442,8 +442,6 @@ public class MemoryDumpDialog extends JDialog
 					});
 				}
 
-				invokeLater(() -> startingAddressField.setEnabled(!selectedFileType.equals(FileTypeImport.POINTER_MAP)));
-
 				try
 				{
 					//noinspection BusyWait
@@ -576,10 +574,7 @@ public class MemoryDumpDialog extends JDialog
 				}
 
 				startingAddressField.setText("0");
-				if (startingAddressField.isEnabled())
-				{
-					startingAddressField.setEnabled(false);
-				}
+				startingAddressField.setEnabled(false);
 			} else
 			{
 				startingAddressField.setEnabled(true);
