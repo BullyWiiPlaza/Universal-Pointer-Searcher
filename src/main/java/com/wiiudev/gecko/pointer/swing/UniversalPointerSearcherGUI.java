@@ -222,6 +222,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 	@Getter
 	private JTextField fileExtensionsField;
 
+	private JButton addressSizeInformationButton;
+
 	private PersistentSettingsManager persistentSettingsManager;
 
 	@Getter
@@ -294,6 +296,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		targetSystemSelection.setModel(new DefaultComboBoxModel<>(TargetSystem.values()));
 		targetSystemCheckbox.addItemListener(itemEvent -> setButtonAvailability());
 		addByteOrderInformationButtonListener();
+		addAddressSizeInformationButtonListener();
 		addMaximumMemoryUtilizationPercentageFieldDocumentListener();
 		val storeMemoryPointersFilePathFileBrowserManager = new FileBrowserManager(storeMemoryPointerResultsCheckBox,
 				storeMemoryPointersFilePathField, storeMemoryPointerResultsBrowseButton,
@@ -483,6 +486,11 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private void addByteOrderInformationButtonListener()
 	{
 		byteOrderInformationButton.addActionListener(actionEvent -> openURL("https://en.wikipedia.org/wiki/Endianness"));
+	}
+
+	private void addAddressSizeInformationButtonListener()
+	{
+		addressSizeInformationButton.addActionListener(actionEvent -> openURL("https://en.wikipedia.org/wiki/Memory_address"));
 	}
 
 	private void setTargetSystemComponentsAvailability()

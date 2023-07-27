@@ -800,15 +800,6 @@
                       <toolTipText value="The byte order of the platform to perform a pointer search for (will be overwritten by the target system selection)"/>
                     </properties>
                   </component>
-                  <component id="284c3" class="javax.swing.JButton" binding="byteOrderInformationButton" default-binding="true">
-                    <constraints>
-                      <grid row="18" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="Byte Order Information"/>
-                      <toolTipText value="Provides information about the byte order selection"/>
-                    </properties>
-                  </component>
                   <component id="6b1c0" class="javax.swing.JLabel">
                     <constraints>
                       <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
@@ -933,6 +924,34 @@
                       <toolTipText value="The file extensions (separated by commas) to look for when parsing input files from a folder"/>
                     </properties>
                   </component>
+                  <grid id="90b2b" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="18" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="284c3" class="javax.swing.JButton" binding="byteOrderInformationButton" default-binding="true">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Byte Order Information"/>
+                          <toolTipText value="Provides information about the byte order selection"/>
+                        </properties>
+                      </component>
+                      <component id="903d6" class="javax.swing.JButton" binding="addressSizeInformationButton" default-binding="true">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Address Size Information"/>
+                          <toolTipText value="Provides information about the address size in computing"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
                 </children>
               </grid>
               <grid id="101f" binding="aboutTab" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
