@@ -23,6 +23,7 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -1513,17 +1514,23 @@ public class UniversalPointerSearcherGUI extends JFrame
 	{
 		val memoryDumpDialog = new MemoryDumpDialog(memoryDump, mayParseFolder);
 		memoryDumpDialog.setFilePath(filePath);
+		memoryDumpDialog.setAddModuleDumpsFolder(addModuleDumpsFolder);
 		if (memoryDump != null)
 		{
 			memoryDumpDialog.setFileType(memoryDump.getFileType());
 			memoryDumpDialog.setInputType(memoryDump.getInputType());
 			memoryDumpDialog.getComparisonGroupNumberSpinner().setValue(memoryDump.getComparisonGroupNumber());
+
+			// TODO Maybe distinguish between parsing the folder and adding module dumps folder?
+			if (Files.isDirectory(memoryDump.getFilePath()))
+			{
+				memoryDumpDialog.setAddModuleDumpsFolder(true);
+			}
 		}
 		memoryDumpDialog.setLastAddedStartingAddress(lastAddedStartingAddress);
 		memoryDumpDialog.setLastAddedTargetAddress(lastAddedTargetAddress);
 		memoryDumpDialog.setByteOrder(lastAddedByteOrder);
 		memoryDumpDialog.setParseEntireFolder(parseEntireFolder);
-		memoryDumpDialog.setAddModuleDumpsFolder(addModuleDumpsFolder);
 		memoryDumpDialog.setLocationRelativeTo(this);
 		val title = button.getText();
 		memoryDumpDialog.setTitle(title);

@@ -13,6 +13,7 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
+	// TODO Implement moving rows up/down via context menu
 	// TODO File extensions without prepended dot "."
 	// TODO Debugging output line numbers
 	// TODO Adding memory dumps/pointers maps by folder
