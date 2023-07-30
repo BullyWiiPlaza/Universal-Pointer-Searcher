@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import lombok.var;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class NativePointerSearcherManager
 	private static final String WINDOWS_SYSTEM32_DIRECTORY;
 	private static final String CMD_FILE_PATH;
 	private static final String WINDOWS_TEMPORARY_DIRECTORY_COMMAND = "%TEMP%";
+	public static final String POINTER_MAP_EXTENSION = "pointermap";
 
 	private static String getExtension()
 	{
@@ -110,6 +112,14 @@ public class NativePointerSearcherManager
 	@Getter
 	@Setter
 	private Integer scanDeeperBy;
+
+	@Getter
+	@Setter
+	private boolean writePointerMaps = false;
+
+	@Getter
+	@Setter
+	private boolean readPointerMaps = false;
 
 	@Setter
 	private long fromPointerOffset;
@@ -222,7 +232,7 @@ public class NativePointerSearcherManager
 			val actualProcessOutput = USE_FILE_OUTPUT ?
 					new String(readAllBytes(pointerSearcherOutput)) : readFromProcess(process);
 			val processOutput = COMMAND_LINE_STARTING_SYMBOL
-					+ executedCommand + "\n\n" + actualProcessOutput;
+			                    + executedCommand + "\n\n" + actualProcessOutput;
 			if (exitCode != 0)
 			{
 				val exceptionMessage = getExceptionMessage(exitCode);
@@ -326,12 +336,12 @@ public class NativePointerSearcherManager
 		if (exitCode == -1073740791)
 		{
 			additionalErrorHint = "\nPlease try setting your \"maximum memory chunk size\" " +
-					"large enough to read the entire file at once.";
+			                      "large enough to read the entire file at once.";
 		}
 
 		return "Native pointer searcher " +
-				"finished abnormally with exit code " + exitCode + " (0x"
-				+ toHexString(exitCode).toUpperCase() + ")" + additionalErrorHint;
+		       "finished abnormally with exit code " + exitCode + " (0x"
+		       + toHexString(exitCode).toUpperCase() + ")" + additionalErrorHint;
 	}
 
 	private List<String> buildCommandList(Path temporaryExecutableFile)
@@ -383,7 +393,7 @@ public class NativePointerSearcherManager
 
 		command.add("--pointer-offset-range");
 		command.add(toHexadecimalString(fromPointerOffset)
-				+ "," + toHexadecimalString(toPointerOffset));
+		            + "," + toHexadecimalString(toPointerOffset));
 
 		command.add("--pointer-depth-range");
 		command.add(minimumPointerDepth + "," + maximumPointerDepth);
@@ -629,12 +639,42 @@ public class NativePointerSearcherManager
 			command.add(String.valueOf(scanDeeperBy));
 		}
 
+		if (writePointerMaps)
+		{
+			command.add("--write-pointer-maps-file-paths");
+			addPointerMapCommand(initialFilePaths, command);
+		}
+
+		if (readPointerMaps)
+		{
+			command.add("--read-pointer-maps-file-paths");
+			addPointerMapCommand(initialFilePaths, command);
+		}
+
 		command.add("--maximum-pointer-count");
 		command.add(String.valueOf(maximumPointerCount));
 		command.add("--maximum-pointers-printed-count");
 		command.add(String.valueOf(maximumPointerCount));
 
 		return command;
+	}
+
+	private static void addPointerMapCommand(final List<Path> initialFilePaths, final List<String> command)
+	{
+		for (val initialFilePath : initialFilePaths)
+		{
+			if (Files.isDirectory(initialFilePath))
+			{
+				val pointerMapFilePath = initialFilePath.resolve("Pointer Map." + POINTER_MAP_EXTENSION);
+				command.add(pointerMapFilePath.toString());
+			} else
+			{
+				val pointerMapFileName = FilenameUtils.removeExtension(initialFilePath.toString())
+				                         + "." + POINTER_MAP_EXTENSION;
+				val pointerMapFilePath = initialFilePath.getParent().resolve(pointerMapFileName);
+				command.add(pointerMapFilePath.toString());
+			}
+		}
 	}
 
 	private void passTargetAddress(final List<String> command, final MemoryDump memoryDump)

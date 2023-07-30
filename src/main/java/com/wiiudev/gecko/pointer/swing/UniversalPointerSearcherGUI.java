@@ -2060,6 +2060,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val maximumPointerOffset = parseLong(maximumPointerOffsetField.getText(), 16);
 		nativePointerSearcher.setPointerOffsetRange((int) minimumPointerOffset, (int) maximumPointerOffset);
 
+		val generatePointerMaps = generatePointerMapsCheckBox.isSelected();
+		nativePointerSearcher.setWritePointerMaps(generatePointerMaps);
+
+		val readPointerMaps = readPointerMapsCheckBox.isSelected();
+		nativePointerSearcher.setReadPointerMaps(readPointerMaps);
+
 		val threadCount = parseLong(threadCountField.getText(), 10);
 		nativePointerSearcher.setThreadCount(threadCount);
 
