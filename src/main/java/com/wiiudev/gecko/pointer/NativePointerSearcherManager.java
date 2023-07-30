@@ -558,6 +558,7 @@ public class NativePointerSearcherManager
 			command.add(booleanToIntegerString(memoryDump.isReadPointerMap())); */
 		}
 
+		// TODO Unify target address passing with --target-address below, also don't repeat the command
 		if (!targetAddresses.isEmpty())
 		{
 			// Pass the target addresses (one per memory snapshot)
@@ -569,12 +570,25 @@ public class NativePointerSearcherManager
 			}
 		}
 
-		for (val pointerMap : pointerMaps)
+		if (!pointerMaps.isEmpty())
 		{
 			command.add("--read-pointer-maps-file-paths");
-			command.add(pointerMap.getFilePath().toString());
+		}
 
-			passTargetAddress(command, pointerMap);
+		for (val pointerMap : pointerMaps)
+		{
+			command.add(pointerMap.getFilePath().toString());
+		}
+
+		if (!pointerMaps.isEmpty())
+		{
+			command.add("--target-address");
+		}
+
+		for (val pointerMap : pointerMaps)
+		{
+			val targetAddress = pointerMap.getTargetAddress();
+			command.add("0x" + toHexadecimalString(targetAddress));
 		}
 
 		if (targetSystem == null)
@@ -645,6 +659,7 @@ public class NativePointerSearcherManager
 			addPointerMapCommand(initialFilePaths, command);
 		}
 
+		// TODO Remove?
 		if (readPointerMaps)
 		{
 			command.add("--read-pointer-maps-file-paths");
@@ -675,13 +690,6 @@ public class NativePointerSearcherManager
 				command.add(pointerMapFilePath.toString());
 			}
 		}
-	}
-
-	private void passTargetAddress(final List<String> command, final MemoryDump memoryDump)
-	{
-		command.add("--target-address");
-		val targetAddress = memoryDump.getTargetAddress();
-		command.add("0x" + toHexadecimalString(targetAddress));
 	}
 
 	private String toHexadecimalString(long value)
