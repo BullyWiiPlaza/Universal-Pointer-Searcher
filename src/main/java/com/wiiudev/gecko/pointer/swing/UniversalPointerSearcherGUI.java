@@ -1327,7 +1327,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		singleMemoryDumpMethodCheckBox.setEnabled(!isSearching);
 		generatePointerMapsCheckBox.setEnabled(!isSearching);
 		readPointerMapsCheckBox.setEnabled(!isSearching);
-		readPointerMapsCheckBox.setVisible(usingNativePointerSearcher);
+		readPointerMapsCheckBox.setVisible(false);
 		verboseLoggingCheckBox.setEnabled(!isSearching);
 		verboseLoggingCheckBox.setVisible(usingNativePointerSearcher);
 		printModuleFileNamesCheckBox.setEnabled(!isSearching);
@@ -1747,8 +1747,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val allowNegativeOffsets = allowNegativeOffsetsCheckBox.isSelected();
 		memoryPointerSearcher.setAllowNegativeOffsets(allowNegativeOffsets);
 
-		val usePointerMaps = generatePointerMapsCheckBox.isSelected();
-		memoryPointerSearcher.setGeneratePointerMaps(usePointerMaps);
+		val generatePointerMaps = generatePointerMapsCheckBox.isSelected();
+		memoryPointerSearcher.setGeneratePointerMaps(generatePointerMaps);
 
 		val excludeCycles = excludeCyclesCheckBox.isSelected();
 		memoryPointerSearcher.setExcludeCycles(excludeCycles);
@@ -2062,9 +2062,6 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 		val generatePointerMaps = generatePointerMapsCheckBox.isSelected();
 		nativePointerSearcher.setWritePointerMaps(generatePointerMaps);
-
-		val readPointerMaps = readPointerMapsCheckBox.isSelected();
-		nativePointerSearcher.setReadPointerMaps(readPointerMaps);
 
 		val threadCount = parseLong(threadCountField.getText(), 10);
 		nativePointerSearcher.setThreadCount(threadCount);

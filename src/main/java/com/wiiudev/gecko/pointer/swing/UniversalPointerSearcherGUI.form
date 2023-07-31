@@ -362,15 +362,6 @@
                           <toolTipText value="Whether to exclude cycles of pointer base addresses"/>
                         </properties>
                       </component>
-                      <component id="7b7db" class="javax.swing.JCheckBox" binding="readPointerMapsCheckBox">
-                        <constraints>
-                          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties>
-                          <text value="Read Pointer Map(s)"/>
-                          <toolTipText value="Whether to read existing pointer maps to possibly speed up searches (maybe only beneficial on Linux)"/>
-                        </properties>
-                      </component>
                       <grid id="8a39d" binding="baseOffsetRangePanel" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
@@ -420,7 +411,7 @@
                       </grid>
                       <component id="220c7" class="javax.swing.JCheckBox" binding="useNativePointerSearcherCheckBox">
                         <constraints>
-                          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <selected value="true"/>
@@ -439,7 +430,7 @@
                       </component>
                       <component id="504e6" class="javax.swing.JCheckBox" binding="writePointersToFileSystemCheckBox" default-binding="true">
                         <constraints>
-                          <grid row="5" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="4" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <selected value="false"/>
@@ -476,9 +467,18 @@
                           <toolTipText value="Whether the pointer searcher will print the visited addresses of each pointer result"/>
                         </properties>
                       </component>
-                      <component id="cc1" class="javax.swing.JCheckBox" binding="truncateMemoryPointersDebuggingOutputCheckBox" default-binding="true">
+                      <component id="7b7db" class="javax.swing.JCheckBox" binding="readPointerMapsCheckBox">
                         <constraints>
-                          <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Read Pointer Map(s)"/>
+                          <toolTipText value="Whether to read existing pointer maps to possibly speed up searches (maybe only beneficial on Linux)"/>
+                        </properties>
+                      </component>
+                      <component id="5ea6f" class="javax.swing.JCheckBox" binding="truncateMemoryPointersDebuggingOutputCheckBox" default-binding="true">
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <text value="Truncate Memory Pointers Debugging Output"/>

@@ -558,11 +558,13 @@ public class NativePointerSearcherManager
 			command.add(booleanToIntegerString(memoryDump.isReadPointerMap())); */
 		}
 
-		// TODO Unify target address passing with --target-address below, also don't repeat the command
+		val targetAddressFlagName = "--target-address";
+		var isTargetAddressFlagPassed = false;
 		if (!targetAddresses.isEmpty())
 		{
 			// Pass the target addresses (one per memory snapshot)
-			command.add("--target-address");
+			command.add(targetAddressFlagName);
+			isTargetAddressFlagPassed = true;
 			for (val targetAddress : targetAddresses)
 			{
 				val hexadecimalTargetAddress = "0x" + toHexadecimalString(targetAddress);
@@ -580,9 +582,9 @@ public class NativePointerSearcherManager
 			command.add(pointerMap.getFilePath().toString());
 		}
 
-		if (!pointerMaps.isEmpty())
+		if (!pointerMaps.isEmpty() && !isTargetAddressFlagPassed)
 		{
-			command.add("--target-address");
+			command.add(targetAddressFlagName);
 		}
 
 		for (val pointerMap : pointerMaps)
@@ -656,14 +658,16 @@ public class NativePointerSearcherManager
 		if (writePointerMaps)
 		{
 			command.add("--write-pointer-maps-file-paths");
-			addPointerMapCommand(initialFilePaths, command);
-		}
+			addPointerMapCommand(command, initialFilePaths);
 
-		// TODO Remove?
-		if (readPointerMaps)
-		{
-			command.add("--read-pointer-maps-file-paths");
-			addPointerMapCommand(initialFilePaths, command);
+			for (val comparisonFilePathEntry : comparisonFilePathEntries.entrySet())
+			{
+				val comparisonFilePaths = comparisonFilePathEntry.getValue();
+				if (comparisonFilePaths.size() == 1)
+				{
+					addPointerMapCommand(command, comparisonFilePaths);
+				}
+			}
 		}
 
 		command.add("--maximum-pointer-count");
@@ -674,7 +678,7 @@ public class NativePointerSearcherManager
 		return command;
 	}
 
-	private static void addPointerMapCommand(final List<Path> initialFilePaths, final List<String> command)
+	private static void addPointerMapCommand(final List<String> command, final List<Path> initialFilePaths)
 	{
 		for (val initialFilePath : initialFilePaths)
 		{
