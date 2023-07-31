@@ -561,9 +561,9 @@ public class MemoryDumpDialog extends JDialog
 	{
 		invokeLater(() ->
 		{
+			val fileTypeImport = getSelectedItem(fileTypeSelection);
 			if (addModuleDumpsFolderCheckBox.isSelected())
 			{
-				val fileTypeImport = getSelectedItem(fileTypeSelection);
 				if (!fileTypeImport.equals(FileTypeImport.MEMORY_DUMP))
 				{
 					fileTypeSelection.setSelectedItem(FileTypeImport.MEMORY_DUMP);
@@ -578,7 +578,7 @@ public class MemoryDumpDialog extends JDialog
 				startingAddressField.setEnabled(false);
 			} else
 			{
-				startingAddressField.setEnabled(true);
+				startingAddressField.setEnabled(fileTypeImport.equals(FileTypeImport.MEMORY_DUMP));
 			}
 		});
 
