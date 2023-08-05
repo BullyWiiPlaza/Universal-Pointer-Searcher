@@ -1134,7 +1134,13 @@ public class UniversalPointerSearcherGUI extends JFrame
 			{
 				if (useNativePointerSearcherCheckBox.isSelected())
 				{
-					nativePointerSearcher.cancel();
+					try
+					{
+						nativePointerSearcher.cancel();
+					} catch (final Exception exception)
+					{
+						handleException(exception);
+					}
 				} else
 				{
 					memoryPointerSearcher.setSearchCanceled(true);

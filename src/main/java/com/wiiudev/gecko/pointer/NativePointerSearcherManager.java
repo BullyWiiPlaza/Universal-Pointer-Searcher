@@ -944,10 +944,35 @@ public class NativePointerSearcherManager
 		return memoryPointers;
 	}
 
-	public void cancel()
+	public void cancel() throws Exception
 	{
 		isCanceled = true;
 		process.destroyForcibly();
+
+		killProcessByName(BINARY_NAME);
+	}
+
+	private static void killProcessByName(@SuppressWarnings("SameParameterValue") final String binaryName)
+			throws Exception
+	{
+		ProcessBuilder processBuilder;
+		Process process;
+		val binaryExtension = getExtension();
+		if (IS_OS_WINDOWS)
+		{
+			processBuilder = new ProcessBuilder("taskkill", "/F", "/IM", binaryName + "." + binaryExtension);
+		} else
+		{
+			// Valid for Linux and macOS
+			processBuilder = new ProcessBuilder("pkill", "-f", binaryName + "." + binaryExtension);
+		}
+		process = processBuilder.start();
+
+		val exitCode = process.waitFor();
+		if (exitCode != 0)
+		{
+			throw new IOException("Failed to terminate process, exit code: " + exitCode);
+		}
 	}
 
 	public void setPointerOffsetRange(int fromOffset, int toOffset)
