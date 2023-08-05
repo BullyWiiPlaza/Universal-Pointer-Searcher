@@ -691,8 +691,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 				if (nativePointerSearcherOutput == null)
 				{
 					showMessageDialog(this,
-							"No native pointer search has been performed yet.",
-							"Warning", WARNING_MESSAGE);
+							"No native pointer search has been completed yet.",
+							"No output available", WARNING_MESSAGE);
 				} else
 				{
 					val nativePointerSearcherOutputDialog = new NativePointerSearcherOutputDialog();
