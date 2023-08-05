@@ -436,9 +436,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 				try
 				{
 					guiSettingsManager.saveSettings(UniversalPointerSearcherGUI.this);
-				} catch (IOException exception)
+				} catch (final Exception exception)
 				{
-					exception.printStackTrace();
+					handleException(exception);
 				}
 			});
 			menu.add(saveMenuItem);

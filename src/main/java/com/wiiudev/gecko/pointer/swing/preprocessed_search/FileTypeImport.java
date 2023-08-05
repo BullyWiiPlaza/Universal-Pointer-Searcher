@@ -22,7 +22,21 @@ public enum FileTypeImport
 		this.extension = extension;
 	}
 
-	public static FileTypeImport parseFileTypeImport(String filePath)
+	public static FileTypeImport parseFileTypeImport(final String name)
+	{
+		val values = values();
+		for (val value : values)
+		{
+			if (value.toString().equals(name))
+			{
+				return value;
+			}
+		}
+
+		return null;
+	}
+
+	public static FileTypeImport parseFileTypeImportByFilePath(String filePath)
 	{
 		val values = values();
 		for (val value : values)

@@ -334,7 +334,7 @@ public class MemoryDumpDialog extends JDialog
 					// targetAddressField.setEnabled(!shouldParseEntireFolder || addModuleDumpsFolderCheckBox.isSelected());
 					fileTypeSelection.setEnabled(!shouldParseEntireFolder && !addModuleDumpsFolderCheckBox.isSelected());
 
-					val detectedFileTypeImport = FileTypeImport.parseFileTypeImport(filePath);
+					val detectedFileTypeImport = FileTypeImport.parseFileTypeImportByFilePath(filePath);
 					if (detectedFileTypeImport != null)
 					{
 						// fileTypeSelection.setSelectedItem(detectedFileTypeImport);

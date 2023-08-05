@@ -1,6 +1,7 @@
 package com.wiiudev.gecko.pointer.swing;
 
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
+import com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport;
 import lombok.val;
 import lombok.var;
 import org.json.JSONArray;
@@ -31,6 +32,7 @@ public class GUISettingsManager
 	private static final String INPUT_FILES_JSON_KEY = "input-files";
 	private static final String STARTING_ADDRESS_JSON_KEY = "starting-address";
 	private static final String INPUT_TYPE_JSON_KEY = "input-type";
+	private static final String FILE_TYPE_JSON_KEY = "file-type";
 	private static final String FILE_PATH_JSON_KEY = "file-path";
 	private static final String TARGET_ADDRESS_JSON_KEY = "target-address";
 	private static final String POINTER_DEPTH_RANGE_JSON_KEY = "pointer-depth-range";
@@ -124,10 +126,17 @@ public class GUISettingsManager
 				{
 					val inputFileJSONObject = inputFilesJSONArray.getJSONObject(inputFileIndex);
 					val inputFileFilePath = inputFileJSONObject.getString(FILE_PATH_JSON_KEY);
-					val startingAddress = parseNumeric(inputFileJSONObject.getString(STARTING_ADDRESS_JSON_KEY));
+					val startingAddress = inputFileJSONObject.has(STARTING_ADDRESS_JSON_KEY)
+							? parseNumeric(inputFileJSONObject.getString(STARTING_ADDRESS_JSON_KEY)) : null;
 					val memoryDump = new MemoryDump(inputFileFilePath, startingAddress, targetAddress, memoryDumpsByteOrder.getByteOrder());
 					val inputType = inputFileJSONObject.getString(INPUT_TYPE_JSON_KEY);
 					memoryDump.setInputType(parseInputType(inputType));
+					if (inputFileJSONObject.has(FILE_TYPE_JSON_KEY))
+					{
+						val fileType = inputFileJSONObject.getString(FILE_TYPE_JSON_KEY);
+						val fileTypeImport = FileTypeImport.parseFileTypeImport(fileType);
+						memoryDump.setFileType(fileTypeImport);
+					}
 					memoryDump.setComparisonGroupNumber(inputFileJSONObject.getInt(COMPARISON_GROUP_NUMBER_JSON_KEY));
 					memoryDumps.add(memoryDump);
 				}
@@ -277,20 +286,27 @@ public class GUISettingsManager
 		val rootJSONObject = new JSONObject();
 		val memoryDumpTableManager = pointerSearcherGUI.getMemoryDumpTableManager();
 		val memoryDumps = memoryDumpTableManager.getMemoryDumps();
+		val pointerMaps = memoryDumpTableManager.getPointerMaps();
+		memoryDumps.addAll(pointerMaps);
 		val inputFilesJSONObject = new JSONArray();
 		for (val memoryDump : memoryDumps)
 		{
 			val inputFileJSONObject = new JSONObject();
 			inputFileJSONObject.put(FILE_PATH_JSON_KEY, memoryDump.getFilePath().toString());
 			inputFileJSONObject.put(INPUT_TYPE_JSON_KEY, memoryDump.getInputType().toString());
-			inputFileJSONObject.put(STARTING_ADDRESS_JSON_KEY, toHexadecimal(memoryDump.getStartingAddress()));
+			inputFileJSONObject.put(FILE_TYPE_JSON_KEY, memoryDump.getFileType().toString());
+			val startingAddress = memoryDump.getStartingAddress();
+			if (startingAddress != null)
+			{
+				inputFileJSONObject.put(STARTING_ADDRESS_JSON_KEY, toHexadecimal(startingAddress));
+			}
 			inputFileJSONObject.put(COMPARISON_GROUP_NUMBER_JSON_KEY, memoryDump.getComparisonGroupNumber());
 
 			inputFilesJSONObject.put(inputFileJSONObject);
 		}
 		rootJSONObject.put(INPUT_FILES_JSON_KEY, inputFilesJSONObject);
 
-		if (memoryDumps.size() != 0)
+		if (!memoryDumps.isEmpty())
 		{
 			val firstMemoryDump = memoryDumps.get(0);
 			rootJSONObject.put(TARGET_ADDRESS_JSON_KEY, toHexadecimal(firstMemoryDump.getTargetAddress()));
