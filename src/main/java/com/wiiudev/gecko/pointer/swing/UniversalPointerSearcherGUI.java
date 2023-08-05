@@ -1414,9 +1414,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 			for (val memoryDump : memoryDumps)
 			{
 				val inputType = memoryDump.getInputType();
-				val comparisonGroupNumber = memoryDump.getComparisonGroupNumber();
 				val stringInputType = inputType.equals(InputType.INITIAL)
-						? inputType.toString() : inputType + " " + comparisonGroupNumber;
+						? inputType.toString() : memoryDump.getComparisonInputType();
 				if (component.equals(stringInputType))
 				{
 					foundMatchingGroup = true;
@@ -2130,8 +2129,11 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val lastOffsets = parseLastOffsets();
 		nativePointerSearcher.setLastPointerOffsets(lastOffsets);
 
-		val inputTypesFieldText = generatePointerMapsInputTypesField.getText();
-		nativePointerSearcher.setWritePointerMapInputTypes(inputTypesFieldText.split(","));
+		if (generatePointerMapsCheckBox.isSelected())
+		{
+			val inputTypesFieldText = generatePointerMapsInputTypesField.getText();
+			nativePointerSearcher.setWritePointerMapInputTypes(inputTypesFieldText.split(","));
+		}
 
 		try
 		{

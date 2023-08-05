@@ -583,6 +583,25 @@ public class NativePointerSearcherManager
 			command.add(pointerMap.getFilePath().toString());
 		}
 
+		val targetPointerMaps = "--target-pointer-maps";
+		if (!pointerMaps.isEmpty())
+		{
+			command.add(targetPointerMaps);
+		}
+
+		for (val pointerMap : pointerMaps)
+		{
+			val inputType = pointerMap.getInputType();
+			if (inputType.equals(InputType.INITIAL))
+			{
+				command.add(inputType.toString());
+			} else
+			{
+				val comparisonInputType = pointerMap.getComparisonInputType();
+				command.add(comparisonInputType);
+			}
+		}
+
 		if (!pointerMaps.isEmpty() && !isTargetAddressFlagPassed)
 		{
 			command.add(targetAddressFlagName);
@@ -596,7 +615,7 @@ public class NativePointerSearcherManager
 
 		if (writePointerMapInputTypes != null && writePointerMapInputTypes.length > 0)
 		{
-			command.add("--target-pointer-maps");
+			command.add(targetPointerMaps);
 			command.addAll(asList(writePointerMapInputTypes));
 		}
 

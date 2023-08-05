@@ -191,8 +191,8 @@ public class MemoryDump
 				{
 					val finalMemoryDumpReaderIndex = memoryDumpReaderIndex;
 					invokeLater(() -> searchPointersButton.setText("Parsing"
-							+ (memoryDumpIndex == 0 ? " first" : "") + " memory dump... (part "
-							+ (finalMemoryDumpReaderIndex + 1) + "/" + memoryDumpReadersCount + ")"));
+					                                               + (memoryDumpIndex == 0 ? " first" : "") + " memory dump... (part "
+					                                               + (finalMemoryDumpReaderIndex + 1) + "/" + memoryDumpReadersCount + ")"));
 				}
 
 				memoryDumpReader.order(byteOrder);
@@ -227,15 +227,15 @@ public class MemoryDump
 					var isOffsetIgnored = false;
 
 					if (value >= minimumPointerAddress
-							&& value >= startingAddress
-							&& value < lastAddress
-							&& value % alignment == 0)
+					    && value >= startingAddress
+					    && value < lastAddress
+					    && value % alignment == 0)
 					{
 						val address = new MemoryAddress(startingOffset + currentPosition, startingAddress);
 
 						val relativeOffset = address.getRelativeOffset();
 						if (copiedIgnoredMemoryRanges != null
-								&& !copiedIgnoredMemoryRanges.isEmpty())
+						    && !copiedIgnoredMemoryRanges.isEmpty())
 						{
 							for (val memoryRange : copiedIgnoredMemoryRanges)
 							{
@@ -346,8 +346,8 @@ public class MemoryDump
 	public String toString()
 	{
 		return filePath.toAbsolutePath()
-				+ ": "
-				+ toHexadecimal(targetAddress, Long.BYTES, true);
+		       + ": "
+		       + toHexadecimal(targetAddress, Long.BYTES, true);
 	}
 
 	public Path getMemoryDumpFilePath()
@@ -368,5 +368,10 @@ public class MemoryDump
 		val parentDirectory = binaryFilePath.getParent().toString();
 		val pointerMapFilePath = parentDirectory + separator + baseFileName + extension;
 		return Paths.get(pointerMapFilePath);
+	}
+
+	public String getComparisonInputType()
+	{
+		return inputType + " " + comparisonGroupNumber;
 	}
 }
