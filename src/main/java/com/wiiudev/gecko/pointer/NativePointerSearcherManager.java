@@ -594,6 +594,12 @@ public class NativePointerSearcherManager
 			command.add("0x" + toHexadecimalString(targetAddress));
 		}
 
+		if (writePointerMapInputTypes != null && writePointerMapInputTypes.length > 0)
+		{
+			command.add("--target-pointer-maps");
+			command.addAll(asList(writePointerMapInputTypes));
+		}
+
 		if (targetSystem == null)
 		{
 			command.add("--endian");
