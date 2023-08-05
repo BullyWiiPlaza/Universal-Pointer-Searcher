@@ -21,7 +21,6 @@ public class PointerSearcherClient
 	// TODO Move input file(s) up/down (+ context menu)
 	// TODO Checkboxes for enabling/disabling input files: https://stackoverflow.com/questions/7391877
 	// TODO When adding another pointer map, re-populate file type
-	// TODO Implement minimum pointer address being passed to the native pointer searcher
 	// TODO Check provided addresses against address size
 	// TODO Implement ignored memory ranges
 	private static void startGUI()

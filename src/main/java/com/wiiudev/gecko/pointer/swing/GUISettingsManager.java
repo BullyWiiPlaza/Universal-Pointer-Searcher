@@ -37,7 +37,6 @@ public class GUISettingsManager
 	private static final String TARGET_ADDRESS_JSON_KEY = "target-address";
 	private static final String POINTER_DEPTH_RANGE_JSON_KEY = "pointer-depth-range";
 	private static final String POINTER_OFFSET_RANGE_JSON_KEY = "pointer-offset-range";
-	private static final String MINIMUM_POINTER_ADDRESS_JSON_KEY = "minimum-pointer-address";
 	private static final String LAST_POINTER_OFFSETS_JSON_KEY = "last-pointer-offsets";
 	private static final String MAXIMUM_RESULT_COUNT_JSON_KEY = "maximum-result-count";
 	private static final String MAXIMUM_MEMORY_UTILIZATION_PERCENTAGE_JSON_KEY = "maximum-memory-utilization-percentage";
@@ -167,9 +166,6 @@ public class GUISettingsManager
 			pointerSearcherGUI.getMinimumPointerOffsetField().setText(pointerOffsetRangeFrom);
 			val pointerOffsetRangeTo = pointerOffsetRangeJSONArray.getString(POINTER_DEPTH_RANGE_TO_JSON_KEY);
 			pointerSearcherGUI.getMaximumPointerOffsetField().setText(pointerOffsetRangeTo);
-
-			val minimumPointerAddress = jsonObject.getString(MINIMUM_POINTER_ADDRESS_JSON_KEY);
-			pointerSearcherGUI.getMinimumPointerAddressField().setText(minimumPointerAddress);
 
 			val lastPointerOffsetsJSONArray = jsonObject.getJSONArray(LAST_POINTER_OFFSETS_JSON_KEY);
 			val lastPointerOffsetBuilder = new StringBuilder();
@@ -320,7 +316,6 @@ public class GUISettingsManager
 		val pointerOffsetRangeJSONObject = buildRangeJSON(pointerSearcherGUI.getMinimumPointerOffsetField(),
 				pointerSearcherGUI.getMaximumPointerOffsetField(), true);
 		rootJSONObject.put(POINTER_OFFSET_RANGE_JSON_KEY, pointerOffsetRangeJSONObject);
-		rootJSONObject.put(MINIMUM_POINTER_ADDRESS_JSON_KEY, pointerSearcherGUI.getMinimumPointerAddressField().getText());
 		val lastPointerOffsets = pointerSearcherGUI.getLastPointerOffsetsField().getText();
 		val lastPointerOffsetsArray = lastPointerOffsets.split(",");
 		val lastPointerOffsetsJSONArray = new JSONArray();

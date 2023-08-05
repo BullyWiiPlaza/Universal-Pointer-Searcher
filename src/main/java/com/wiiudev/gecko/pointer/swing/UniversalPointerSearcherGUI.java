@@ -229,6 +229,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 	@Getter
 	private JTextField generatePointerMapsInputTypesField;
 
+	private JPanel minimumPointerAddressPanel;
+
 	private PersistentSettingsManager persistentSettingsManager;
 
 	@Getter
@@ -1163,6 +1165,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		minimumPointerOffsetField.setDocument(new JTextAreaLimit(addressSize + 1, HEXADECIMAL, true));
 		maximumPointerOffsetField.setDocument(new JTextAreaLimit(addressSize + 1, HEXADECIMAL, true));
 		minimumPointerAddressField.setDocument(new JTextAreaLimit());
+		minimumPointerAddressPanel.setVisible(false);
 		pointerResultsPageSizeField.setDocument(new JTextAreaLimit(BYTES * 2, NUMERIC, false));
 	}
 
