@@ -1439,7 +1439,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			}
 		}
 
-		val backgroundColor = isInputTypesValid ? GREEN : RED;
+		val backgroundColor = isInputTypesValid || !isGeneratingPointerMaps ? GREEN : RED;
 		generatePointerMapsInputTypesField.setBackground(backgroundColor);
 	}
 

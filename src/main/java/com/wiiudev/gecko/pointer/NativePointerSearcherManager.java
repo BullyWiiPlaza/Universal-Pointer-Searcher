@@ -76,7 +76,7 @@ public class NativePointerSearcherManager
 
 	@Getter
 	@Setter
-	private String[] writePointerMapInputTypes;
+	private String[] writePointerMapInputTypes = new String[]{};
 
 	@Getter
 	@Setter
@@ -613,7 +613,7 @@ public class NativePointerSearcherManager
 			command.add("0x" + toHexadecimalString(targetAddress));
 		}
 
-		if (writePointerMapInputTypes != null && writePointerMapInputTypes.length > 0)
+		if (writePointerMapInputTypes.length > 0)
 		{
 			command.add(targetPointerMaps);
 			command.addAll(asList(writePointerMapInputTypes));
