@@ -55,7 +55,7 @@ public class MemoryDumpTableManager
 		val row = new Object[]{memoryDump.getFilePath().toFile().getName(),
 				startingAddress == null ? "" : toHexString(startingAddress).toUpperCase(),
 				targetAddress == null ? "" : toHexString(targetAddress).toUpperCase(),
-				fileType, fileType.equals(POINTER_MAP) ? "" : renderInputType(inputType, comparisonGroupNumber)};
+				fileType, renderInputType(inputType, comparisonGroupNumber)};
 		val tableModel = (DefaultTableModel) table.getModel();
 		tableModel.addRow(row);
 

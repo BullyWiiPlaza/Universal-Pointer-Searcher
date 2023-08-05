@@ -165,8 +165,8 @@ public class MemoryDumpDialog extends JDialog
 			val selectedAnswer = showConfirmDialog(
 					rootPane,
 					"The order of bytes in memory can differ between systems.\n" +
-							"The Wii and Wii U for example use big endian while the 3DS uses little endian.\n" +
-							"Do you want to read more about byte orders?",
+					"The Wii and Wii U for example use big endian while the 3DS uses little endian.\n" +
+					"Do you want to read more about byte orders?",
 					"Read more?",
 					YES_NO_OPTION);
 
@@ -322,9 +322,8 @@ public class MemoryDumpDialog extends JDialog
 				{
 					val isParsingEntireFolderAllowed = mayParseFolder && !addModuleDumpsFolderCheckBox.isSelected();
 					parseEntireFolderCheckBox.setEnabled(isParsingEntireFolderAllowed);
-					inputTypeSelection.setEnabled(selectedFileType.equals(FileTypeImport.MEMORY_DUMP));
-					val isComparisonGroupNumberEnabled = getSelectedItem(inputTypeSelection).equals(InputType.COMPARISON)
-							&& getSelectedItem(fileTypeSelection).equals(FileTypeImport.MEMORY_DUMP);
+					// inputTypeSelection.setEnabled(selectedFileType.equals(FileTypeImport.MEMORY_DUMP));
+					val isComparisonGroupNumberEnabled = getSelectedItem(inputTypeSelection).equals(InputType.COMPARISON);
 					comparisonGroupNumberSpinner.setEnabled(isComparisonGroupNumberEnabled);
 					addModuleDumpsFolderCheckBox.setEnabled(mayParseFolder && !parseEntireFolderCheckBox.isSelected());
 					filePathField.setBackground(finalIsFilePathValid ? VALID_INPUT_COLOR : INVALID_INPUT_COLOR);
@@ -512,7 +511,7 @@ public class MemoryDumpDialog extends JDialog
 		val memoryDumpsSize = memoryDumps.size();
 		val pointerMapsSize = pointerMaps.size();
 		return memoryDumpsSize + " memory dump(s) and "
-				+ pointerMapsSize + " pointer map(s) found";
+		       + pointerMapsSize + " pointer map(s) found";
 	}
 
 	private void findFiles(ArrayList<File> memoryDumps, ArrayList<File> pointerMaps)
@@ -526,8 +525,8 @@ public class MemoryDumpDialog extends JDialog
 			{
 				val listedFilePath = listedFile.toString();
 				if (listedFilePath.endsWith("." + FileTypeImport.MEMORY_DUMP.getExtension())
-						|| listedFilePath.endsWith("." + FileTypeImport.MEMORY_DUMP_EXTENSION_DMP)
-				        || listedFilePath.endsWith("." + FileTypeImport.MEMORY_DUMP_EXTENSION_RAW))
+				    || listedFilePath.endsWith("." + FileTypeImport.MEMORY_DUMP_EXTENSION_DMP)
+				    || listedFilePath.endsWith("." + FileTypeImport.MEMORY_DUMP_EXTENSION_RAW))
 				{
 					memoryDumps.add(listedFile);
 				} else if (listedFilePath.endsWith("." + FileTypeImport.POINTER_MAP.getExtension()))
@@ -701,17 +700,23 @@ public class MemoryDumpDialog extends JDialog
 			val selectedByteOrder = getSelectedItem(byteOrderSelection);
 			val byteOrder = selectedByteOrder == null ? null : selectedByteOrder.getByteOrder();
 			val targetAddressFieldText = targetAddressField.getText();
-			val targetAddress = targetAddressFieldText.equals("")
+			val targetAddress = targetAddressFieldText.isEmpty()
 					? null : (Long) parseUnsignedLong(targetAddressFieldText, 16);
 			memoryDump = new MemoryDump(filePath, startingAddress, targetAddress, byteOrder);
-			memoryDump.setInputType(getSelectedItem(inputTypeSelection));
-			val comparisonGroupNumber = Integer.parseInt(String.valueOf(comparisonGroupNumberSpinner.getValue()));
+			val inputType = getSelectedItem(inputTypeSelection);
+			memoryDump.setInputType(inputType);
+			val comparisonGroupNumber = inputType.equals(InputType.COMPARISON)
+					? Integer.parseInt(String.valueOf(comparisonGroupNumberSpinner.getValue())) : 0;
 			memoryDump.setComparisonGroupNumber(comparisonGroupNumber);
 			memoryDump.setAddedAsFolder(addModuleDumpsFolderCheckBox.isSelected());
 
 			val parseEntireFolderCheckBoxSelected = parseEntireFolderCheckBox.isSelected();
 			if (parseEntireFolderCheckBoxSelected && !addModuleDumpsFolderCheckBox.isSelected())
 			{
+				if (startingAddress == null)
+				{
+					throw new IllegalStateException("Starting address may not be null here");
+				}
 				parseFolder(startingAddress, byteOrder);
 			} else
 			{
