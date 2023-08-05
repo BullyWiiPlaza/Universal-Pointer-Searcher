@@ -226,6 +226,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private JButton addressSizeInformationButton;
 
+	@Getter
+	private JTextField generatePointerMapsInputTypesField;
+
 	private PersistentSettingsManager persistentSettingsManager;
 
 	@Getter
@@ -272,6 +275,27 @@ public class UniversalPointerSearcherGUI extends JFrame
 		configureMaximumPointerOffsetField();
 		populateOffsetPrintingSettings();
 		setGraphicalInterfaceDefaultValues();
+		generatePointerMapsCheckBox.addItemListener(itemEvent -> setButtonAvailability());
+		generatePointerMapsInputTypesField.getDocument().addDocumentListener(new DocumentListener()
+		{
+			@Override
+			public void insertUpdate(final DocumentEvent documentEvent)
+			{
+				setButtonAvailability();
+			}
+
+			@Override
+			public void removeUpdate(final DocumentEvent documentEvent)
+			{
+				setButtonAvailability();
+			}
+
+			@Override
+			public void changedUpdate(final DocumentEvent documentEvent)
+			{
+				setButtonAvailability();
+			}
+		});
 
 		configureAboutTab();
 		addLastPointerOffsetFieldDocumentListener();
@@ -1258,6 +1282,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private void setButtonAvailability()
 	{
+		verifyInputTypesField();
 		scanDeeperByCheckBox.setEnabled(loadMemoryPointerResultsCheckBox.isSelected());
 		scanDeeperByField.setEnabled(loadMemoryPointerResultsCheckBox.isSelected());
 		val minimumPointerDepth = parseLongSafely(minimumPointerSearchDepthField.getText());
@@ -1372,6 +1397,42 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 		setOffsetPrintingSetting();
 		setTargetSystemComponentsAvailability();
+	}
+
+	private void verifyInputTypesField()
+	{
+		val isGeneratingPointerMaps = generatePointerMapsCheckBox.isSelected();
+		generatePointerMapsInputTypesField.setEnabled(isGeneratingPointerMaps && !isSearching);
+		val inputTypesFieldText = generatePointerMapsInputTypesField.getText();
+		val components = inputTypesFieldText.split(",");
+		val memoryDumps = memoryDumpTableManager.getMemoryDumps();
+		var isInputTypesValid = true;
+
+		for (val component : components)
+		{
+			var foundMatchingGroup = false;
+			for (val memoryDump : memoryDumps)
+			{
+				val inputType = memoryDump.getInputType();
+				val comparisonGroupNumber = memoryDump.getComparisonGroupNumber();
+				val stringInputType = inputType.equals(InputType.INITIAL)
+						? inputType.toString() : inputType + " " + comparisonGroupNumber;
+				if (component.equals(stringInputType))
+				{
+					foundMatchingGroup = true;
+					break;
+				}
+			}
+
+			if (!foundMatchingGroup)
+			{
+				isInputTypesValid = false;
+				break;
+			}
+		}
+
+		val backgroundColor = isInputTypesValid ? GREEN : RED;
+		generatePointerMapsInputTypesField.setBackground(backgroundColor);
 	}
 
 	private int getPointerSearchDepth()
@@ -2068,6 +2129,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 		val lastOffsets = parseLastOffsets();
 		nativePointerSearcher.setLastPointerOffsets(lastOffsets);
+
+		val inputTypesFieldText = generatePointerMapsInputTypesField.getText();
+		nativePointerSearcher.setWritePointerMapInputTypes(inputTypesFieldText.split(","));
 
 		try
 		{

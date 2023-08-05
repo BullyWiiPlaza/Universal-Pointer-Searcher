@@ -53,6 +53,7 @@ public class GUISettingsManager
 	private static final String EXCLUDE_CYCLES_JSON_KEY = "exclude-cycles";
 	private static final String READ_POINTER_MAPS_JSON_KEY = "read-pointer-maps";
 	private static final String GENERATE_POINTER_MAPS_JSON_KEY = "generate-pointer-maps";
+	private static final String TARGET_POINTER_MAPS_JSON_KEY = "target-pointer-maps";
 	private static final String TRUNCATE_MEMORY_POINTERS_DEBUGGING_OUTPUT_JSON_KEY = "truncate-memory-pointers-debugging-output";
 	private static final String PRINT_VISITED_ADDRESSES_JSON_KEY = "print-visited-addresses";
 	private static final String COMPARISON_GROUP_NUMBER_JSON_KEY = "comparison-group-number";
@@ -224,6 +225,12 @@ public class GUISettingsManager
 			val generatePointerMaps = jsonObject.getBoolean(GENERATE_POINTER_MAPS_JSON_KEY);
 			pointerSearcherGUI.getGeneratePointerMapsCheckBox().setSelected(generatePointerMaps);
 
+			if (jsonObject.has(TARGET_POINTER_MAPS_JSON_KEY))
+			{
+				val targetPointerMaps = jsonObject.getString(TARGET_POINTER_MAPS_JSON_KEY);
+				pointerSearcherGUI.getGeneratePointerMapsInputTypesField().setText(targetPointerMaps);
+			}
+
 			val truncateMemoryPointersDebuggingOutput = jsonObject.getBoolean(TRUNCATE_MEMORY_POINTERS_DEBUGGING_OUTPUT_JSON_KEY);
 			pointerSearcherGUI.getTruncateMemoryPointersDebuggingOutputCheckBox().setSelected(truncateMemoryPointersDebuggingOutput);
 
@@ -327,6 +334,7 @@ public class GUISettingsManager
 		rootJSONObject.put(PRINT_VISITED_ADDRESSES_JSON_KEY, pointerSearcherGUI.getPrintVisitedAddressesCheckBox().isSelected());
 		rootJSONObject.put(READ_POINTER_MAPS_JSON_KEY, pointerSearcherGUI.getReadPointerMapsCheckBox().isSelected());
 		rootJSONObject.put(GENERATE_POINTER_MAPS_JSON_KEY, pointerSearcherGUI.getGeneratePointerMapsCheckBox().isSelected());
+		rootJSONObject.put(TARGET_POINTER_MAPS_JSON_KEY, pointerSearcherGUI.getGeneratePointerMapsInputTypesField().getText());
 		rootJSONObject.put(TRUNCATE_MEMORY_POINTERS_DEBUGGING_OUTPUT_JSON_KEY, pointerSearcherGUI.getTruncateMemoryPointersDebuggingOutputCheckBox().isSelected());
 
 		return formatJson(rootJSONObject.toString());

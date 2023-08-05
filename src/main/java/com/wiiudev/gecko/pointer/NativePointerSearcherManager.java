@@ -27,12 +27,9 @@ import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport
 import static java.io.File.separator;
 import static java.lang.Integer.toHexString;
 import static java.lang.Long.toHexString;
-import static java.lang.System.*;
-import static java.lang.Thread.sleep;
 import static java.nio.ByteOrder.BIG_ENDIAN;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.Files.*;
 import static java.util.Arrays.asList;
 import static org.apache.commons.io.FileUtils.deleteDirectory;
 import static org.apache.commons.io.IOUtils.toByteArray;
@@ -76,6 +73,10 @@ public class NativePointerSearcherManager
 
 	@Setter
 	private boolean excludeCycles;
+
+	@Getter
+	@Setter
+	private String[] writePointerMapInputTypes;
 
 	@Getter
 	@Setter
@@ -166,7 +167,7 @@ public class NativePointerSearcherManager
 
 	static
 	{
-		WINDOWS_SYSTEM32_DIRECTORY = getenv("WINDIR") + "\\system32";
+		WINDOWS_SYSTEM32_DIRECTORY = System.getenv("WINDIR") + "\\system32";
 		CMD_FILE_PATH = WINDOWS_SYSTEM32_DIRECTORY + "\\" + "cmd";
 
 		val thread = new Thread(new Runnable()
@@ -207,7 +208,7 @@ public class NativePointerSearcherManager
 		while (executableFilePath == null)
 		{
 			//noinspection BusyWait
-			sleep(10);
+			Thread.sleep(10);
 		}
 
 		val commandList = buildCommandList(executableFilePath);
@@ -215,7 +216,7 @@ public class NativePointerSearcherManager
 		commandList.remove(executableFilePath.toString());
 		var executedCommand = toCommandString(commandList);
 		processBuilder.redirectErrorStream(true);
-		Path pointerSearcherOutput = USE_FILE_OUTPUT ? createTempFile("prefix", "suffix") : null;
+		Path pointerSearcherOutput = USE_FILE_OUTPUT ? Files.createTempFile("prefix", "suffix") : null;
 
 		try
 		{
@@ -230,7 +231,7 @@ public class NativePointerSearcherManager
 
 			executedCommand = considerReplacingTemporaryDirectoryFilePath(executedCommand);
 			val actualProcessOutput = USE_FILE_OUTPUT ?
-					new String(readAllBytes(pointerSearcherOutput)) : readFromProcess(process);
+					new String(Files.readAllBytes(pointerSearcherOutput)) : readFromProcess(process);
 			val processOutput = COMMAND_LINE_STARTING_SYMBOL
 			                    + executedCommand + "\n\n" + actualProcessOutput;
 			if (exitCode != 0)
@@ -244,7 +245,7 @@ public class NativePointerSearcherManager
 		{
 			if (pointerSearcherOutput != null)
 			{
-				delete(pointerSearcherOutput);
+				Files.delete(pointerSearcherOutput);
 			}
 		}
 	}
@@ -252,7 +253,7 @@ public class NativePointerSearcherManager
 	public static String compressProcessOutput(String processOutput)
 	{
 		val stringBuilder = new StringBuilder();
-		val lines = processOutput.split(lineSeparator());
+		val lines = processOutput.split(System.lineSeparator());
 		var reachedMemoryPointers = false;
 		for (val line : lines)
 		{
@@ -264,14 +265,14 @@ public class NativePointerSearcherManager
 				if (!reachedMemoryPointers)
 				{
 					stringBuilder.append("<< Memory pointers truncated >>");
-					stringBuilder.append(lineSeparator());
+					stringBuilder.append(System.lineSeparator());
 					reachedMemoryPointers = true;
 				}
 			} catch (Exception ignored)
 			{
 				// Print out the unfiltered line
 				stringBuilder.append(line);
-				stringBuilder.append(lineSeparator());
+				stringBuilder.append(System.lineSeparator());
 			}
 		}
 
@@ -293,7 +294,7 @@ public class NativePointerSearcherManager
 
 	private static String getTemporaryFilePath()
 	{
-		var temporaryDirectory = getProperty("java.io.tmpdir");
+		var temporaryDirectory = System.getProperty("java.io.tmpdir");
 		if (temporaryDirectory.endsWith(separator))
 		{
 			temporaryDirectory = temporaryDirectory.substring(0,
@@ -658,14 +659,21 @@ public class NativePointerSearcherManager
 		if (writePointerMaps)
 		{
 			command.add("--write-pointer-maps-file-paths");
-			addPointerMapCommand(command, initialFilePaths);
+
+			for (val writePointerMapInputType : writePointerMapInputTypes)
+			{
+				if (writePointerMapInputType.contains("Initial") && !initialFilePaths.isEmpty())
+				{
+					addPointerMapCommand(command, initialFilePaths.get(0));
+				}
+			}
 
 			for (val comparisonFilePathEntry : comparisonFilePathEntries.entrySet())
 			{
 				val comparisonFilePaths = comparisonFilePathEntry.getValue();
-				if (comparisonFilePaths.size() == 1)
+				if (!comparisonFilePaths.isEmpty())
 				{
-					addPointerMapCommand(command, comparisonFilePaths);
+					addPointerMapCommand(command, comparisonFilePaths.get(0));
 				}
 			}
 		}
@@ -678,21 +686,20 @@ public class NativePointerSearcherManager
 		return command;
 	}
 
-	private static void addPointerMapCommand(final List<String> command, final List<Path> initialFilePaths)
+	private static void addPointerMapCommand(final List<String> command, final Path initialFilePath)
 	{
-		for (val initialFilePath : initialFilePaths)
+		if (Files.isDirectory(initialFilePath))
 		{
-			if (Files.isDirectory(initialFilePath))
-			{
-				val pointerMapFilePath = initialFilePath.resolve("Pointer Map." + POINTER_MAP_EXTENSION);
-				command.add(pointerMapFilePath.toString());
-			} else
-			{
-				val pointerMapFileName = FilenameUtils.removeExtension(initialFilePath.toString())
-				                         + "." + POINTER_MAP_EXTENSION;
-				val pointerMapFilePath = initialFilePath.getParent().resolve(pointerMapFileName);
-				command.add(pointerMapFilePath.toString());
-			}
+			// Write the pointer map into the folder
+			val pointerMapFilePath = initialFilePath.resolve(initialFilePath.getFileName() + "." + POINTER_MAP_EXTENSION);
+			command.add(pointerMapFilePath.toString());
+		} else
+		{
+			// Write the pointer map with the same file name
+			val pointerMapFileName = FilenameUtils.removeExtension(initialFilePath.toString())
+			                         + "." + POINTER_MAP_EXTENSION;
+			val pointerMapFilePath = initialFilePath.getParent().resolve(pointerMapFileName);
+			command.add(pointerMapFilePath.toString());
 		}
 	}
 
@@ -834,7 +841,7 @@ public class NativePointerSearcherManager
 	{
 		val allPosixFilePermissions = asList(PosixFilePermission.values());
 		val posixFilePermissionsSet = new HashSet<>(allPosixFilePermissions);
-		setPosixFilePermissions(filePath, posixFilePermissionsSet);
+		Files.setPosixFilePermissions(filePath, posixFilePermissionsSet);
 	}
 
 	private static byte[] readExecutableFileBytes() throws IOException
@@ -874,7 +881,7 @@ public class NativePointerSearcherManager
 
 	public static List<MemoryPointer> parseMemoryPointersFromOutput(String processOutput)
 	{
-		val lines = processOutput.split(lineSeparator());
+		val lines = processOutput.split(System.lineSeparator());
 		val memoryPointers = new ArrayList<MemoryPointer>();
 		for (val line : lines)
 		{

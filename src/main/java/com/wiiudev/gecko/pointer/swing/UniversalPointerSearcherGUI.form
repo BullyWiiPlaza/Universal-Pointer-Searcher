@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="716" height="1195"/>
+      <xy x="20" y="20" width="716" height="1199"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -344,7 +344,7 @@
                       </component>
                     </children>
                   </scrollpane>
-                  <grid id="47ac4" layout-manager="GridLayoutManager" row-count="6" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="47ac4" layout-manager="GridLayoutManager" row-count="7" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="22" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -365,7 +365,7 @@
                       <grid id="8a39d" binding="baseOffsetRangePanel" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="0" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties/>
                         <border type="none"/>
@@ -430,7 +430,7 @@
                       </component>
                       <component id="504e6" class="javax.swing.JCheckBox" binding="writePointersToFileSystemCheckBox" default-binding="true">
                         <constraints>
-                          <grid row="4" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="4" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <selected value="false"/>
@@ -440,7 +440,7 @@
                       </component>
                       <component id="1fba9" class="javax.swing.JCheckBox" binding="verboseLoggingCheckBox" default-binding="true">
                         <constraints>
-                          <grid row="1" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="1" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <selected value="true"/>
@@ -448,19 +448,9 @@
                           <toolTipText value="Whether the pointer searcher will print out progress in more detail"/>
                         </properties>
                       </component>
-                      <component id="c4a5a" class="javax.swing.JCheckBox" binding="generatePointerMapsCheckBox" default-binding="true">
-                        <constraints>
-                          <grid row="3" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties>
-                          <selected value="false"/>
-                          <text value="Generate Pointer Map(s)"/>
-                          <toolTipText value="Whether this application should write pointer maps to the disc"/>
-                        </properties>
-                      </component>
                       <component id="e47d0" class="javax.swing.JCheckBox" binding="printVisitedAddressesCheckBox" default-binding="true">
                         <constraints>
-                          <grid row="2" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="2" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <text value="Print Visited Addresses"/>
@@ -469,7 +459,7 @@
                       </component>
                       <component id="7b7db" class="javax.swing.JCheckBox" binding="readPointerMapsCheckBox">
                         <constraints>
-                          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
                           <text value="Read Pointer Map(s)"/>
@@ -485,6 +475,36 @@
                           <toolTipText value="Whether memory pointers are removed from the debugging output (for readability and viewing performance)"/>
                         </properties>
                       </component>
+                      <grid id="fd7d0" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints>
+                          <grid row="5" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="c2707" class="javax.swing.JCheckBox" binding="generatePointerMapsCheckBox" default-binding="true">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <selected value="false"/>
+                              <text value="Generate Pointer Map(s):"/>
+                              <toolTipText value="Whether this application should write pointer maps to the disc based on the input types specified"/>
+                            </properties>
+                          </component>
+                          <component id="5d777" class="javax.swing.JTextField" binding="generatePointerMapsInputTypesField">
+                            <constraints>
+                              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                            </constraints>
+                            <properties>
+                              <toolTipText value="The comma separated input types for which a pointer map should be generated"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
                     </children>
                   </grid>
                   <vspacer id="42ae6">
