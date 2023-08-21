@@ -49,6 +49,8 @@ public class GUISettingsManager
 	private static final String STORE_MEMORY_POINTER_RESULTS_JSON_KEY_FILE_PATH = "store-memory-pointer-results-file-path";
 	private static final String LOAD_MEMORY_POINTER_RESULTS_JSON_KEY = "load-memory-pointer-results";
 	private static final String LOAD_MEMORY_POINTER_RESULTS_JSON_KEY_FILE_PATH = "load-memory-pointer-results-file-path";
+	private static final String SCAN_DEEPER_BY_CHECKBOX_JSON_KEY = "scan-deeper-by-checkbox";
+	private static final String SCAN_DEEPER_BY_SPINNER_JSON_KEY = "scan-deeper-by-spinner";
 	private static final String PRINT_MODULE_FILE_NAMES_JSON_KEY = "print-module-file-names";
 	private static final String VERBOSE_LOGGING_JSON_KEY = "verbose-logging";
 	private static final String EXCLUDE_CYCLES_JSON_KEY = "exclude-cycles";
@@ -101,7 +103,6 @@ public class GUISettingsManager
 		return null;
 	}
 
-	// TODO Implement loading settings fully
 	public void loadSettings(final UniversalPointerSearcherGUI pointerSearcherGUI) throws IOException
 	{
 		val filePath = showFileChooser(pointerSearcherGUI.getRootPane(), FileChooserOpenDialogType.OPEN_DIALOG);
@@ -147,6 +148,14 @@ public class GUISettingsManager
 				{
 					memoryDumpTableManager.addMemoryDump(memoryDump);
 				}
+			}
+
+			if (jsonObject.has(SCAN_DEEPER_BY_CHECKBOX_JSON_KEY))
+			{
+				val shouldScanDeeperBy = jsonObject.getBoolean(SCAN_DEEPER_BY_CHECKBOX_JSON_KEY);
+				pointerSearcherGUI.getScanDeeperByCheckBox().setSelected(shouldScanDeeperBy);
+				val scanDeeperByDepth = jsonObject.getInt(SCAN_DEEPER_BY_SPINNER_JSON_KEY);
+				pointerSearcherGUI.getScanDeeperBySpinner().setValue(scanDeeperByDepth);
 			}
 
 			val pointerDepthRangeJSONObject = jsonObject.getJSONObject(POINTER_DEPTH_RANGE_JSON_KEY);
@@ -339,6 +348,8 @@ public class GUISettingsManager
 		rootJSONObject.put(STORE_MEMORY_POINTER_RESULTS_JSON_KEY_FILE_PATH, pointerSearcherGUI.getStoreMemoryPointersFilePathField().getText());
 		rootJSONObject.put(LOAD_MEMORY_POINTER_RESULTS_JSON_KEY, pointerSearcherGUI.getLoadMemoryPointerResultsCheckBox().isSelected());
 		rootJSONObject.put(LOAD_MEMORY_POINTER_RESULTS_JSON_KEY_FILE_PATH, pointerSearcherGUI.getLoadMemoryPointersFilePathField().getText());
+		rootJSONObject.put(SCAN_DEEPER_BY_CHECKBOX_JSON_KEY, pointerSearcherGUI.getScanDeeperByCheckBox().isSelected() + "");
+		rootJSONObject.put(SCAN_DEEPER_BY_SPINNER_JSON_KEY, pointerSearcherGUI.getScanDeeperBySpinner().getValue().toString());
 		rootJSONObject.put(PRINT_MODULE_FILE_NAMES_JSON_KEY, pointerSearcherGUI.getPrintModuleFileNamesCheckBox().isSelected());
 		rootJSONObject.put(VERBOSE_LOGGING_JSON_KEY, pointerSearcherGUI.getVerboseLoggingCheckBox().isSelected());
 		rootJSONObject.put(EXCLUDE_CYCLES_JSON_KEY, pointerSearcherGUI.getExcludeCyclesCheckBox().isSelected());

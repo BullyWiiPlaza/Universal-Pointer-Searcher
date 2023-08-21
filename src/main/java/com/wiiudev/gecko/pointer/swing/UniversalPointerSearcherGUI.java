@@ -214,7 +214,11 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JTextField loadMemoryPointersFilePathField;
 
 	private JButton loadMemoryPointerResultsBrowseButton;
+
+	@Getter
 	private JCheckBox scanDeeperByCheckBox;
+
+	@Getter
 	private JSpinner scanDeeperBySpinner;
 
 	@Getter
