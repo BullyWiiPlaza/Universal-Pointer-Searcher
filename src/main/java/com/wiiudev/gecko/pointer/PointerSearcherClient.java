@@ -14,14 +14,13 @@ import static javax.swing.UIManager.setLookAndFeel;
 public class PointerSearcherClient
 {
 	// TODO storeMemoryPointersFilePathField, storeMemoryPointerResultsBrowseButton etc. disable correctly while searching
+	// TODO Implement ignored memory ranges
 	// TODO File extensions without prepended dot "."
-	// TODO Debugging output line numbers
-	// TODO Adding memory dumps/pointers maps by folder
+	// TODO Adding memory dumps/pointer maps by folder
 	// TODO Move input file(s) up/down (+ context menu)
 	// TODO Checkboxes for enabling/disabling input files: https://stackoverflow.com/questions/7391877
 	// TODO When adding another pointer map, re-populate file type
 	// TODO Check provided addresses against address size
-	// TODO Implement ignored memory ranges
 	private static void startGUI()
 	{
 		val universalPointerSearcherGUI = UniversalPointerSearcherGUI.getInstance();
