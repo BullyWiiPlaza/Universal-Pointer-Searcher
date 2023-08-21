@@ -2169,7 +2169,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val splitOffsets = lastOffsetsText.isEmpty()
 				? new String[0] : lastOffsetsText.split(",");
 
-		if (splitOffsets.length - 1 != StringUtils.countMatches(lastOffsetsText, ","))
+		if (splitOffsets.length != 0
+		    && splitOffsets.length - 1 != StringUtils.countMatches(lastOffsetsText, ","))
 		{
 			throw new IllegalStateException("Unexpected amount of commas");
 		}

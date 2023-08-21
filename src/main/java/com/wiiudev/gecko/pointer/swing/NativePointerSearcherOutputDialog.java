@@ -33,12 +33,15 @@ public class NativePointerSearcherOutputDialog extends JDialog
 	private JPanel contentPane;
 	private JTextArea outputArea;
 	private JButton executeOnCommandPromptButton;
+	private JScrollPane outputScrollPane;
 
 	NativePointerSearcherOutputDialog()
 	{
 		setFrameProperties();
 		configureCommandLineExecutor();
 		addDefaultContextMenu(outputArea);
+		val textLineNumber = new TextLineNumber(outputArea);
+		outputScrollPane.setRowHeaderView(textLineNumber);
 	}
 
 	private void setFrameProperties()
