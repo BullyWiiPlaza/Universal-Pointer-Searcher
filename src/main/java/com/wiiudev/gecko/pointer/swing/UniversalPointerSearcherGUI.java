@@ -13,6 +13,7 @@ import com.wiiudev.gecko.pointer.utilities.Benchmark;
 import lombok.Getter;
 import lombok.val;
 import lombok.var;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -49,8 +50,7 @@ import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.getSelect
 import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.setWindowIconImage;
 import static com.wiiudev.gecko.pointer.swing.utilities.HTMLDialogUtilities.addHyperLinkListener;
 import static com.wiiudev.gecko.pointer.swing.utilities.ResourceUtilities.resourceToString;
-import static com.wiiudev.gecko.pointer.swing.utilities.TextAreaLimitType.HEXADECIMAL;
-import static com.wiiudev.gecko.pointer.swing.utilities.TextAreaLimitType.NUMERIC;
+import static com.wiiudev.gecko.pointer.swing.utilities.TextAreaLimitType.*;
 import static com.wiiudev.gecko.pointer.utilities.DataConversions.parseLongSafely;
 import static java.awt.Color.GREEN;
 import static java.awt.Color.RED;
@@ -1130,6 +1130,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		configurePointerSearchDepthField();
 		val addressSize = Integer.BYTES * 2;
 		pointerValueAlignmentField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, false));
+		lastPointerOffsetsField.setDocument(new JTextAreaLimit(Integer.MAX_VALUE, HEXADECIMAL_WITH_COMMAS_AND_SPACES, false));
 		pointerAddressAlignmentField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, false));
 		threadCountField.setDocument(new JTextAreaLimit(addressSize, NUMERIC, false));
 		maximumPointersCountField.setDocument(new JTextAreaLimit(BYTES * 2, NUMERIC, false));
@@ -2167,6 +2168,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val lastOffsetsText = lastPointerOffsetsField.getText().trim();
 		val splitOffsets = lastOffsetsText.isEmpty()
 				? new String[0] : lastOffsetsText.split(",");
+
+		if (splitOffsets.length - 1 != StringUtils.countMatches(lastOffsetsText, ","))
+		{
+			throw new IllegalStateException("Unexpected amount of commas");
+		}
+
 		val lastOffsets = new ArrayList<Long>();
 		for (var splitOffset : splitOffsets)
 		{

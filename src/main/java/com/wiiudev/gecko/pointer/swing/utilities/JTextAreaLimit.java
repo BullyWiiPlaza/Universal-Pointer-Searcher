@@ -1,6 +1,7 @@
 package com.wiiudev.gecko.pointer.swing.utilities;
 
 import lombok.val;
+import lombok.var;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -14,7 +15,8 @@ public class JTextAreaLimit extends PlainDocument
 	private final TextAreaLimitType textAreaLimitType;
 	private final boolean allowNegative;
 
-	public JTextAreaLimit(int lengthLimit, TextAreaLimitType textAreaLimitType, boolean allowNegative)
+	public JTextAreaLimit(final int lengthLimit, final TextAreaLimitType textAreaLimitType,
+	                      final boolean allowNegative)
 	{
 		super();
 		this.lengthLimit = lengthLimit;
@@ -27,7 +29,8 @@ public class JTextAreaLimit extends PlainDocument
 		this(Long.BYTES * 2, HEXADECIMAL, false);
 	}
 
-	public void insertString(int offset, String input, AttributeSet attributeSet) throws BadLocationException
+	public void insertString(final int offset, String input,
+	                         final AttributeSet attributeSet) throws BadLocationException
 	{
 		input = input.toUpperCase();
 		val limitHeld = getLength() + input.length() <= lengthLimit;
@@ -51,12 +54,28 @@ public class JTextAreaLimit extends PlainDocument
 			case HEXADECIMAL:
 				return isHexadecimal(input);
 
+			case HEXADECIMAL_WITH_COMMAS_AND_SPACES:
+				return isHexadecimalSpaceOrComma(input);
+
 			case NUMERIC:
 				return isNumeric(input);
 
 			default:
 				throw new IllegalStateException("Illegal text area limit type: " + textAreaLimitType);
 		}
+	}
+
+	private boolean isHexadecimalSpaceOrComma(final String input)
+	{
+		for (var inputCharacter : input.toCharArray())
+		{
+			if (!(isHexadecimal(inputCharacter + "") || inputCharacter == ' ' || inputCharacter == ','))
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private static boolean isNumeric(String input)
