@@ -2036,7 +2036,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			nativePointerSearcher.setTargetSystem(targetSystem);
 		}
 
-		if (scanDeeperByCheckBox.isSelected())
+		if (scanDeeperByCheckBox.isEnabled() && scanDeeperByCheckBox.isSelected())
 		{
 			val scanDeeperByText = scanDeeperBySpinner.getValue().toString();
 			val scanDeeperBy = Integer.parseInt(scanDeeperByText);
