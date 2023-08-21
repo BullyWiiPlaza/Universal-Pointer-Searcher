@@ -894,14 +894,13 @@
                           <toolTipText value="Whether the pointer searcher will scan a deeper level for the provided memory pointer results input file"/>
                         </properties>
                       </component>
-                      <component id="8561e" class="javax.swing.JTextField" binding="scanDeeperByField">
+                      <component id="ab0de" class="javax.swing.JSpinner" binding="scanDeeperBySpinner">
                         <constraints>
                           <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="150" height="-1"/>
                           </grid>
                         </constraints>
                         <properties>
-                          <text value="1"/>
                           <toolTipText value="The depth to scan deeper for the provided input memory pointers"/>
                         </properties>
                       </component>

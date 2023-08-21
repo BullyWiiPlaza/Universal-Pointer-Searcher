@@ -110,7 +110,7 @@ public class GUISettingsManager
 			val fileContents = new String(readAllBytes(filePath), StandardCharsets.UTF_8);
 
 			val jsonObject = new JSONObject(fileContents);
-			val targetAddress = parseNumeric(jsonObject.getString(TARGET_ADDRESS_JSON_KEY));
+			val targetAddress = jsonObject.has(TARGET_ADDRESS_JSON_KEY) ? parseNumeric(jsonObject.getString(TARGET_ADDRESS_JSON_KEY)) : 0;
 			val memoryDumpsByteOrder = parseMemoryDumpsByteOrder(jsonObject.getString(BYTE_ORDER_JSON_KEY));
 			if (memoryDumpsByteOrder == null)
 			{

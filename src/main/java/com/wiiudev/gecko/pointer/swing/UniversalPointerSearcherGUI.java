@@ -76,9 +76,8 @@ import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 public class UniversalPointerSearcherGUI extends JFrame
 {
 	public static final String APPLICATION_NAME = "Universal Pointer Searcher";
-	public static final Pattern NUMERIC_PATTERN = Pattern.compile("[0-9]+");
 	private static final Pattern PERCENTAGE_REGULAR_EXPRESSION = Pattern.compile("\\b(?<!\\.)(?!0+(?:\\.0+)?%)(?:\\d|[1-9]\\d|100)(?:(?<!100)\\.\\d+)?");
-	private static final String APPLICATION_VERSION = "v4.0";
+	private static final String APPLICATION_VERSION = "v4.1";
 	private static final String STORED_POINTERS_FILE_NAME = "Pointers.txt";
 
 	// Invalid JOptionPane option as default for recognition
@@ -216,7 +215,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private JButton loadMemoryPointerResultsBrowseButton;
 	private JCheckBox scanDeeperByCheckBox;
-	private JTextField scanDeeperByField;
+	private JSpinner scanDeeperBySpinner;
 
 	@Getter
 	private JCheckBox truncateMemoryPointersDebuggingOutputCheckBox;
@@ -335,9 +334,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 				loadMemoryPointersFilePathField, loadMemoryPointerResultsBrowseButton,
 				OpenDialogType.OPEN);
 		loadMemoryPointerResultsCheckBox.addItemListener(itemEvent -> setButtonAvailability());
-		scanDeeperByCheckBox.addItemListener(itemEvent -> setScanDeeperByBackgroundColor());
 		addScanDeeperByFieldDocumentListener();
-		setScanDeeperByBackgroundColor();
 		loadMemoryPointersFilePathFileBrowserManager.configure(rootPane);
 		verifyMemoryUtilizationPercentageInput();
 		setTargetSystemComponentsAvailability();
@@ -454,37 +451,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private void addScanDeeperByFieldDocumentListener()
 	{
-		val document = scanDeeperByField.getDocument();
-		document.addDocumentListener(new DocumentListener()
-		{
-			@Override
-			public void insertUpdate(final DocumentEvent documentEvent)
-			{
-				setScanDeeperByBackgroundColor();
-			}
-
-			@Override
-			public void removeUpdate(final DocumentEvent documentEvent)
-			{
-				setScanDeeperByBackgroundColor();
-			}
-
-			@Override
-			public void changedUpdate(final DocumentEvent documentEvent)
-			{
-				setScanDeeperByBackgroundColor();
-			}
-		});
-	}
-
-	private void setScanDeeperByBackgroundColor()
-	{
-		val scanDeeperByFieldText = scanDeeperByField.getText();
-		val matcher = NUMERIC_PATTERN.matcher(scanDeeperByFieldText);
-		val matches = matcher.matches();
-		val isValid = !scanDeeperByCheckBox.isSelected() || matches;
-		val backgroundColor = isValid ? GREEN : RED;
-		scanDeeperByField.setBackground(backgroundColor);
+		val model = new SpinnerNumberModel(1, 1, 10, 1);
+		scanDeeperBySpinner.setModel(model);
 	}
 
 	private void addMaximumMemoryUtilizationPercentageFieldDocumentListener()
@@ -1293,7 +1261,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	{
 		verifyInputTypesField();
 		scanDeeperByCheckBox.setEnabled(loadMemoryPointerResultsCheckBox.isSelected());
-		scanDeeperByField.setEnabled(loadMemoryPointerResultsCheckBox.isSelected());
+		scanDeeperBySpinner.setEnabled(loadMemoryPointerResultsCheckBox.isSelected());
 		val minimumPointerDepth = parseLongSafely(minimumPointerSearchDepthField.getText());
 		val maximumPointerDepth = parseLongSafely(maximumPointerSearchDepthField.getText());
 		val isPointerDepthValid = minimumPointerDepth <= maximumPointerDepth;
@@ -1390,7 +1358,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 			loadMemoryPointersFilePathField.setEnabled(false);
 			loadMemoryPointerResultsBrowseButton.setEnabled(false);
 			scanDeeperByCheckBox.setEnabled(!isSearching);
-			scanDeeperByField.setEnabled(!isSearching);
+			scanDeeperBySpinner.setEnabled(!isSearching);
 		} */
 		resetMemoryDumpsButton.setEnabled(memoryDumpsAdded && !isSearching);
 		editMemoryDumpButton.setEnabled(memoryDumpTableManager.isMemoryDumpSelected() && !isSearching);
@@ -2070,7 +2038,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 		if (scanDeeperByCheckBox.isSelected())
 		{
-			val scanDeeperByText = scanDeeperByField.getText();
+			val scanDeeperByText = scanDeeperBySpinner.getValue().toString();
 			val scanDeeperBy = Integer.parseInt(scanDeeperByText);
 			nativePointerSearcher.setScanDeeperBy(scanDeeperBy);
 		}
