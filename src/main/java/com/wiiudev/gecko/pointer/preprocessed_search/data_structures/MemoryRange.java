@@ -50,4 +50,9 @@ public class MemoryRange
 	{
 		return Long.toHexString(startingOffset).toUpperCase() + "," + Long.toHexString(endOffset).toUpperCase();
 	}
+
+	public boolean isAlignedTo(final int addressSize)
+	{
+		return startingOffset % addressSize == 0 && endOffset % addressSize == 0;
+	}
 }

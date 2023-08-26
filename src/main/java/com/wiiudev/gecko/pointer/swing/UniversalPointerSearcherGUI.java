@@ -233,6 +233,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JTextField generatePointerMapsInputTypesField;
 
 	private JPanel minimumPointerAddressPanel;
+
+	@Getter
 	private JTextField pointerAddressRangesField;
 
 	private PersistentSettingsManager persistentSettingsManager;
@@ -424,7 +426,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		pointerAddressRangesField.setBackground(color);
 	}
 
-	private static List<MemoryRange> parseAddressRanges(final String addressRangesText)
+	private List<MemoryRange> parseAddressRanges(final String addressRangesText)
 	{
 		if (addressRangesText.trim().isEmpty())
 		{
@@ -440,6 +442,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		}
 
 		List<MemoryRange> addressRanges = new ArrayList<>();
+		val selectedAddressSize = getSelectedItem(addressSizeSelection);
 		for (val memoryRangesComponent : addressRangesComponents)
 		{
 			val addressRangeStartAndEnd = memoryRangesComponent.split("-");
@@ -450,7 +453,18 @@ public class UniversalPointerSearcherGUI extends JFrame
 				throw new IllegalStateException("The start address is not before or equal to the end address");
 			}
 
+			if (!addressRange.isAlignedTo(selectedAddressSize))
+			{
+				throw new IllegalStateException("Address range not allowed to " + selectedAddressSize);
+			}
+
 			addressRanges.add(addressRange);
+		}
+
+		val dashCount = StringUtils.countMatches(addressRangesText, "-");
+		if (dashCount != addressRanges.size())
+		{
+			throw new IllegalStateException("Illegal dash count, must be equal to the address ranges size");
 		}
 
 		return addressRanges;
@@ -1208,6 +1222,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val addressSize = Integer.BYTES * 2;
 		pointerValueAlignmentField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, false));
 		lastPointerOffsetsField.setDocument(new JTextAreaLimit(Integer.MAX_VALUE, HEXADECIMAL_WITH_COMMAS_AND_SPACES, false));
+		pointerAddressRangesField.setDocument(new JTextAreaLimit(Integer.MAX_VALUE, HEXADECIMAL_WITH_COMMAS_DASHES_AND_SPACES, false));
 		pointerAddressAlignmentField.setDocument(new JTextAreaLimit(addressSize, HEXADECIMAL, false));
 		threadCountField.setDocument(new JTextAreaLimit(addressSize, NUMERIC, false));
 		maximumPointersCountField.setDocument(new JTextAreaLimit(BYTES * 2, NUMERIC, false));
@@ -1422,6 +1437,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		lastPointerOffsetsField.setEnabled(!isSearching);
 		lastPointerOffsetsLabel.setVisible(usingNativePointerSearcher);
 		lastPointerOffsetsField.setVisible(usingNativePointerSearcher);
+		pointerAddressRangesField.setEnabled(!isSearching);
 		pointerResultsPageSizeField.setEnabled(!isSearching);
 		fileExtensionsField.setEnabled(!isSearching);
 		maximumMemoryUtilizationPercentageField.setEnabled(!isSearching);
@@ -1549,6 +1565,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 				val selectedAddressSize = getSelectedItem(addressSizeSelection);
 				pointerAddressAlignmentField.setText(String.valueOf(selectedAddressSize));
 				pointerValueAlignmentField.setText(String.valueOf(selectedAddressSize));
+				validatePermittedAddressRangesInput();
 			}
 		});
 

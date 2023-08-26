@@ -57,12 +57,29 @@ public class JTextAreaLimit extends PlainDocument
 			case HEXADECIMAL_WITH_COMMAS_AND_SPACES:
 				return isHexadecimalSpaceOrComma(input);
 
+			case HEXADECIMAL_WITH_COMMAS_DASHES_AND_SPACES:
+				return isHexadecimalSpaceDashOrComma(input);
+
 			case NUMERIC:
 				return isNumeric(input);
 
 			default:
 				throw new IllegalStateException("Illegal text area limit type: " + textAreaLimitType);
 		}
+	}
+
+	private boolean isHexadecimalSpaceDashOrComma(final String input)
+	{
+		for (var inputCharacter : input.toCharArray())
+		{
+			if (!(isHexadecimal(inputCharacter + "") || inputCharacter == ' '
+			      || inputCharacter == ',' || inputCharacter == '-'))
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private boolean isHexadecimalSpaceOrComma(final String input)

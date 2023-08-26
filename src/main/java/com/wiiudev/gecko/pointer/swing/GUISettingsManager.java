@@ -50,6 +50,7 @@ public class GUISettingsManager
 	private static final String LOAD_MEMORY_POINTER_RESULTS_JSON_KEY = "load-memory-pointer-results";
 	private static final String LOAD_MEMORY_POINTER_RESULTS_JSON_KEY_FILE_PATH = "load-memory-pointer-results-file-path";
 	private static final String SCAN_DEEPER_BY_CHECKBOX_JSON_KEY = "scan-deeper-by-checkbox";
+	private static final String POINTER_ADDRESS_RANGE_JSON_KEY = "pointer-address-range";
 	private static final String SCAN_DEEPER_BY_SPINNER_JSON_KEY = "scan-deeper-by-spinner";
 	private static final String PRINT_MODULE_FILE_NAMES_JSON_KEY = "print-module-file-names";
 	private static final String VERBOSE_LOGGING_JSON_KEY = "verbose-logging";
@@ -196,6 +197,16 @@ public class GUISettingsManager
 			val fileExtensions = buildFileExtensionsString(fileExtensionsJSONArray);
 			pointerSearcherGUI.getFileExtensionsField().setText(fileExtensions);
 
+			if (jsonObject.has(POINTER_ADDRESS_RANGE_JSON_KEY))
+			{
+				val pointerAddressRange = jsonObject.getString(POINTER_ADDRESS_RANGE_JSON_KEY);
+				pointerSearcherGUI.getPointerAddressRangesField().setText(pointerAddressRange);
+			} else
+			{
+				// Reset it back to default
+				pointerSearcherGUI.getPointerAddressRangesField().setText("");
+			}
+
 			val addressSize = jsonObject.getInt(ADDRESS_SIZE_JSON_KEY);
 			pointerSearcherGUI.getAddressSizeSelection().setSelectedItem(addressSize);
 
@@ -340,6 +351,7 @@ public class GUISettingsManager
 			fileExtensionsJSON.put(fileExtension);
 		}
 		rootJSONObject.put(FILE_EXTENSIONS_JSON_KEY, fileExtensionsJSON);
+		rootJSONObject.put(POINTER_ADDRESS_RANGE_JSON_KEY, pointerSearcherGUI.getPointerAddressRangesField().getText());
 		rootJSONObject.put(USING_TARGET_SYSTEM_JSON_KEY, pointerSearcherGUI.getTargetSystemCheckbox().isSelected());
 		rootJSONObject.put(TARGET_SYSTEM_JSON_KEY, getSelectedItem(pointerSearcherGUI.getTargetSystemSelection()).toString());
 		rootJSONObject.put(ADDRESS_SIZE_JSON_KEY, getSelectedItem(pointerSearcherGUI.getAddressSizeSelection()));
