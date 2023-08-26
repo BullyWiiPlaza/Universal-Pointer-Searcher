@@ -7,18 +7,22 @@ import lombok.val;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @RequiredArgsConstructor
 public class MemoryRange
 {
-	@Getter
 	private final long startingOffset;
 
-	@Getter
 	private final long endOffset;
 
 	public boolean contains(long offset)
 	{
 		return (offset >= startingOffset) && (offset <= endOffset);
+	}
+
+	public boolean isStartBeforeOrEqualToEnd()
+	{
+		return startingOffset <= endOffset;
 	}
 
 	static List<MemoryRange> copy(List<MemoryRange> memoryRanges)
@@ -39,5 +43,11 @@ public class MemoryRange
 		}
 
 		return copiedMemoryRanges;
+	}
+
+	@Override
+	public String toString()
+	{
+		return Long.toHexString(startingOffset).toUpperCase() + "," + Long.toHexString(endOffset).toUpperCase();
 	}
 }

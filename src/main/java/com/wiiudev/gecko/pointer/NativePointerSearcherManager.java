@@ -2,6 +2,7 @@ package com.wiiudev.gecko.pointer;
 
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryPointer;
+import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryRange;
 import com.wiiudev.gecko.pointer.swing.TargetSystem;
 import com.wiiudev.gecko.pointer.swing.preprocessed_search.InputType;
 import com.wiiudev.gecko.pointer.swing.utilities.MemoryDumpsByteOrder;
@@ -105,6 +106,10 @@ public class NativePointerSearcherManager
 	@Getter
 	@Setter
 	private TargetSystem targetSystem;
+
+	@Getter
+	@Setter
+	private List<MemoryRange> pointerAddressRanges = new ArrayList<>();
 
 	@Getter
 	@Setter
@@ -631,6 +636,15 @@ public class NativePointerSearcherManager
 		{
 			command.add("--target-system");
 			command.add(targetSystem.toString());
+		}
+
+		if (!pointerAddressRanges.isEmpty())
+		{
+			command.add("--pointer-address-range");
+			for (val pointerAddressRange : pointerAddressRanges)
+			{
+				command.add(pointerAddressRange.toString());
+			}
 		}
 
 		if (storeMemoryPointersFilePath != null)

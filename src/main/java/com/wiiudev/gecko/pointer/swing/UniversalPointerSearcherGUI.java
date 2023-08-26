@@ -233,6 +233,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private JTextField generatePointerMapsInputTypesField;
 
 	private JPanel minimumPointerAddressPanel;
+	private JTextField pointerAddressRangesField;
 
 	private PersistentSettingsManager persistentSettingsManager;
 
@@ -304,6 +305,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 		configureAboutTab();
 		addLastPointerOffsetFieldDocumentListener();
+		addIgnoredMemoryRangesFieldDocumentListener();
 		addMaximumMemoryChunkSizeModifiedListener();
 		addSignedModificationListener();
 		addPointerSearchButtonActionListener();
@@ -377,6 +379,81 @@ public class UniversalPointerSearcherGUI extends JFrame
 		});
 
 		validateEnteredFileExtensions();
+	}
+
+	private void addIgnoredMemoryRangesFieldDocumentListener()
+	{
+		pointerAddressRangesField.getDocument().addDocumentListener(new DocumentListener()
+		{
+			@Override
+			public void insertUpdate(final DocumentEvent documentEvent)
+			{
+				validatePermittedAddressRangesInput();
+			}
+
+			@Override
+			public void removeUpdate(final DocumentEvent documentEvent)
+			{
+				validatePermittedAddressRangesInput();
+			}
+
+			@Override
+			public void changedUpdate(final DocumentEvent documentEvent)
+			{
+				validatePermittedAddressRangesInput();
+			}
+		});
+
+		validatePermittedAddressRangesInput();
+	}
+
+	private void validatePermittedAddressRangesInput()
+	{
+		var addressRangesText = pointerAddressRangesField.getText();
+		addressRangesText = addressRangesText.replaceAll("\\s", "");
+		var isValid = true;
+		try
+		{
+			parseAddressRanges(addressRangesText);
+		} catch (final Exception ignored)
+		{
+			isValid = false;
+		}
+
+		val color = isValid ? GREEN : RED;
+		pointerAddressRangesField.setBackground(color);
+	}
+
+	private static List<MemoryRange> parseAddressRanges(final String addressRangesText)
+	{
+		if (addressRangesText.trim().isEmpty())
+		{
+			return new ArrayList<>();
+		}
+
+		val addressRangesComponents = addressRangesText.split(",");
+
+		if (addressRangesComponents.length != 0
+		    && addressRangesComponents.length - 1 != StringUtils.countMatches(addressRangesText, ","))
+		{
+			throw new IllegalStateException("Unexpected amount of commas");
+		}
+
+		List<MemoryRange> addressRanges = new ArrayList<>();
+		for (val memoryRangesComponent : addressRangesComponents)
+		{
+			val addressRangeStartAndEnd = memoryRangesComponent.split("-");
+			val addressRange = new MemoryRange(parseLong(addressRangeStartAndEnd[0].trim(), 16),
+					parseLong(addressRangeStartAndEnd[1].trim(), 16));
+			if (!addressRange.isStartBeforeOrEqualToEnd())
+			{
+				throw new IllegalStateException("The start address is not before or equal to the end address");
+			}
+
+			addressRanges.add(addressRange);
+		}
+
+		return addressRanges;
 	}
 
 	private static String renderDefaultFileExtensions()
@@ -2034,6 +2111,13 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 		/* val allowNegativeOffsets = allowNegativeOffsetsCheckBox.isSelected();
 		nativePointerSearcher.setAllowNegativeOffsets(allowNegativeOffsets); */
+
+		val addressRangesText = pointerAddressRangesField.getText();
+		if (!addressRangesText.trim().isEmpty())
+		{
+			val pointerAddressRanges = parseAddressRanges(addressRangesText);
+			nativePointerSearcher.setPointerAddressRanges(pointerAddressRanges);
+		}
 
 		if (targetSystemCheckbox.isSelected())
 		{
