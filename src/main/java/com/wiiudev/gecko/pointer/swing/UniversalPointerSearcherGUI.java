@@ -253,7 +253,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private boolean isSearching;
 
 	private static final String searchButtonText = "Search";
+
+	@Getter
 	private WindowsTaskBarProgress windowsTaskBarProgress;
+
 	private List<List<MemoryPointer>> singleMemoryDumpPointers;
 
 	private static UniversalPointerSearcherGUI universalPointerSearcherGUI;
@@ -1369,7 +1372,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		maximumPointerOffsetDelimiterLabel.setVisible(usingNativePointerSearcher);
 		minimumPointerOffsetField.setVisible(usingNativePointerSearcher);
 		val memoryDumps = memoryPointerSearcher.getMemoryDumps();
-		val memoryDumpsAdded = memoryDumps.size() > 0;
+		val memoryDumpsAdded = !memoryDumps.isEmpty();
 
 		val addressSize = getSelectedItem(addressSizeSelection);
 		if (addressSize == null)
@@ -1386,7 +1389,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val lastPointerOffsetBackgroundColor = lastPointerOffsetsField.getBackground();
 		val isSearchButtonAvailable = isPointerDepthValid &&
 		                              pointerSearchDepth >= MINIMUM_POINTER_SEARCH_DEPTH_VALUE
-		                              && (memoryDumpsAdded || memoryPointerSearcher.getImportedPointerMaps().size() > 0) && maximumPointerOffsetValid &&
+		                              && (memoryDumpsAdded || !memoryPointerSearcher.getImportedPointerMaps().isEmpty()) && maximumPointerOffsetValid &&
 		                              (minimumPointerOffsetField.isVisible() && minimumPointerOffsetValid || !minimumPointerOffsetField.isVisible())
 		                              && lastPointerOffsetBackgroundColor.equals(GREEN);
 		searchPointersButton.setEnabled(isSearchButtonAvailable && !isSearching);
@@ -2498,7 +2501,6 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val finalHeight = min(screenHeight, updatedSize.getHeight());
 		updatedSize.setSize(finalWidth, finalHeight);
 		setSize(updatedSize);
-		setMinimumSize(updatedSize);
 	}
 
 	@Override
@@ -2513,16 +2515,10 @@ public class UniversalPointerSearcherGUI extends JFrame
 			{
 				handleException(exception);
 			}
-		});
+		}, "Windows Task Bar Initializer");
 
-		thread.setName("Windows Task Bar Initializer");
 		thread.start();
 
 		super.setVisible(visible);
-	}
-
-	public WindowsTaskBarProgress getWindowsTaskBarProgress()
-	{
-		return windowsTaskBarProgress;
 	}
 }
