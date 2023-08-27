@@ -1666,7 +1666,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	                                              Long lastAddedTargetAddress,
 	                                              ByteOrder lastAddedByteOrder,
 	                                              boolean parseEntireFolder,
-	                                              boolean mayParseFolder,
+	                                              @SuppressWarnings("SameParameterValue") boolean mayParseFolder,
 	                                              boolean addModuleDumpsFolder)
 	{
 		val memoryDumpDialog = new MemoryDumpDialog(memoryDump, mayParseFolder);

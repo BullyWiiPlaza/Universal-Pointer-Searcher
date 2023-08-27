@@ -21,22 +21,23 @@ public class FileReadingUtilities
 		val byteBuffers = new ArrayList<ByteBuffer>();
 
 		val binaryFile = new File(filePath);
-		val binaryFileChannel = new RandomAccessFile(binaryFile, "r").getChannel();
-
-		var remainingSize = totalSize;
-		while (remainingSize > 0)
+		try (val binaryFileChannel = new RandomAccessFile(binaryFile, "r").getChannel())
 		{
-			var byteBufferSize = remainingSize;
-
-			if (remainingSize > Integer.MAX_VALUE)
+			var remainingSize = totalSize;
+			while (remainingSize > 0)
 			{
-				byteBufferSize = Integer.MAX_VALUE;
+				var byteBufferSize = remainingSize;
+
+				if (remainingSize > Integer.MAX_VALUE)
+				{
+					byteBufferSize = Integer.MAX_VALUE;
+				}
+
+				val mappedByteBuffer = binaryFileChannel.map(READ_ONLY, startingOffset, byteBufferSize);
+				byteBuffers.add(mappedByteBuffer);
+
+				remainingSize -= byteBufferSize;
 			}
-
-			val mappedByteBuffer = binaryFileChannel.map(READ_ONLY, startingOffset, byteBufferSize);
-			byteBuffers.add(mappedByteBuffer);
-
-			remainingSize -= byteBufferSize;
 		}
 
 		return byteBuffers;

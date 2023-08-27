@@ -4,12 +4,11 @@ import lombok.Getter;
 
 import static java.lang.Long.toHexString;
 
+@Getter
 public class MemoryAddress
 {
-	@Getter
 	private final long relativeOffset;
 
-	@Getter
 	private final long startingOffset;
 
 	public MemoryAddress(long absoluteAddress)

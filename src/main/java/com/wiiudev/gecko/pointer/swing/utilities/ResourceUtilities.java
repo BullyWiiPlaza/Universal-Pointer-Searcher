@@ -4,7 +4,6 @@ import lombok.val;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.Scanner;
 
 public class ResourceUtilities

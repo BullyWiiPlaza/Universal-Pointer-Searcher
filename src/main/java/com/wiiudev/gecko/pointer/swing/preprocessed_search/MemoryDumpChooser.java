@@ -8,8 +8,6 @@ import java.awt.*;
 import java.io.File;
 
 import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.*;
-import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.MEMORY_DUMP;
-import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.POINTER_MAP;
 import static com.wiiudev.gecko.pointer.swing.preprocessed_search.MemoryDumpDialog.toRelativeFilePath;
 
 class MemoryDumpChooser extends JFileChooser

@@ -138,11 +138,6 @@ public class MemoryDumpDialog extends JDialog
 		return addModuleDumpsFolderCheckBox.isSelected();
 	}
 
-	public boolean shouldParseEntireFolder()
-	{
-		return parseEntireFolderCheckBox.isSelected();
-	}
-
 	private void considerPopulatingFields()
 	{
 		if (memoryDump != null)
@@ -240,9 +235,8 @@ public class MemoryDumpDialog extends JDialog
 		val filePath = getFilePath();
 
 		// Beginning of Wii U memory dump
-		try
+		try (val randomAccessFile = new RandomAccessFile(filePath, "r"))
 		{
-			val randomAccessFile = new RandomAccessFile(filePath, "r");
 			val firstValue = randomAccessFile.readInt();
 			if (firstValue == 0x3E8)
 			{
@@ -658,7 +652,7 @@ public class MemoryDumpDialog extends JDialog
 
 		if (isRegularFile(filePathObject))
 		{
-			memoryDumpFileSize = Files.size(Paths.get(filePath));
+			memoryDumpFileSize = Files.size(filePathObject);
 		}
 
 		return memoryDumpFileSize;

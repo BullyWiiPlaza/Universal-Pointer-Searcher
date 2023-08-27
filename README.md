@@ -7,7 +7,7 @@ My new **Universal Pointer Searcher Engine** has been released. It's an updated 
 This project aims to provide a fast and platform-independent pointer searcher to aid cheat code and mod tool creation. It was originally developed and tested to function with `Nintendo Wii U` memory dumps but should be compatible with other platforms as well due to having highly configurable options.
 
 ## Why is searching pointers useful?
-Many memory addresses in processes or video games are not static. Hence, they change regularly. Using memory dumps and this application you can find static routes to destination addresses, so called pointers or pointer expressions.
+Many memory addresses in processes or video games are not static. Hence, they change regularly. Using memory dumps and this application you can find static routes to destination addresses, so-called pointers or pointer expressions.
 
 ## Which features does this program have to offer?
 * Negative pointer offsets

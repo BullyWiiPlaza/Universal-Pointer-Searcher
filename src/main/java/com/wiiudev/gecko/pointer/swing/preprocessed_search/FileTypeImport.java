@@ -3,6 +3,7 @@ package com.wiiudev.gecko.pointer.swing.preprocessed_search;
 import lombok.Getter;
 import lombok.val;
 
+@Getter
 public enum FileTypeImport
 {
 	MEMORY_DUMP("Memory Dump", "bin"),
@@ -11,7 +12,6 @@ public enum FileTypeImport
 	public static final String MEMORY_DUMP_EXTENSION_DMP = "dmp";
 	public static final String MEMORY_DUMP_EXTENSION_RAW = "raw";
 
-	@Getter
 	private final String extension;
 
 	private final String value;

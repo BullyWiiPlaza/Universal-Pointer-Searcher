@@ -30,6 +30,7 @@ import static java.util.logging.Level.INFO;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
 
+@Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MemoryDump
 {
@@ -42,66 +43,50 @@ public class MemoryDump
 		LOGGER.setLevel(INFO);
 	}
 
-	@Getter
 	@EqualsAndHashCode.Include
 	private final Path filePath;
 
-	@Getter
 	@Setter
 	private FileTypeImport fileType;
 
-	@Getter
 	@Setter
 	private Long startingAddress;
 
-	@Getter
 	private final Long targetAddress;
 
-	@Getter
 	private final ByteOrder byteOrder;
 
-	@Getter
 	@Setter
 	private long addressSize;
 
-	@Getter
 	@Setter
 	private long addressAlignment;
 
-	@Getter
 	@Setter
 	private long valueAlignment;
 
-	@Getter
 	@Setter
 	private long minimumPointerAddress;
 
-	@Getter
 	@Setter
 	private long maximumPointerAddress;
 
-	@Getter
 	@Setter
 	private boolean generatePointerMap;
 
-	@Getter
 	@Setter
 	private boolean readPointerMap;
 
-	@Getter
 	@Setter
 	private boolean isAddedAsFolder;
 
-	@Getter
 	@Setter
 	private int comparisonGroupNumber;
 
-	@Getter
 	@Setter
 	private List<String> fileExtensions;
 
 	@Setter
-	@Getter
 	private InputType inputType;
 
 	public MemoryDump(String memoryDumpFilePath,
@@ -137,16 +122,6 @@ public class MemoryDump
 	public long getSize() throws IOException
 	{
 		return Files.size(filePath);
-	}
-
-	private long getTargetOffset()
-	{
-		if (startingAddress == null || targetAddress == null)
-		{
-			return 0;
-		}
-
-		return targetAddress - startingAddress;
 	}
 
 	public long getLastAddress() throws IOException

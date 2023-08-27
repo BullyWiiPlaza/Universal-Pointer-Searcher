@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.TreeMap;
 
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.OffsetPrintingSetting.SIGNED;
-import static com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport.*;
 import static java.io.File.separator;
 import static java.lang.Integer.toHexString;
 import static java.lang.Long.toHexString;
@@ -422,7 +421,7 @@ public class NativePointerSearcherManager
 			}
 		}
 
-		if (memoryDumps.size() > 0)
+		if (!memoryDumps.isEmpty())
 		{
 			val memoryDump = memoryDumps.get(0);
 			val targetAddress = memoryDump.getTargetAddress();
@@ -752,45 +751,6 @@ public class NativePointerSearcherManager
 			value *= -1;
 			return "-" + toHexString(value).toUpperCase();
 		}
-	}
-
-	private void addFileExtensionsCommand(final List<String> command, final MemoryDump memoryDump)
-	{
-		command.add("--file-extensions");
-		val fileExtensions = memoryDump.getFileExtensions();
-		if (fileExtensions == null)
-		{
-			val defaultFileExtensions = new ArrayList<String>();
-			defaultFileExtensions.add(MEMORY_DUMP.getExtension());
-			defaultFileExtensions.add(MEMORY_DUMP_EXTENSION_DMP);
-			defaultFileExtensions.add(MEMORY_DUMP_EXTENSION_RAW);
-			val fileExtensionsCommand = buildFileExtensionsCommand(defaultFileExtensions);
-			command.add(fileExtensionsCommand);
-		} else
-		{
-			val fileExtensionsCommand = buildFileExtensionsCommand(fileExtensions);
-			command.add(fileExtensionsCommand);
-		}
-	}
-
-	private String buildFileExtensionsCommand(final List<String> fileExtensions)
-	{
-		val stringBuilder = new StringBuilder();
-		var fileExtensionsIndex = 0;
-		for (val fileExtension : fileExtensions)
-		{
-			stringBuilder.append(".");
-			stringBuilder.append(fileExtension);
-
-			if (fileExtensionsIndex != fileExtensions.size() - 1)
-			{
-				stringBuilder.append(",");
-			}
-
-			fileExtensionsIndex++;
-		}
-
-		return stringBuilder.toString();
 	}
 
 	private String toCommaSeparated(final List<Long> list)

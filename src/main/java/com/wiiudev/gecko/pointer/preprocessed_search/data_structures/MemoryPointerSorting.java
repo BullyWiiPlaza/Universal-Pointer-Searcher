@@ -19,7 +19,7 @@ public enum MemoryPointerSorting
 	private static final int LESS_THAN = -1;
 	private static final int GREATER_THAN = 1;
 
-	public static Comparator<MemoryPointer> ABSOLUTE_OFFSETS_COMPARATOR = (firstMemoryPointer, secondMemoryPointer) ->
+	public static final Comparator<MemoryPointer> ABSOLUTE_OFFSETS_COMPARATOR = (firstMemoryPointer, secondMemoryPointer) ->
 	{
 		val firstMemoryPointerOffsets = firstMemoryPointer.getOffsets();
 		val secondMemoryPointerOffsets = secondMemoryPointer.getOffsets();
@@ -33,7 +33,7 @@ public enum MemoryPointerSorting
 		return EQUALS;
 	};
 
-	public static Comparator<MemoryPointer> ADDRESS_COMPARATOR = (firstMemoryPointer, secondMemoryPointer) ->
+	public static final Comparator<MemoryPointer> ADDRESS_COMPARATOR = (firstMemoryPointer, secondMemoryPointer) ->
 	{
 		val baseAddressOrModuleOffset = firstMemoryPointer.getAddressOrModuleOffset();
 		val offsets = firstMemoryPointer.getOffsets();
@@ -58,7 +58,7 @@ public enum MemoryPointerSorting
 		return EQUALS;
 	};
 
-	public static Comparator<MemoryPointer> OFFSETS_COUNT_COMPARATOR = (firstMemoryPointer, secondMemoryPointer) ->
+	public static final Comparator<MemoryPointer> OFFSETS_COUNT_COMPARATOR = (firstMemoryPointer, secondMemoryPointer) ->
 	{
 		val firstMemoryPointerOffsets = firstMemoryPointer.getOffsets();
 		val secondMemoryPointerOffsets = secondMemoryPointer.getOffsets();
@@ -89,7 +89,7 @@ public enum MemoryPointerSorting
 
 		for (val offset : offsets)
 		{
-			sum += abs(offset);
+			sum += (int) abs(offset);
 		}
 
 		return sum;

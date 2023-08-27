@@ -3,12 +3,10 @@ import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
 import lombok.AllArgsConstructor;
 import lombok.val;
 import lombok.var;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
 
-import static com.google.common.base.Stopwatch.createStarted;
 import static com.wiiudev.gecko.pointer.NativePointerSearcherManager.findPointers;
 import static java.lang.Math.pow;
 import static java.nio.ByteOrder.BIG_ENDIAN;
@@ -26,55 +24,6 @@ public class NativePointerSearcherTest
 		val parallelComputer = new ParallelComputer(false, true);
 		runClasses(parallelComputer, classes);
 	} */
-
-	@Ignore
-	public void testOptimalThreadCount() throws Exception
-	{
-		val availableProcessorsCount = getAvailableProcessorsCount();
-		val maximumThreadCount = availableProcessorsCount * 2;
-		for (var threadCount = 1; threadCount <= maximumThreadCount; threadCount++)
-		{
-			val stopWatch = createStarted();
-
-			val nativePointerSearcherManager = new NativePointerSearcherManager();
-			nativePointerSearcherManager.setThreadCount(threadCount);
-			nativePointerSearcherManager.setExcludeCycles(true);
-			nativePointerSearcherManager.setMinimumPointerDepth(1);
-			nativePointerSearcherManager.setMaximumPointerDepth(3);
-			nativePointerSearcherManager.setMaximumMemoryDumpChunkSize(100_000_000);
-			nativePointerSearcherManager.setSaveAdditionalMemoryDumpRAM(false);
-			nativePointerSearcherManager.setPotentialPointerOffsetsCountPerAddressPrediction(40);
-			val maximumPointersCount = 100_000;
-			nativePointerSearcherManager.setMaximumPointerCount(maximumPointersCount);
-			nativePointerSearcherManager.setPointerOffsetRange(0, 10_000);
-			nativePointerSearcherManager.setLastPointerOffsets(emptyList());
-			val firstMemoryDump = new MemoryDump("D:\\Cpp\\PointerSearcher\\card_ids",
-					0x0L, 0x2D574C28020L, LITTLE_ENDIAN);
-			val addressSize = 8;
-			firstMemoryDump.setAddressSize(addressSize);
-			firstMemoryDump.setAddressAlignment(8);
-			val valueAlignment = 8;
-			firstMemoryDump.setValueAlignment(valueAlignment);
-			firstMemoryDump.setMinimumPointerAddress(0x0);
-			firstMemoryDump.setMaximumPointerAddress(0x7FFFFFFFFFFL);
-			firstMemoryDump.setFileExtensions(asList("bin", "dmp"));
-			firstMemoryDump.setGeneratePointerMap(true);
-			firstMemoryDump.setReadPointerMap(false);
-			nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
-			nativePointerSearcherManager.addMemoryDump(firstMemoryDump);
-			findPointers(nativePointerSearcherManager, addressSize, false);
-
-			System.out.print("Pointer search with ");
-
-			if (threadCount < 10)
-			{
-				System.out.print(" ");
-			}
-
-			System.out.println(threadCount + " thread(s) took " + stopWatch);
-			System.gc();
-		}
-	}
 
 	@Test
 	public void testPSVitaPointerSearch() throws Exception

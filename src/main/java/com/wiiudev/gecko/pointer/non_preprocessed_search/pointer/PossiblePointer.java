@@ -1,7 +1,9 @@
 package com.wiiudev.gecko.pointer.non_preprocessed_search.pointer;
 
+import lombok.Getter;
 import lombok.val;
 
+@Getter
 public class PossiblePointer
 {
 	private final long address;
@@ -11,16 +13,6 @@ public class PossiblePointer
 	{
 		this.address = address;
 		this.value = value;
-	}
-
-	public long getValue()
-	{
-		return value;
-	}
-
-	public long getAddress()
-	{
-		return address;
 	}
 
 	@Override

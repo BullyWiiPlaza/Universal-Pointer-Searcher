@@ -12,7 +12,7 @@ public class MapUtilities
 {
 	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map)
 	{
-		val list = new ArrayList<Map.Entry<K, V>>(map.entrySet());
+		val list = new ArrayList<>(map.entrySet());
 		list.sort(comparingByValue());
 
 		val sortedMap = new LinkedHashMap<K, V>();

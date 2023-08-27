@@ -2,10 +2,8 @@ package com.wiiudev.gecko.pointer;
 
 import com.jidesoft.utils.ThreadCheckingRepaintManager;
 import com.wiiudev.gecko.pointer.swing.UniversalPointerSearcherGUI;
-import com.wiiudev.gecko.pointer.utilities.JVMArgumentEnforcer;
 import lombok.val;
 
-import static com.wiiudev.gecko.pointer.utilities.JVMArgumentEnforcer.assert64BitJavaInstallation;
 import static javax.swing.RepaintManager.setCurrentManager;
 import static javax.swing.SwingUtilities.invokeLater;
 import static javax.swing.UIManager.getSystemLookAndFeelClassName;
@@ -13,6 +11,7 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
+	// TODO Delete all dead Java pointer searcher code/fix warnings
 	// TODO storeMemoryPointersFilePathField, storeMemoryPointerResultsBrowseButton etc. disable correctly while searching
 	// TODO File extensions without prepended dot "."
 	// TODO Adding memory dumps/pointer maps by folder
@@ -24,15 +23,6 @@ public class PointerSearcherClient
 	{
 		val universalPointerSearcherGUI = UniversalPointerSearcherGUI.getInstance();
 		universalPointerSearcherGUI.setVisible(true);
-	}
-
-	private static void forceMaximumMemoryLimit() throws Exception
-	{
-		assert64BitJavaInstallation();
-
-		// Make sure that enough memory is assigned to the process
-		val jvmArgumentEnforcer = new JVMArgumentEnforcer("-Xmx100g");
-		jvmArgumentEnforcer.forceArgument();
 	}
 
 	private static void setupThreadViolationsDetector()

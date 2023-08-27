@@ -15,8 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.wiiudev.gecko.pointer.swing.StackTraceUtilities.handleException;
 import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.setWindowIconImage;
@@ -37,7 +35,6 @@ public class AddMemoryDumpDialog extends JDialog
 	private JCheckBox parseFolderCheckBox;
 
 	private boolean confirmed;
-	private long dumpStartAddress;
 
 	public AddMemoryDumpDialog(JRootPane rootPane)
 	{
@@ -170,7 +167,7 @@ public class AddMemoryDumpDialog extends JDialog
 			{
 				try
 				{
-					if (MemoryDump.getMemoryDumps(pathString).size() > 0)
+					if (!MemoryDump.getMemoryDumps(pathString).isEmpty())
 					{
 						pathValid = true;
 					}
@@ -217,6 +214,7 @@ public class AddMemoryDumpDialog extends JDialog
 		{
 			val isDirectory = isDirectory(path);
 
+			long dumpStartAddress;
 			if (isDirectory)
 			{
 				dumpStartAddress = MemoryDump.getDumpStartAddress(path.toString());
@@ -231,11 +229,6 @@ public class AddMemoryDumpDialog extends JDialog
 		}
 	}
 
-	public long getDumpStartAddress()
-	{
-		return dumpStartAddress;
-	}
-
 	private void onOK()
 	{
 		confirmed = true;
@@ -248,46 +241,10 @@ public class AddMemoryDumpDialog extends JDialog
 		dispose();
 	}
 
-	public boolean confirmed()
-	{
-		return confirmed;
-	}
-
 	private void setDialogProperties()
 	{
 		setTitle("Add memory dump(s)");
 		setSize(400, 400);
 		setWindowIconImage(this);
-	}
-
-	public void setVisible()
-	{
-		pack();
-		setVisible(true);
-	}
-
-	public List<MemoryDump> getMemoryDumps() throws IOException
-	{
-		var memoryDumps = new ArrayList<MemoryDump>();
-		val selectedFilePath = pathField.getText();
-
-		if (parseFolderCheckBox.isSelected())
-		{
-			// Parse the selected folder using the filenames as target addresses
-			memoryDumps = MemoryDump.getMemoryDumps(selectedFilePath);
-		} else if (equalsFilenameCheckBox.isSelected())
-		{
-			// Just add the selected file using its filename as target address
-			val memoryDump = new MemoryDump(selectedFilePath);
-			memoryDumps.add(memoryDump);
-		} else
-		{
-			// Let the user specify the file path and target address manually
-			val targetAddress = Integer.parseInt(targetAddressField.getText(), 16);
-			val memoryDump = new MemoryDump(selectedFilePath, targetAddress);
-			memoryDumps.add(memoryDump);
-		}
-
-		return memoryDumps;
 	}
 }

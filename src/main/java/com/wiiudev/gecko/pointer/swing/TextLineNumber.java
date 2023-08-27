@@ -1,10 +1,6 @@
 package com.wiiudev.gecko.pointer.swing;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -27,11 +23,7 @@ import java.util.HashMap;
 public class TextLineNumber extends JPanel
 		implements CaretListener, DocumentListener, PropertyChangeListener
 {
-	public final static float LEFT = 0.0f;
-	public final static float CENTER = 0.5f;
 	private final static float RIGHT = 1.0f;
-
-	private final static Border OUTER = new MatteBorder(0, 0, 0, 2, Color.GRAY);
 
 	private final static int HEIGHT = Integer.MAX_VALUE - 1000000;
 
@@ -42,7 +34,6 @@ public class TextLineNumber extends JPanel
 	//  Properties that can be changed
 
 	private boolean updateFont;
-	private int borderGap;
 	private Color currentLineForeground;
 	private float digitAlignment;
 	private int minimumDisplayDigits;
@@ -80,7 +71,6 @@ public class TextLineNumber extends JPanel
 
 		setFont(component.getFont());
 
-		setBorderGap(5);
 		setCurrentLineForeground(Color.RED);
 		setDigitAlignment(RIGHT);
 		setMinimumDisplayDigits(minimumDisplayDigits);
@@ -88,44 +78,6 @@ public class TextLineNumber extends JPanel
 		component.getDocument().addDocumentListener(this);
 		component.addCaretListener(this);
 		component.addPropertyChangeListener("font", this);
-	}
-
-	/**
-	 * Gets the update font property
-	 *
-	 * @return the update font property
-	 */
-	public boolean getUpdateFont()
-	{
-		return updateFont;
-	}
-
-	/**
-	 * Set the update font property. Indicates whether this Font should be
-	 * updated automatically when the Font of the related text component
-	 * is changed.
-	 *
-	 * @param updateFont when true update the Font and repaint the line
-	 *                   numbers, otherwise just repaint the line numbers.
-	 */
-	public void setUpdateFont(boolean updateFont)
-	{
-		this.updateFont = updateFont;
-	}
-
-	/**
-	 * The border gap is used in calculating the left and right insets of the
-	 * border. Default value is 5.
-	 *
-	 * @param borderGap the gap in pixels
-	 */
-	public void setBorderGap(int borderGap)
-	{
-		this.borderGap = borderGap;
-		Border inner = new EmptyBorder(0, borderGap, 0, borderGap);
-		setBorder(new CompoundBorder(OUTER, inner));
-		lastDigits = 0;
-		setPreferredWidth();
 	}
 
 	/**
@@ -148,16 +100,6 @@ public class TextLineNumber extends JPanel
 		this.currentLineForeground = currentLineForeground;
 	}
 
-	/**
-	 * Gets the digit alignment
-	 *
-	 * @return the alignment of the painted digits
-	 */
-	public float getDigitAlignment()
-	{
-		return digitAlignment;
-	}
-
 	public void setDigitAlignment(float digitAlignment)
 	{
 		this.digitAlignment =
@@ -165,17 +107,7 @@ public class TextLineNumber extends JPanel
 	}
 
 	/**
-	 * Gets the minimum display digits
-	 *
-	 * @return the minimum display digits
-	 */
-	public int getMinimumDisplayDigits()
-	{
-		return minimumDisplayDigits;
-	}
-
-	/**
-	 * Specify the mimimum number of digits used to calculate the preferred
+	 * Specify the minimum number of digits used to calculate the preferred
 	 * width of the component. Default is 3.
 	 *
 	 * @param minimumDisplayDigits the number digits used in the preferred
@@ -401,7 +333,7 @@ public class TextLineNumber extends JPanel
 
 	/*
 	 *  A document change may affect the number of displayed lines of text.
-	 *  Therefore the lines numbers will also change.
+	 *  Therefore, the lines numbers will also change.
 	 */
 	private void documentChanged()
 	{

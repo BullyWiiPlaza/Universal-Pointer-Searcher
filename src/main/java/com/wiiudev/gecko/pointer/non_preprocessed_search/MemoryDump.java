@@ -1,5 +1,6 @@
 package com.wiiudev.gecko.pointer.non_preprocessed_search;
 
+import lombok.Getter;
 import lombok.val;
 import lombok.var;
 
@@ -17,11 +18,15 @@ import static java.lang.Long.parseLong;
 import static java.nio.channels.FileChannel.MapMode.READ_ONLY;
 import static java.nio.file.Files.newDirectoryStream;
 
+@Getter
 public class MemoryDump
 {
 	private final Path binaryFilePath;
+
 	private final long targetAddress;
+
 	private final RandomAccessFile randomAccessFile;
+
 	private final ByteBuffer byteBuffer;
 
 	private MemoryDump(Path binaryFilePath) throws IOException
@@ -45,11 +50,6 @@ public class MemoryDump
 		byteBuffer = getFreshByteBuffer();
 	}
 
-	public ByteBuffer getByteBuffer()
-	{
-		return byteBuffer;
-	}
-
 	public ByteBuffer getFreshByteBuffer() throws IOException
 	{
 		val fileChannel = randomAccessFile.getChannel();
@@ -59,16 +59,6 @@ public class MemoryDump
 	public long getBytesCount()
 	{
 		return binaryFilePath.toFile().length();
-	}
-
-	public Path getBinaryFilePath()
-	{
-		return binaryFilePath;
-	}
-
-	public long getTargetAddress()
-	{
-		return targetAddress;
 	}
 
 	public static ArrayList<MemoryDump> getMemoryDumps(String sourceDirectory) throws IOException

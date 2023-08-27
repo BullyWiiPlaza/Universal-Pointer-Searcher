@@ -1,8 +1,12 @@
 package com.wiiudev.gecko.pointer.non_preprocessed_search.pointer;
 
+import lombok.Getter;
+
 public class PointerOffsetChecker
 {
 	private boolean allowNegative;
+
+	@Getter
 	private int maximumOffset;
 
 	public PointerOffsetChecker()
@@ -19,11 +23,6 @@ public class PointerOffsetChecker
 	public void setMaximumOffset(int maximumOffset)
 	{
 		this.maximumOffset = maximumOffset;
-	}
-
-	public int getMaximumOffset()
-	{
-		return maximumOffset;
 	}
 
 	public boolean allowsPositive()

@@ -74,7 +74,7 @@ public class DefaultContextMenu extends JPopupMenu
 
 		if (text != null)
 		{
-			if (text.length() > 0)
+			if (!text.isEmpty())
 			{
 				enableSelectAll = true;
 			}
@@ -82,7 +82,7 @@ public class DefaultContextMenu extends JPopupMenu
 
 		if (selectedText != null)
 		{
-			if (selectedText.length() > 0)
+			if (!selectedText.isEmpty())
 			{
 				enableCopy = true;
 			}

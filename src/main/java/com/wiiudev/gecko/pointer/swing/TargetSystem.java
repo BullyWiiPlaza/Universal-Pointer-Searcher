@@ -3,6 +3,7 @@ package com.wiiudev.gecko.pointer.swing;
 import lombok.Getter;
 import lombok.val;
 
+@Getter
 public enum TargetSystem
 {
 	TRIFORCE("Triforce"),
@@ -34,7 +35,6 @@ public enum TargetSystem
 	MICROSOFT_WINDOWS_X86("Microsoft Windows x86"),
 	MICROSOFT_WINDOWS_X64("Microsoft Windows x64");
 
-	@Getter
 	private final String value;
 
 	TargetSystem(final String value)

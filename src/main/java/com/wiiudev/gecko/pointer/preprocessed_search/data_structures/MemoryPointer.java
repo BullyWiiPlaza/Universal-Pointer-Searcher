@@ -11,6 +11,7 @@ import static java.lang.Long.parseUnsignedLong;
 import static java.lang.System.lineSeparator;
 import static org.apache.commons.lang3.StringUtils.countMatches;
 
+@Getter
 @RequiredArgsConstructor
 @EqualsAndHashCode
 public class MemoryPointer
@@ -22,19 +23,15 @@ public class MemoryPointer
 	private static final String EQUALS_SIGN = "=";
 	public static final String PLUS_SIGN = "+";
 
-	@Getter
 	@Setter
 	private String moduleName;
 
-	@Getter
 	@Setter
 	private long moduleOffset;
 
-	@Getter
 	@Setter
 	private long baseAddress;
 
-	@Getter
 	@Setter
 	private long[] offsets;
 
@@ -168,7 +165,7 @@ public class MemoryPointer
 	{
 		val pointerBuilder = new StringBuilder();
 
-		for (val ignored : offsets)
+		for (@SuppressWarnings("UnusedAssignment") val ignored : offsets)
 		{
 			pointerBuilder.append(OPENING_BRACKET);
 		}

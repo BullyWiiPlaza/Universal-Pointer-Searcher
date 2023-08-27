@@ -84,7 +84,7 @@ public class MemoryPointer implements Comparable<MemoryPointer>
 	{
 		val pointerBuilder = new StringBuilder();
 
-		for (val ignored : offsets)
+		for (@SuppressWarnings("UnusedAssignment") val ignored : offsets)
 		{
 			pointerBuilder.append("[");
 		}
@@ -118,19 +118,6 @@ public class MemoryPointer implements Comparable<MemoryPointer>
 		}
 
 		return pointerBuilder.toString();
-	}
-
-	public static String toString(List<MemoryPointer> memoryPointers, boolean signedOffsets)
-	{
-		val foundPointers = new StringBuilder();
-
-		for (val memoryPointer : memoryPointers)
-		{
-			foundPointers.append(memoryPointer.toString(signedOffsets));
-			foundPointers.append(System.lineSeparator());
-		}
-
-		return foundPointers.toString().trim();
 	}
 
 	@Override

@@ -8,11 +8,11 @@ import java.util.Comparator;
 
 import static com.wiiudev.gecko.pointer.preprocessed_search.utilities.DataConversions.toHexadecimal;
 
+@Getter
 @EqualsAndHashCode
 @RequiredArgsConstructor
 public class OffsetValuePair implements Comparable<OffsetValuePair>, Comparator<OffsetValuePair>
 {
-	@Getter
 	private final int offset;
 
 	@Getter

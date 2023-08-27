@@ -36,6 +36,7 @@ import static java.util.logging.Level.INFO;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
 
+@Getter
 public class MemoryPointerSearcher
 {
 	public static final int MINIMUM_POINTER_SEARCH_DEPTH_VALUE = 1;
@@ -48,7 +49,6 @@ public class MemoryPointerSearcher
 		LOGGER.setLevel(INFO);
 	}
 
-	@Getter
 	@Setter
 	private List<MemoryDump> memoryDumps;
 
@@ -556,18 +556,6 @@ public class MemoryPointerSearcher
 		return lastBaseOffset;
 	} */
 
-	private long getFirstBaseAddress(int pointerValue)
-	{
-		var firstBaseAddress = allowNegativeOffsets ? pointerValue - maximumPointerOffset : pointerValue;
-
-		if (firstBaseAddress < 0)
-		{
-			firstBaseAddress = 0;
-		}
-
-		return firstBaseAddress;
-	}
-
 	private void addMemoryPointer(MemoryDump memoryDump,
 	                              Long targetAddress,
 	                              MemoryPointer memoryPointer,
@@ -670,25 +658,6 @@ public class MemoryPointerSearcher
 		return keySet.toArray();
 	}
 
-	private long getLastAddress(Long pointerValue)
-	{
-		var lastBaseAddress = pointerValue + maximumPointerOffset;
-
-		try
-		{
-			val memoryDump = memoryDumps.get(0);
-			if (lastBaseAddress > memoryDump.getSize())
-			{
-				lastBaseAddress = memoryDump.getSize();
-			}
-		} catch (IOException ignored)
-		{
-
-		}
-
-		return lastBaseAddress;
-	}
-
 	private void considerAddingMemoryPointer(MemoryDump memoryDump,
 	                                         Long startingOffset,
 	                                         MemoryPointer memoryPointer)
@@ -738,7 +707,7 @@ public class MemoryPointerSearcher
 
 	private boolean shouldReadPointerMapLater()
 	{
-		return pointerMaps.size() >= 1;
+		return !pointerMaps.isEmpty();
 	}
 
 	private void addPointerMap(TreeMap<Long, Long> pointerMap)

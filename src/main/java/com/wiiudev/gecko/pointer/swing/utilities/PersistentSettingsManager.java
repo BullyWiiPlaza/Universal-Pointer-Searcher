@@ -19,7 +19,7 @@ public class PersistentSettingsManager
 	private Properties properties;
 	private String propertiesFilePath;
 
-	private PersistentSettingsManager(String propertiesFilePath)
+	private PersistentSettingsManager(final String propertiesFilePath)
 	{
 		this.propertiesFilePath = propertiesFilePath;
 		loadProperties();
@@ -35,8 +35,8 @@ public class PersistentSettingsManager
 		if (propertiesFilePath == null)
 		{
 			propertiesFilePath = getProgramDirectory()
-					+ separator + APPLICATION_NAME
-					+ "." + PERSISTENT_SETTINGS_EXTENSION;
+			                     + separator + APPLICATION_NAME
+			                     + "." + PERSISTENT_SETTINGS_EXTENSION;
 		}
 
 		properties = new Properties();

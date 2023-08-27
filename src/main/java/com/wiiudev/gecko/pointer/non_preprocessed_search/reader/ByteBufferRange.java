@@ -1,5 +1,7 @@
 package com.wiiudev.gecko.pointer.non_preprocessed_search.reader;
 
+import lombok.Getter;
+
 import java.nio.ByteBuffer;
 
 import static java.lang.Long.toHexString;
@@ -8,6 +10,8 @@ public class ByteBufferRange
 {
 	private final long startOffset;
 	private final long endOffset;
+
+	@Getter
 	private final ByteBuffer byteBuffer;
 
 	public ByteBufferRange(long startingOffset, long endOffset, ByteBuffer byteBuffer)
@@ -21,11 +25,6 @@ public class ByteBufferRange
 	long getEndOffset()
 	{
 		return endOffset;
-	}
-
-	public ByteBuffer getByteBuffer()
-	{
-		return byteBuffer;
 	}
 
 	@Override

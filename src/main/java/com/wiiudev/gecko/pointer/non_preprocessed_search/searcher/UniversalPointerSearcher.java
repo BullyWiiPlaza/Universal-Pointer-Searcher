@@ -1,11 +1,12 @@
 package com.wiiudev.gecko.pointer.non_preprocessed_search.searcher;
 
 import com.wiiudev.gecko.pointer.non_preprocessed_search.MemoryDump;
-import com.wiiudev.gecko.pointer.non_preprocessed_search.pointer.PointerAddressRange;
 import com.wiiudev.gecko.pointer.non_preprocessed_search.pointer.MemoryPointer;
+import com.wiiudev.gecko.pointer.non_preprocessed_search.pointer.PointerAddressRange;
 import com.wiiudev.gecko.pointer.non_preprocessed_search.pointer.PointerOffsetChecker;
 import com.wiiudev.gecko.pointer.non_preprocessed_search.reader.ByteBufferRange;
 import com.wiiudev.gecko.pointer.non_preprocessed_search.reader.ByteBufferUtilities;
+import lombok.val;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -22,10 +23,10 @@ public abstract class UniversalPointerSearcher
 	private long memoryDumpStartingOffset;
 	private List<MemoryDump> memoryDumps;
 	private PointerAddressRange pointerAddressRange;
-	private ByteOrder byteOrder;
+	private final ByteOrder byteOrder;
 	private PointerOffsetChecker pointerOffsetChecker;
 	private final Set<MemoryPointer> memoryPointers;
-	public static int INTEGER_SIZE = 4;
+	public static final int INTEGER_SIZE = 4;
 
 	UniversalPointerSearcher()
 	{
@@ -42,49 +43,14 @@ public abstract class UniversalPointerSearcher
 
 	public abstract long returnMemoryDumpStartingOffset();
 
-	public PointerOffsetChecker getPointerOffsetChecker()
-	{
-		return pointerOffsetChecker;
-	}
-
 	public void setPointerOffsetChecker(PointerOffsetChecker pointerOffsetChecker)
 	{
 		this.pointerOffsetChecker = pointerOffsetChecker;
 	}
 
-	public void removeAllMemoryDumps()
-	{
-		memoryDumps.clear();
-	}
-
-	public long getMemoryDumpStartingOffset()
-	{
-		return memoryDumpStartingOffset;
-	}
-
-	public ByteOrder getByteOrder()
-	{
-		return byteOrder;
-	}
-
-	public void setByteOrder(ByteOrder byteOrder)
-	{
-		this.byteOrder = byteOrder;
-	}
-
 	public void setMemoryDumpStartingOffset(int memoryDumpStartingOffset)
 	{
 		this.memoryDumpStartingOffset = memoryDumpStartingOffset;
-	}
-
-	public void addMemoryDump(MemoryDump memoryDump)
-	{
-		memoryDumps.add(memoryDump);
-	}
-
-	public List<MemoryDump> getMemoryDumps()
-	{
-		return memoryDumps;
 	}
 
 	public List<MemoryPointer> getMemoryPointers()
@@ -137,7 +103,7 @@ public abstract class UniversalPointerSearcher
 		}
 
 		// Wait for all tasks to finish
-		for (ByteBufferRange ignored : byteBufferRanges)
+		for (@SuppressWarnings("UnusedAssignment") val ignored : byteBufferRanges)
 		{
 			completionService.take().get();
 		}
@@ -215,7 +181,7 @@ public abstract class UniversalPointerSearcher
 		}
 	}
 
-	private void checkForPointerDepth1(long absoluteBaseAddress, long baseAddressValue, long targetAddress) throws IOException
+	private void checkForPointerDepth1(long absoluteBaseAddress, long baseAddressValue, long targetAddress)
 	{
 		int[] pointerOffsets = getPointerOffsets(baseAddressValue, targetAddress);
 		validatePointer(absoluteBaseAddress, pointerOffsets);
@@ -232,7 +198,7 @@ public abstract class UniversalPointerSearcher
 		return new int[]{innerPointerOffset, getPointerOffsets(addressValue, targetAddress)[0]};
 	}
 
-	private void checkForPointerDepth2(ByteBuffer memoryDumpReader, long targetAddress, long absoluteBaseAddress, long baseAddressValue) throws IOException
+	private void checkForPointerDepth2(ByteBuffer memoryDumpReader, long targetAddress, long absoluteBaseAddress, long baseAddressValue)
 	{
 		// Backup the buffer position since we're possibly changing it
 		int positionBackup = memoryDumpReader.position();

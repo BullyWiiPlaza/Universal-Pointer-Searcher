@@ -5,23 +5,25 @@ import lombok.val;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 
 import static com.wiiudev.gecko.pointer.swing.StackTraceUtilities.handleException;
 
 public class FrameUtilities
 {
-	public static void setWindowIconImage(Window window)
+	public static void setWindowIconImage(final Window window)
 	{
 		try
 		{
-			InputStream imageInputStream = window.getClass().getResourceAsStream("/Icon.png");
-			BufferedImage bufferedImage = ImageIO.read(imageInputStream);
+			val imageInputStream = window.getClass().getResourceAsStream("/Icon.png");
+			if (imageInputStream == null)
+			{
+				throw new IOException("Window icon resource not found");
+			}
+
+			val bufferedImage = ImageIO.read(imageInputStream);
 			window.setIconImage(bufferedImage);
-		}
-		catch(IOException exception)
+		} catch (IOException exception)
 		{
 			handleException(null, exception);
 		}

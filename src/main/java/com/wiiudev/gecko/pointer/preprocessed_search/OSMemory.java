@@ -40,15 +40,15 @@ class OSMemory
 
 				try
 				{
+					//noinspection BusyWait
 					Thread.sleep(100);
 				} catch (InterruptedException exception)
 				{
 					exception.printStackTrace();
 				}
 			}
-		});
+		}, "Used Memory Setter Thread");
 
-		thread.setName("Used Memory Setter Thread");
 		thread.start();
 	}
 }
