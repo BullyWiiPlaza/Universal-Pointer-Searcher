@@ -11,6 +11,7 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
+	// TODO Compile native pointer searcher for Mac and add it to the classpath as well
 	// TODO Delete all dead Java pointer searcher code/fix warnings
 	// TODO storeMemoryPointersFilePathField, storeMemoryPointerResultsBrowseButton etc. disable correctly while searching
 	// TODO File extensions without prepended dot "."
