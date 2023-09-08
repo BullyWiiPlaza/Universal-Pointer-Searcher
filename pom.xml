@@ -104,6 +104,19 @@
             <version>${slf4j-simple.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.kohsuke/github-api -->
+        <dependency>
+            <groupId>org.kohsuke</groupId>
+            <artifactId>github-api</artifactId>
+            <version>1.316</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.23.0</version> <!-- Update to the latest version -->
+        </dependency>
+
         <!-- StopWatch -->
         <dependency>
             <groupId>com.google.guava</groupId>

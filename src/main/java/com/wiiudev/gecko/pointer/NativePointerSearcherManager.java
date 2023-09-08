@@ -6,17 +6,21 @@ import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryRange
 import com.wiiudev.gecko.pointer.swing.TargetSystem;
 import com.wiiudev.gecko.pointer.swing.preprocessed_search.InputType;
 import com.wiiudev.gecko.pointer.swing.utilities.MemoryDumpsByteOrder;
+import com.wiiudev.gecko.pointer.utilities.GitHubUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import lombok.var;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,6 +28,8 @@ import java.util.List;
 import java.util.TreeMap;
 
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.OffsetPrintingSetting.SIGNED;
+import static com.wiiudev.gecko.pointer.swing.StackTraceUtilities.handleException;
+import static com.wiiudev.gecko.pointer.utilities.GitHubUtils.getExtension;
 import static java.io.File.separator;
 import static java.lang.Integer.toHexString;
 import static java.lang.Long.toHexString;
@@ -31,37 +37,16 @@ import static java.nio.ByteOrder.BIG_ENDIAN;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
-import static org.apache.commons.io.FileUtils.deleteDirectory;
-import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.apache.commons.lang3.SystemUtils.*;
 
 public class NativePointerSearcherManager
 {
-	private static final String BINARY_NAME = "UniversalPointerSearcher";
-	private static final String EXTENSION = getExtension();
-	private static final String DOT_EXTENSION = "." + EXTENSION;
+	public static final String BINARY_NAME = "UniversalPointerSearcher";
 	private static final String WINDOWS_SYSTEM32_DIRECTORY;
 	private static final String CMD_FILE_PATH;
 	private static final String WINDOWS_TEMPORARY_DIRECTORY_COMMAND = "%TEMP%";
 	public static final String POINTER_MAP_EXTENSION = "pointermap";
 
-	private static String getExtension()
-	{
-		if (IS_OS_WINDOWS)
-		{
-			return "exe";
-		} else if (IS_OS_LINUX)
-		{
-			return "elf";
-		} else if (IS_OS_MAC)
-		{
-			return "macho";
-		}
-
-		return "";
-	}
-
-	private static final String POINTER_SEARCHER_BINARY = BINARY_NAME + DOT_EXTENSION;
 	private static final String COMMAND_LINE_STARTING_SYMBOL = IS_OS_WINDOWS ? ">" : "$ ";
 	private static final boolean ELEVATE_PROCESS_PRIORITY = true;
 
@@ -174,22 +159,41 @@ public class NativePointerSearcherManager
 		WINDOWS_SYSTEM32_DIRECTORY = System.getenv("WINDIR") + "\\system32";
 		CMD_FILE_PATH = WINDOWS_SYSTEM32_DIRECTORY + "\\" + "cmd";
 
-		val thread = new Thread(new Runnable()
+		val thread = new Thread(() ->
 		{
-			@Override
-			public void run()
+			try
 			{
-				try
-				{
-					executableFilePath = getExecutableFilePath();
-				} catch (IOException exception)
-				{
-					exception.printStackTrace();
-				}
-			}
-		});
+				val gitHubAssetsDownloaderDialog = new GitHubAssetsDownloaderDialog[1];
 
-		thread.setName("Native Pointer Searcher Extractor");
+				SwingUtilities.invokeLater(() ->
+				{
+					gitHubAssetsDownloaderDialog[0] = new GitHubAssetsDownloaderDialog();
+					gitHubAssetsDownloaderDialog[0].setTitle("Verifying Assets...");
+					gitHubAssetsDownloaderDialog[0].setVisible(true);
+				});
+
+				val outputFilePath = Paths.get("native");
+				val gitHubUtils = new GitHubUtils("BullyWiiPlaza",
+						"Universal-Pointer-Searcher-Engine", outputFilePath);
+
+				// Check if GitHub assets are up-to-date
+				if (!gitHubUtils.isAssetUpToDate())
+				{
+					// Clean up the output directory if it exists
+					FileUtils.deleteQuietly(outputFilePath.toFile());
+
+					// Download it fresh
+					gitHubUtils.downloadGitHubRelease();
+				}
+
+				executableFilePath = gitHubUtils.getUniversalPointerSearcherFilePath();
+
+				SwingUtilities.invokeLater(() -> gitHubAssetsDownloaderDialog[0].dispose());
+			} catch (final Exception exception)
+			{
+				handleException(null, exception);
+			}
+		}, "Native Pointer Searcher Extractor");
 		thread.start();
 	}
 
@@ -783,79 +787,11 @@ public class NativePointerSearcherManager
 
 	public static Process runningNativePointerSearcher = null;
 
-	private static Path getExecutableFilePath() throws IOException
-	{
-		val temporaryDirectory = Files.createTempDirectory("prefix");
-
-		val runtime = Runtime.getRuntime();
-		runtime.addShutdownHook(new Thread(() ->
-		{
-			if (runningNativePointerSearcher != null)
-			{
-				// Checking for isAlive() isn't necessary
-				System.out.println("Killing potentially running pointer searcher...");
-				runningNativePointerSearcher.destroy();
-			}
-
-			var repeatIndex = 0;
-			val maximumRepetitionCount = 10;
-			while (repeatIndex < maximumRepetitionCount)
-			{
-				try
-				{
-					System.out.println("Cleanup attempt: " + (repeatIndex + 1) + "/" + maximumRepetitionCount + "...");
-					deleteDirectory(temporaryDirectory.toFile());
-					break;
-				} catch (final Exception ignored)
-				{
-
-				}
-
-				repeatIndex++;
-
-				try
-				{
-					Thread.sleep(1_000);
-				} catch (final InterruptedException ignored)
-				{
-
-				}
-			}
-		}));
-
-		val executableFileBytes = readExecutableFileBytes();
-		val fileName = BINARY_NAME + DOT_EXTENSION;
-		val executableFilePath = temporaryDirectory.resolve(fileName);
-		Files.write(executableFilePath, executableFileBytes);
-
-		if (IS_OS_UNIX)
-		{
-			giveAllPosixFilePermissions(executableFilePath);
-		}
-
-		return executableFilePath;
-	}
-
 	public static void giveAllPosixFilePermissions(Path filePath) throws IOException
 	{
 		val allPosixFilePermissions = asList(PosixFilePermission.values());
 		val posixFilePermissionsSet = new HashSet<>(allPosixFilePermissions);
 		Files.setPosixFilePermissions(filePath, posixFilePermissionsSet);
-	}
-
-	private static byte[] readExecutableFileBytes() throws IOException
-	{
-		val clazz = NativePointerSearcherManager.class;
-		val classLoader = clazz.getClassLoader();
-		try (val resourceAsStream = classLoader.getResourceAsStream(POINTER_SEARCHER_BINARY))
-		{
-			if (resourceAsStream == null)
-			{
-				throw new IllegalStateException("Cannot find pointer searcher native binary");
-			}
-
-			return toByteArray(resourceAsStream);
-		}
 	}
 
 	public static String readFromProcess(Process process) throws IOException
