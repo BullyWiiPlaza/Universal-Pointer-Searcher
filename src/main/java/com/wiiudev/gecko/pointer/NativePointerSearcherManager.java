@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 import static com.wiiudev.gecko.pointer.preprocessed_search.data_structures.OffsetPrintingSetting.SIGNED;
 import static com.wiiudev.gecko.pointer.swing.StackTraceUtilities.handleException;
@@ -37,7 +38,8 @@ import static java.nio.ByteOrder.BIG_ENDIAN;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.SystemUtils.*;
+import static java.util.logging.Logger.getLogger;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 
 public class NativePointerSearcherManager
 {
@@ -46,6 +48,8 @@ public class NativePointerSearcherManager
 	private static final String CMD_FILE_PATH;
 	private static final String WINDOWS_TEMPORARY_DIRECTORY_COMMAND = "%TEMP%";
 	public static final String POINTER_MAP_EXTENSION = "pointermap";
+
+	private static final Logger LOGGER = getLogger(NativePointerSearcherManager.class.getName());
 
 	private static final String COMMAND_LINE_STARTING_SYMBOL = IS_OS_WINDOWS ? ">" : "$ ";
 	private static final boolean ELEVATE_PROCESS_PRIORITY = true;
@@ -233,11 +237,13 @@ public class NativePointerSearcherManager
 				processBuilder.redirectOutput(pointerSearcherOutput.toFile());
 			}
 
+			executedCommand = considerReplacingTemporaryDirectoryFilePath(executedCommand);
+			LOGGER.info("Executing command: " + executedCommand);
+
 			process = processBuilder.start();
 			runningNativePointerSearcher = process;
 			val exitCode = process.waitFor();
 
-			executedCommand = considerReplacingTemporaryDirectoryFilePath(executedCommand);
 			val actualProcessOutput = USE_FILE_OUTPUT ?
 					new String(Files.readAllBytes(pointerSearcherOutput)) : readFromProcess(process);
 			val processOutput = COMMAND_LINE_STARTING_SYMBOL
