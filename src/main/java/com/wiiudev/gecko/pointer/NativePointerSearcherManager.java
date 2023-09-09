@@ -39,8 +39,7 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.logging.Logger.getLogger;
-import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
-import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
+import static org.apache.commons.lang3.SystemUtils.*;
 
 public class NativePointerSearcherManager
 {
@@ -238,7 +237,7 @@ public class NativePointerSearcherManager
 				processBuilder.redirectOutput(pointerSearcherOutput.toFile());
 			}
 
-			executedCommand = considerReplacingTemporaryDirectoryFilePath(executedCommand);
+			executedCommand = considerReplacingFilePathsWithEnvironmentVariables(executedCommand);
 			LOGGER.info("Executing command: " + executedCommand);
 
 			process = processBuilder.start();
@@ -293,20 +292,19 @@ public class NativePointerSearcherManager
 		return stringBuilder.toString();
 	}
 
-	private String considerReplacingTemporaryDirectoryFilePath(String input)
+	private String considerReplacingFilePathsWithEnvironmentVariables(String input)
 	{
+		val userHomeDirectory = System.getProperty("user.home");
+
 		if (IS_OS_WINDOWS)
 		{
 			val temporaryDirectory = getTemporaryFilePath();
-			if (input.contains(temporaryDirectory))
-			{
-				input = input.replace(temporaryDirectory, WINDOWS_TEMPORARY_DIRECTORY_COMMAND);
-			}
+			input = input.replace(temporaryDirectory, WINDOWS_TEMPORARY_DIRECTORY_COMMAND);
+			input = input.replace(userHomeDirectory, "%USERPROFILE%");
 		}
 
-		if (IS_OS_MAC)
+		if (IS_OS_UNIX)
 		{
-			val userHomeDirectory = System.getProperty("user.home");
 			input = input.replace(userHomeDirectory, "$HOME");
 		}
 
