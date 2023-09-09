@@ -870,7 +870,11 @@ public class NativePointerSearcherManager
 		isCanceled = true;
 		process.destroyForcibly();
 
-		killProcessByName(BINARY_NAME);
+		if (IS_OS_WINDOWS)
+		{
+			// Apparently only necessary on Windows: On Unix, the above destruction call works already
+			killProcessByName(BINARY_NAME);
+		}
 	}
 
 	private static void killProcessByName(@SuppressWarnings("SameParameterValue") final String binaryName)
