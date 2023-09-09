@@ -39,6 +39,7 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.logging.Logger.getLogger;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 
 public class NativePointerSearcherManager
@@ -302,6 +303,13 @@ public class NativePointerSearcherManager
 				input = input.replace(temporaryDirectory, WINDOWS_TEMPORARY_DIRECTORY_COMMAND);
 			}
 		}
+
+		if (IS_OS_MAC)
+		{
+			val userHomeDirectory = System.getProperty("user.home");
+			input = input.replace(userHomeDirectory, "$HOME");
+		}
+
 		return input;
 	}
 
