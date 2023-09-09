@@ -242,12 +242,11 @@ public class NativePointerSearcherManager
 
 			process = processBuilder.start();
 			runningNativePointerSearcher = process;
-			val exitCode = process.waitFor();
-
 			val actualProcessOutput = USE_FILE_OUTPUT ?
 					new String(Files.readAllBytes(pointerSearcherOutput)) : readFromProcess(process);
 			val processOutput = COMMAND_LINE_STARTING_SYMBOL
 			                    + executedCommand + "\n\n" + actualProcessOutput;
+			val exitCode = process.waitFor();
 			if (exitCode != 0)
 			{
 				val exceptionMessage = getExceptionMessage(exitCode);
