@@ -176,7 +176,7 @@ public class NativePointerSearcherManager
 					gitHubAssetsDownloaderDialog[0].setVisible(true);
 				});
 
-				val outputFilePath = Paths.get("native");
+				val outputFilePath = Paths.get("native").toAbsolutePath();
 				val gitHubUtils = new GitHubUtils("BullyWiiPlaza",
 						"Universal-Pointer-Searcher-Engine", outputFilePath);
 
@@ -225,7 +225,7 @@ public class NativePointerSearcherManager
 
 		val commandList = buildCommandList(executableFilePath);
 		val processBuilder = new ProcessBuilder(commandList);
-		commandList.remove(executableFilePath.toString());
+		commandList.remove(executableFilePath.toAbsolutePath().toString());
 		var executedCommand = toCommandString(commandList);
 		processBuilder.redirectErrorStream(true);
 		Path pointerSearcherOutput = USE_FILE_OUTPUT ? Files.createTempFile("prefix", "suffix") : null;
@@ -442,7 +442,7 @@ public class NativePointerSearcherManager
 			command.add("--initial-file-path");
 			for (val filePath : initialFilePaths)
 			{
-				command.add(filePath.toString());
+				command.add(filePath.toAbsolutePath().toString());
 			}
 		}
 
@@ -496,7 +496,7 @@ public class NativePointerSearcherManager
 				val comparisonFilePaths = comparisonFilePathEntry.getValue();
 				for (val comparisonFilePath : comparisonFilePaths)
 				{
-					command.add(comparisonFilePath.toString());
+					command.add(comparisonFilePath.toAbsolutePath().toString());
 				}
 			}
 		}
@@ -533,7 +533,7 @@ public class NativePointerSearcherManager
 			{
 				command.add("--comparison-file-path");
 				val memoryDumpFilePath = memoryDump.getFilePath().toAbsolutePath();
-				command.add(memoryDumpFilePath.toString());
+				command.add(memoryDumpFilePath.toAbsolutePath().toString());
 				command.add("--comparison-starting-address");
 				val startingAddress = memoryDump.getStartingAddress();
 				command.add("0x" + toHexadecimalString(startingAddress));
@@ -541,7 +541,7 @@ public class NativePointerSearcherManager
 			} */
 
 			/* command.add("--file-path");
-			command.add(memoryDumpFilePath.toString());
+			command.add(memoryDumpFilePath.toAbsolutePath().toString());
 			addFileExtensionsCommand(command, memoryDump);
 			command.add("--starting-address");
 			val startingAddress = memoryDump.getStartingAddress();
@@ -593,7 +593,7 @@ public class NativePointerSearcherManager
 
 		for (val pointerMap : pointerMaps)
 		{
-			command.add(pointerMap.getFilePath().toString());
+			command.add(pointerMap.getFilePath().toAbsolutePath().toString());
 		}
 
 		val targetPointerMaps = "--target-pointer-maps";
@@ -658,13 +658,13 @@ public class NativePointerSearcherManager
 		if (storeMemoryPointersFilePath != null)
 		{
 			command.add("--store-memory-pointers-file-path");
-			command.add(storeMemoryPointersFilePath.toString());
+			command.add(storeMemoryPointersFilePath.toAbsolutePath().toString());
 		}
 
 		if (loadMemoryPointersFilePath != null)
 		{
 			command.add("--input-memory-pointers-file-path");
-			command.add(loadMemoryPointersFilePath.toString());
+			command.add(loadMemoryPointersFilePath.toAbsolutePath().toString());
 		}
 
 		if (!excludeCycles)
@@ -739,14 +739,14 @@ public class NativePointerSearcherManager
 		{
 			// Write the pointer map into the folder
 			val pointerMapFilePath = initialFilePath.resolve(initialFilePath.getFileName() + "." + POINTER_MAP_EXTENSION);
-			command.add(pointerMapFilePath.toString());
+			command.add(pointerMapFilePath.toAbsolutePath().toString());
 		} else
 		{
 			// Write the pointer map with the same file name
-			val pointerMapFileName = FilenameUtils.removeExtension(initialFilePath.toString())
+			val pointerMapFileName = FilenameUtils.removeExtension(initialFilePath.toAbsolutePath().toString())
 			                         + "." + POINTER_MAP_EXTENSION;
 			val pointerMapFilePath = initialFilePath.getParent().resolve(pointerMapFileName);
-			command.add(pointerMapFilePath.toString());
+			command.add(pointerMapFilePath.toAbsolutePath().toString());
 		}
 	}
 
