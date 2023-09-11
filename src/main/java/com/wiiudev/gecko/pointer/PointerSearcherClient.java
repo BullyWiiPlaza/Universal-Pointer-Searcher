@@ -12,7 +12,6 @@ import static javax.swing.UIManager.setLookAndFeel;
 public class PointerSearcherClient
 {
 	// TODO Delete all dead Java pointer searcher code/fix warnings
-	// TODO storeMemoryPointersFilePathField, storeMemoryPointerResultsBrowseButton etc. disable correctly while searching
 	// TODO File extensions without prepended dot "."
 	// TODO Adding memory dumps/pointer maps by folder
 	// TODO Move input file(s) up/down (+ context menu)

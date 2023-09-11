@@ -84,6 +84,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private static final int SINGLE_MEMORY_DUMP_METHOD_DEFAULT_SELECTED_ANSWER = -2;
 	private static final int DEFAULT_POINTER_RESULTS_PAGE_SIZE = 10_000;
 	private static final long DEFAULT_RESULTS_PAGE_SIZE = 1;
+	private final FileBrowserManager storeMemoryPointersFilePathFileBrowserManager;
+	private final FileBrowserManager loadMemoryPointersFilePathFileBrowserManager;
 
 	private JPanel rootPanel;
 
@@ -252,7 +254,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private MemoryPointerSearcher memoryPointerSearcher;
 	private boolean isSearching;
 
-	private static final String searchButtonText = "Search";
+	public static final String SEARCH_BUTTON_TEXT = "Search";
 
 	@Getter
 	private WindowsTaskBarProgress windowsTaskBarProgress;
@@ -276,7 +278,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 	private UniversalPointerSearcherGUI()
 	{
-		searchPointersButton.setText(searchButtonText);
+		searchPointersButton.setText(SEARCH_BUTTON_TEXT);
 		add(rootPanel);
 		setFrameProperties();
 
@@ -337,13 +339,13 @@ public class UniversalPointerSearcherGUI extends JFrame
 		addByteOrderInformationButtonListener();
 		addAddressSizeInformationButtonListener();
 		addMaximumMemoryUtilizationPercentageFieldDocumentListener();
-		val storeMemoryPointersFilePathFileBrowserManager = new FileBrowserManager(storeMemoryPointerResultsCheckBox,
+		storeMemoryPointersFilePathFileBrowserManager = new FileBrowserManager(storeMemoryPointerResultsCheckBox,
 				storeMemoryPointersFilePathField, storeMemoryPointerResultsBrowseButton,
-				OpenDialogType.SAVE);
+				OpenDialogType.SAVE, searchPointersButton);
 		storeMemoryPointersFilePathFileBrowserManager.configure(rootPane);
-		val loadMemoryPointersFilePathFileBrowserManager = new FileBrowserManager(loadMemoryPointerResultsCheckBox,
+		loadMemoryPointersFilePathFileBrowserManager = new FileBrowserManager(loadMemoryPointerResultsCheckBox,
 				loadMemoryPointersFilePathField, loadMemoryPointerResultsBrowseButton,
-				OpenDialogType.OPEN);
+				OpenDialogType.OPEN, searchPointersButton);
 		loadMemoryPointerResultsCheckBox.addItemListener(itemEvent -> setButtonAvailability());
 		addScanDeeperByFieldDocumentListener();
 		loadMemoryPointersFilePathFileBrowserManager.configure(rootPane);
@@ -1360,6 +1362,14 @@ public class UniversalPointerSearcherGUI extends JFrame
 	private void setButtonAvailability()
 	{
 		verifyInputTypesField();
+		if (storeMemoryPointersFilePathFileBrowserManager != null)
+		{
+			storeMemoryPointersFilePathFileBrowserManager.setComponentsAvailability();
+		}
+		if (loadMemoryPointersFilePathFileBrowserManager != null)
+		{
+			loadMemoryPointersFilePathFileBrowserManager.setComponentsAvailability();
+		}
 		scanDeeperByCheckBox.setEnabled(loadMemoryPointerResultsCheckBox.isSelected());
 		scanDeeperBySpinner.setEnabled(loadMemoryPointerResultsCheckBox.isSelected());
 		val minimumPointerDepth = parseLongSafely(minimumPointerSearchDepthField.getText());
@@ -1932,7 +1942,6 @@ public class UniversalPointerSearcherGUI extends JFrame
 			{
 				searchPointersButton.setText("Reading first memory dump...");
 			}
-			setButtonAvailability();
 			pointerSearchProgressBar.setValue(0);
 			pointerSearchProgressBar.setVisible(!useNativePointerSearcher);
 		});
@@ -1973,6 +1982,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 				{
 					val labelText = useNativePointerSearcher ? "Running native pointer searcher..." : "Searching pointers...";
 					searchPointersButton.setText(labelText);
+					setButtonAvailability();
 				});
 
 				pointerSearcherThread[0] = new SwingWorker<String, String>()
@@ -2317,7 +2327,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 		invokeLater(() ->
 		{
 			isSearching = false;
-			searchPointersButton.setText(searchButtonText);
+			searchPointersButton.setText(SEARCH_BUTTON_TEXT);
 			setButtonAvailability();
 		});
 	}

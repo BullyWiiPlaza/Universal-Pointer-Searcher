@@ -22,14 +22,16 @@ public class FileBrowserManager
 	private final JTextField textField;
 	private final JButton browseButton;
 	private final OpenDialogType openDialogType;
+	private final JButton searchPointersButton;
 
 	public FileBrowserManager(final JCheckBox checkBox, final JTextField textField, final JButton browseButton,
-	                          final OpenDialogType openDialogType)
+	                          final OpenDialogType openDialogType, final JButton searchPointersButton)
 	{
 		this.checkBox = checkBox;
 		this.textField = textField;
 		this.browseButton = browseButton;
 		this.openDialogType = openDialogType;
+		this.searchPointersButton = searchPointersButton;
 	}
 
 	public enum OpenDialogType
@@ -102,11 +104,12 @@ public class FileBrowserManager
 		});
 	}
 
-	private void setComponentsAvailability()
+	public void setComponentsAvailability()
 	{
 		val isSelected = checkBox.isSelected();
-		textField.setEnabled(isSelected);
-		browseButton.setEnabled(isSelected);
+		val isSearching = !searchPointersButton.getText().equals(UniversalPointerSearcherGUI.SEARCH_BUTTON_TEXT);
+		textField.setEnabled(isSelected && !isSearching);
+		browseButton.setEnabled(isSelected && !isSearching);
 		validateFilePath();
 	}
 
