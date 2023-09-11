@@ -27,6 +27,7 @@ public enum TargetSystem
 	PLAYSTATION_PORTABLE("Playstation Portable"),
 	PLAYSTATION_VITA("Playstation Vita"),
 	XBOX("Xbox"),
+	XBOX360("Xbox 360"),
 	XBOX_ONE("Xbox One"),
 	XBOX_SERIES("Xbox Series"),
 	SEGA_CD("Sega CD"),
