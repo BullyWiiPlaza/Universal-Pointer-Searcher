@@ -343,12 +343,13 @@ public class UniversalPointerSearcherGUI extends JFrame
 				storeMemoryPointersFilePathField, storeMemoryPointerResultsBrowseButton,
 				OpenDialogType.SAVE, searchPointersButton);
 		storeMemoryPointersFilePathFileBrowserManager.configure(rootPane);
+		storeMemoryPointerResultsCheckBox.addItemListener(itemEvent -> setButtonAvailability());
 		loadMemoryPointersFilePathFileBrowserManager = new FileBrowserManager(loadMemoryPointerResultsCheckBox,
 				loadMemoryPointersFilePathField, loadMemoryPointerResultsBrowseButton,
 				OpenDialogType.OPEN, searchPointersButton);
+		loadMemoryPointersFilePathFileBrowserManager.configure(rootPane);
 		loadMemoryPointerResultsCheckBox.addItemListener(itemEvent -> setButtonAvailability());
 		addScanDeeperByFieldDocumentListener();
-		loadMemoryPointersFilePathFileBrowserManager.configure(rootPane);
 		verifyMemoryUtilizationPercentageInput();
 		setTargetSystemComponentsAvailability();
 		configureAddedMemoryDumpsTable();
@@ -1398,7 +1399,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val pointerSearchDepth = getPointerSearchDepth();
 		val lastPointerOffsetBackgroundColor = lastPointerOffsetsField.getBackground();
 		val isSearchButtonAvailable = isPointerDepthValid
-		                              && (generatePointerMapsCheckBox.isSelected() && generatePointerMapsInputTypesField.getBackground().equals(GREEN) || !generatePointerMapsCheckBox.isSelected())
+		                              && generatePointerMapsInputTypesField.getBackground().equals(GREEN)
+		                              && loadMemoryPointersFilePathField.getBackground().equals(GREEN)
+		                              && storeMemoryPointersFilePathField.getBackground().equals(GREEN)
 		                              && pointerSearchDepth >= MINIMUM_POINTER_SEARCH_DEPTH_VALUE
 		                              && (memoryDumpsAdded || !memoryPointerSearcher.getImportedPointerMaps().isEmpty()) && maximumPointerOffsetValid &&
 		                              (minimumPointerOffsetField.isVisible() && minimumPointerOffsetValid || !minimumPointerOffsetField.isVisible())
