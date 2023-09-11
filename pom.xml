@@ -134,6 +134,7 @@
         </dependency>
 
         <!-- JSON pretty printing -->
+        <!-- TODO Fix Dependabot "json-io vulnerable to stack exhaustion" https://mvnrepository.com/artifact/com.cedarsoftware/json-io -->
         <dependency>
             <groupId>com.cedarsoftware</groupId>
             <artifactId>json-io</artifactId>
