@@ -25,6 +25,8 @@
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <junit.version>4.13.2</junit.version>
         <lombok.version>1.18.26</lombok.version>
+        <github-api.version>1.316</github-api.version>
+        <commons-compress.version>1.24.0</commons-compress.version>
     </properties>
 
     <dependencies>
@@ -108,13 +110,13 @@
         <dependency>
             <groupId>org.kohsuke</groupId>
             <artifactId>github-api</artifactId>
-            <version>1.316</version>
+            <version>${github-api.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.23.0</version> <!-- Update to the latest version -->
+            <version>${commons-compress.version}</version> <!-- Update to the latest version -->
         </dependency>
 
         <!-- StopWatch -->
