@@ -1487,6 +1487,12 @@ public class UniversalPointerSearcherGUI extends JFrame
 		val memoryDumps = memoryDumpTableManager.getMemoryDumps();
 		var isInputTypesValid = true;
 
+		if (components.length != 0
+		    && components.length - 1 != StringUtils.countMatches(inputTypesFieldText, ","))
+		{
+			isInputTypesValid = false;
+		}
+
 		for (val component : components)
 		{
 			var foundMatchingGroup = false;
