@@ -1387,8 +1387,9 @@ public class UniversalPointerSearcherGUI extends JFrame
 
 		val pointerSearchDepth = getPointerSearchDepth();
 		val lastPointerOffsetBackgroundColor = lastPointerOffsetsField.getBackground();
-		val isSearchButtonAvailable = isPointerDepthValid &&
-		                              pointerSearchDepth >= MINIMUM_POINTER_SEARCH_DEPTH_VALUE
+		val isSearchButtonAvailable = isPointerDepthValid
+		                              && (generatePointerMapsCheckBox.isSelected() && generatePointerMapsInputTypesField.getBackground().equals(GREEN) || !generatePointerMapsCheckBox.isSelected())
+		                              && pointerSearchDepth >= MINIMUM_POINTER_SEARCH_DEPTH_VALUE
 		                              && (memoryDumpsAdded || !memoryPointerSearcher.getImportedPointerMaps().isEmpty()) && maximumPointerOffsetValid &&
 		                              (minimumPointerOffsetField.isVisible() && minimumPointerOffsetValid || !minimumPointerOffsetField.isVisible())
 		                              && lastPointerOffsetBackgroundColor.equals(GREEN);
@@ -2007,7 +2008,7 @@ public class UniversalPointerSearcherGUI extends JFrame
 								{
 									var processOutput = nativePointerSearcherOutput.getProcessOutput();
 
-									val errorLineIndicator = "[err] ";
+									val errorLineIndicator = "[error] ";
 									val warningIndicator = "[warning] ";
 
 									val nativePointerSearcherName = "Universal Pointer Searcher Engine";
