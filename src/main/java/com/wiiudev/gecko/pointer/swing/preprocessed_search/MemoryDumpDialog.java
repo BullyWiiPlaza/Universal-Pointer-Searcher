@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.wiiudev.gecko.pointer.swing.StackTraceUtilities.handleException;
+import static com.wiiudev.gecko.pointer.swing.utilities.DefaultContextMenu.addDefaultContextMenu;
 import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.getSelectedItem;
 import static com.wiiudev.gecko.pointer.swing.utilities.FrameUtilities.setWindowIconImage;
 import static com.wiiudev.gecko.pointer.swing.utilities.MemoryDumpsByteOrder.getMemoryDumpsByteOrder;
@@ -102,6 +103,10 @@ public class MemoryDumpDialog extends JDialog
 			val isAddedAsFolder = memoryDump.isAddedAsFolder();
 			addModuleDumpsFolderCheckBox.setSelected(isAddedAsFolder);
 		}
+
+		addDefaultContextMenu(filePathField);
+		addDefaultContextMenu(startingAddressField);
+		addDefaultContextMenu(targetAddressField);
 
 		statusLabels = new ArrayList<>();
 		statusLabels.add(folderImporterLabel);
