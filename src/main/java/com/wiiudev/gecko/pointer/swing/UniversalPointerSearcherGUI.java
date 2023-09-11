@@ -2007,8 +2007,8 @@ public class UniversalPointerSearcherGUI extends JFrame
 								{
 									var processOutput = nativePointerSearcherOutput.getProcessOutput();
 
-									val errorLineIndicator = "ERR| ";
-									val warningIndicator = "WARN| ";
+									val errorLineIndicator = "[err] ";
+									val warningIndicator = "[warning] ";
 
 									val nativePointerSearcherName = "Universal Pointer Searcher Engine";
 									val processOutputLines = processOutput.split("\n");
