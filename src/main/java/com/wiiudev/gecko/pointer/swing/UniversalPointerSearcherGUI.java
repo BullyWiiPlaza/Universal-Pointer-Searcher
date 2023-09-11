@@ -343,10 +343,50 @@ public class UniversalPointerSearcherGUI extends JFrame
 				storeMemoryPointersFilePathField, storeMemoryPointerResultsBrowseButton,
 				OpenDialogType.SAVE, searchPointersButton);
 		storeMemoryPointersFilePathFileBrowserManager.configure(rootPane);
+		storeMemoryPointersFilePathField.getDocument().addDocumentListener(new DocumentListener()
+		{
+			@Override
+			public void insertUpdate(final DocumentEvent documentEvent)
+			{
+				setButtonAvailability();
+			}
+
+			@Override
+			public void removeUpdate(final DocumentEvent documentEvent)
+			{
+				setButtonAvailability();
+			}
+
+			@Override
+			public void changedUpdate(final DocumentEvent documentEvent)
+			{
+				setButtonAvailability();
+			}
+		});
 		storeMemoryPointerResultsCheckBox.addItemListener(itemEvent -> setButtonAvailability());
 		loadMemoryPointersFilePathFileBrowserManager = new FileBrowserManager(loadMemoryPointerResultsCheckBox,
 				loadMemoryPointersFilePathField, loadMemoryPointerResultsBrowseButton,
 				OpenDialogType.OPEN, searchPointersButton);
+		loadMemoryPointersFilePathField.getDocument().addDocumentListener(new DocumentListener()
+		{
+			@Override
+			public void insertUpdate(final DocumentEvent documentEvent)
+			{
+				setButtonAvailability();
+			}
+
+			@Override
+			public void removeUpdate(final DocumentEvent documentEvent)
+			{
+				setButtonAvailability();
+			}
+
+			@Override
+			public void changedUpdate(final DocumentEvent documentEvent)
+			{
+				setButtonAvailability();
+			}
+		});
 		loadMemoryPointersFilePathFileBrowserManager.configure(rootPane);
 		loadMemoryPointerResultsCheckBox.addItemListener(itemEvent -> setButtonAvailability());
 		addScanDeeperByFieldDocumentListener();
