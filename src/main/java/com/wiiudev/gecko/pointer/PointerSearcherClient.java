@@ -11,6 +11,7 @@ import static javax.swing.UIManager.setLookAndFeel;
 
 public class PointerSearcherClient
 {
+	// TODO Implement pointer depth ranges for each depth
 	// TODO Delete all dead Java pointer searcher code/fix warnings
 	// TODO File extensions without prepended dot "."
 	// TODO Adding memory dumps/pointer maps by folder

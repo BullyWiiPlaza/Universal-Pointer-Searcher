@@ -12,8 +12,9 @@
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <json-io.version>4.14.0</json-io.version>
-        <json.version>20230227</json.version>
+
+        <json-io.version>4.19.1</json-io.version>
+        <json.version>20231013</json.version>
         <guava.version>32.0.1-jre</guava.version>
         <slf4j-simple.version>2.0.5</slf4j-simple.version>
         <oshi-core.version>3.4.0</oshi-core.version>
@@ -26,7 +27,7 @@
         <junit.version>4.13.2</junit.version>
         <lombok.version>1.18.26</lombok.version>
         <github-api.version>1.316</github-api.version>
-        <commons-compress.version>1.24.0</commons-compress.version>
+        <commons-compress.version>1.26.0</commons-compress.version>
     </properties>
 
     <dependencies>
@@ -134,7 +135,6 @@
         </dependency>
 
         <!-- JSON pretty printing -->
-        <!-- TODO Fix Dependabot "json-io vulnerable to stack exhaustion" https://mvnrepository.com/artifact/com.cedarsoftware/json-io -->
         <dependency>
             <groupId>com.cedarsoftware</groupId>
             <artifactId>json-io</artifactId>
