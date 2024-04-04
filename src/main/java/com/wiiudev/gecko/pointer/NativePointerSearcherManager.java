@@ -165,10 +165,10 @@ public class NativePointerSearcherManager
 
 		val thread = new Thread(() ->
 		{
+			val gitHubAssetsDownloaderDialog = new GitHubAssetsDownloaderDialog[1];
+
 			try
 			{
-				val gitHubAssetsDownloaderDialog = new GitHubAssetsDownloaderDialog[1];
-
 				SwingUtilities.invokeLater(() ->
 				{
 					gitHubAssetsDownloaderDialog[0] = new GitHubAssetsDownloaderDialog();
@@ -191,11 +191,12 @@ public class NativePointerSearcherManager
 				}
 
 				executableFilePath = gitHubUtils.getUniversalPointerSearcherFilePath();
-
-				SwingUtilities.invokeLater(() -> gitHubAssetsDownloaderDialog[0].dispose());
 			} catch (final Exception exception)
 			{
 				handleException(null, exception);
+			} finally
+			{
+				SwingUtilities.invokeLater(() -> gitHubAssetsDownloaderDialog[0].dispose());
 			}
 		}, "Native Pointer Searcher Extractor");
 		thread.start();
