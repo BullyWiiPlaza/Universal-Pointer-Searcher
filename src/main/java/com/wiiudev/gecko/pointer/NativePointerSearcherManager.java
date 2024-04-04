@@ -39,7 +39,8 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.logging.Logger.getLogger;
-import static org.apache.commons.lang3.SystemUtils.*;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 
 public class NativePointerSearcherManager
 {
@@ -166,6 +167,9 @@ public class NativePointerSearcherManager
 		val thread = new Thread(() ->
 		{
 			val gitHubAssetsDownloaderDialog = new GitHubAssetsDownloaderDialog[1];
+			val outputFilePath = Paths.get("native").toAbsolutePath();
+			val gitHubUtils = new GitHubUtils("BullyWiiPlaza",
+					"Universal-Pointer-Searcher-Engine", outputFilePath);
 
 			try
 			{
@@ -176,10 +180,6 @@ public class NativePointerSearcherManager
 					gitHubAssetsDownloaderDialog[0].setVisible(true);
 				});
 
-				val outputFilePath = Paths.get("native").toAbsolutePath();
-				val gitHubUtils = new GitHubUtils("BullyWiiPlaza",
-						"Universal-Pointer-Searcher-Engine", outputFilePath);
-
 				// Check if GitHub assets are up-to-date
 				if (!gitHubUtils.isAssetUpToDate())
 				{
@@ -189,13 +189,12 @@ public class NativePointerSearcherManager
 					// Download it fresh
 					gitHubUtils.downloadGitHubRelease();
 				}
-
-				executableFilePath = gitHubUtils.getUniversalPointerSearcherFilePath();
 			} catch (final Exception exception)
 			{
 				handleException(null, exception);
 			} finally
 			{
+				executableFilePath = gitHubUtils.getUniversalPointerSearcherFilePath();
 				SwingUtilities.invokeLater(() -> gitHubAssetsDownloaderDialog[0].dispose());
 			}
 		}, "Native Pointer Searcher Extractor");
