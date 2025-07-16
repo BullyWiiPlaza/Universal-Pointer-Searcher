@@ -35,14 +35,14 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
+            <version>1.18.26</version>
         </dependency>
 
         <!-- Testing -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -50,42 +50,42 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
+            <version>3.12.0</version>
         </dependency>
 
         <!-- Windows Taskbar Progress -->
         <dependency>
             <groupId>com.nativelibs4java</groupId>
             <artifactId>bridj</artifactId>
-            <version>${bridj.version}</version>
+            <version>0.7.0</version>
         </dependency>
 
         <!-- ThreadCheckingRepaintManager -->
         <dependency>
             <groupId>com.jidesoft</groupId>
             <artifactId>jide-oss</artifactId>
-            <version>${jide-oss.version}</version>
+            <version>3.6.18</version>
         </dependency>
 
         <!-- JSON Serialization for Pointer Maps -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>${gson.version}</version>
+            <version>2.10.1</version>
         </dependency>
 
         <!-- Fast LZ4 pointer maps compression -->
         <dependency>
             <groupId>org.lz4</groupId>
             <artifactId>lz4-java</artifactId>
-            <version>${lz4-java.version}</version>
+            <version>1.8.0</version>
         </dependency>
 
         <!-- FilenameUtils -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
+            <version>2.14.0</version>
         </dependency>
 
         <!-- Memory checking -->
@@ -99,46 +99,46 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j-simple.version}</version>
+            <version>2.0.5</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j-simple.version}</version>
+            <version>2.0.5</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.kohsuke/github-api -->
         <dependency>
             <groupId>org.kohsuke</groupId>
             <artifactId>github-api</artifactId>
-            <version>${github-api.version}</version>
+            <version>1.325</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>${commons-compress.version}</version> <!-- Update to the latest version -->
+            <version>1.26.0</version> <!-- Update to the latest version -->
         </dependency>
 
         <!-- StopWatch -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
+            <version>32.0.1-jre</version>
         </dependency>
 
         <!-- Loading and saving pointer searcher profiles -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>${json.version}</version>
+            <version>20231013</version>
         </dependency>
 
         <!-- JSON pretty printing -->
         <dependency>
             <groupId>com.cedarsoftware</groupId>
             <artifactId>json-io</artifactId>
-            <version>${json-io.version}</version>
+            <version>4.19.1</version>
         </dependency>
     </dependencies>
 </project>
