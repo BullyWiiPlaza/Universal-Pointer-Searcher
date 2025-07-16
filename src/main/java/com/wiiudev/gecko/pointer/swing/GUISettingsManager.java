@@ -1,5 +1,7 @@
 package com.wiiudev.gecko.pointer.swing;
 
+import com.cedarsoftware.io.JsonIo;
+import com.cedarsoftware.io.WriteOptionsBuilder;
 import com.wiiudev.gecko.pointer.preprocessed_search.data_structures.MemoryDump;
 import com.wiiudev.gecko.pointer.swing.preprocessed_search.FileTypeImport;
 import lombok.val;
@@ -17,7 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import static com.cedarsoftware.util.io.JsonWriter.formatJson;
 import static com.wiiudev.gecko.pointer.preprocessed_search.utilities.DataConversions.parseNumeric;
 import static com.wiiudev.gecko.pointer.preprocessed_search.utilities.DataConversions.toHexadecimal;
 import static com.wiiudev.gecko.pointer.swing.preprocessed_search.InputType.parseInputType;
@@ -371,7 +372,11 @@ public class GUISettingsManager
 		rootJSONObject.put(TARGET_POINTER_MAPS_JSON_KEY, pointerSearcherGUI.getGeneratePointerMapsInputTypesField().getText());
 		rootJSONObject.put(TRUNCATE_MEMORY_POINTERS_DEBUGGING_OUTPUT_JSON_KEY, pointerSearcherGUI.getTruncateMemoryPointersDebuggingOutputCheckBox().isSelected());
 
-		return formatJson(rootJSONObject.toString());
+		val writeOptions = new WriteOptionsBuilder()
+				.prettyPrint(true)
+				.showTypeInfoNever()
+				.build();
+		return JsonIo.toJson(rootJSONObject.toMap(), writeOptions);
 	}
 
 	private static JSONObject buildRangeJSON(final JTextField minimumPointerSearchDepthField,

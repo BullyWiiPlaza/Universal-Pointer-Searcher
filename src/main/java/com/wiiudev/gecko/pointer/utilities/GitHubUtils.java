@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import static com.wiiudev.gecko.pointer.NativePointerSearcherManager.giveAllPosixFilePermissions;
@@ -103,7 +104,7 @@ public class GitHubUtils
 		for (val asset : assets)
 		{
 			LOGGER.info("Comparing asset creation date with the existing one...");
-			val assetCreationDate = asset.getCreatedAt();
+			val assetCreationDate = Date.from(asset.getCreatedAt());
 			val formattedDate = SIMPLE_DATE_FORMAT.format(assetCreationDate);
 			val assetCreationDateBytes = Files.readAllBytes(assetCreationDateFilePath);
 			val writtenDate = new String(assetCreationDateBytes, StandardCharsets.UTF_8);

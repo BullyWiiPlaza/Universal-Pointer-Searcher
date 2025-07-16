@@ -13,21 +13,21 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <json-io.version>4.19.1</json-io.version>
-        <json.version>20231013</json.version>
-        <guava.version>32.0.1-jre</guava.version>
-        <slf4j-simple.version>2.0.5</slf4j-simple.version>
-        <oshi-core.version>3.4.0</oshi-core.version>
-        <commons-io.version>2.11.0</commons-io.version>
+        <json-io.version>4.57.0</json-io.version>
+        <json.version>20250517</json.version>
+        <guava.version>33.4.8-jre</guava.version>
+        <slf4j-simple.version>2.1.0-alpha1</slf4j-simple.version>
+        <oshi-core.version>6.8.2</oshi-core.version>
+        <commons-io.version>2.19.0</commons-io.version>
         <lz4-java.version>1.8.0</lz4-java.version>
-        <gson.version>2.10.1</gson.version>
+        <gson.version>2.13.1</gson.version>
         <jide-oss.version>3.6.18</jide-oss.version>
         <bridj.version>0.7.0</bridj.version>
-        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
         <junit.version>4.13.2</junit.version>
-        <lombok.version>1.18.26</lombok.version>
-        <github-api.version>1.316</github-api.version>
-        <commons-compress.version>1.26.0</commons-compress.version>
+        <lombok.version>1.18.38</lombok.version>
+        <github-api.version>2.0-rc.3</github-api.version>
+        <commons-compress.version>1.27.1</commons-compress.version>
     </properties>
 
     <dependencies>
@@ -90,7 +90,7 @@
 
         <!-- Memory checking -->
         <dependency>
-            <groupId>com.github.dblock</groupId>
+            <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
             <version>${oshi-core.version}</version>
         </dependency>
