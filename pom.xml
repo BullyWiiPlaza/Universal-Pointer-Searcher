@@ -14,7 +14,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <json-io.version>4.57.0</json-io.version>
-        <json.version>20250517</json.version>
+        <json.version>20260719</json.version>
         <guava.version>33.4.8-jre</guava.version>
         <slf4j-simple.version>2.1.0-alpha1</slf4j-simple.version>
         <oshi-core.version>6.8.2</oshi-core.version>
